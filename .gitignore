@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.env
+.venv/
+miniconda3/
+*.log
+data/
+checkpoints/
+.vscode/
+.DS_Store

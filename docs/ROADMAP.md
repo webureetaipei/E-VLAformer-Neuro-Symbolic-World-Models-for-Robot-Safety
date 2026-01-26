@@ -1,0 +1,19 @@
+# E-VLAformer Project Roadmap: The 100 Tasks to NeurIPS
+
+**Status:** Active
+**Goal:** NeurIPS 2026
+**Core Tech:** TinyEngine (C++), Graph World Model, Isaac Sim, Distributed gRPC
+
+---
+
+## Phase 1: Infrastructure & Environment (Tasks 01-10)
+- [x] **Task 01:** Project initialization, Git setup, and Technical Spec v2.1.
+- [ ] **Task 02:** Deploy Isaac Sim (Docker/Local) and verify "Hello Robot".
+- [ ] **Task 03:** Setup WSL2 + CUDA development environment for C++.
+- [ ] **Task 04:** Configure Docker container for Headless Simulation.
+- [ ] **Task 05:** Verify gRPC communication loop (Python Client <-> Sim Server).
+- [ ] **Task 06:** Setup HDF5 data logger infrastructure.
+- [ ] ... (Tasks 07-10: CI/CD, Unit Testing setup)
+
+---
+*Note: This roadmap is a living document. We will check off tasks as we complete them.*
