@@ -30,7 +30,7 @@ touch src/vla/__init__.py
 
 # 3. Create System Design Documentation (The "Google Design Docs")
 touch docs/design/{system_design_overview.md,embedded_system_design.md,distributed_system_design.md,neuro_symbolic_multimodal_system_design.md}
-touch docs/reports/evaluation_results.md
+touch docs/reports/evaluation_results.mdgit status
 
 # 4. Create Git Keepfiles & Root Docs
 touch configs/.gitkeep tests/.gitkeep
