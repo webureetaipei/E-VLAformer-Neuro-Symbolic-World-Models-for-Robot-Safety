@@ -9,7 +9,7 @@
 ## Phase 1: Infrastructure & Environment (Tasks 01-10)
 - [x] **Task 01:** Project initialization, Git setup, and Technical Spec v2.1.
 - [x] **Task 02:** Deploy Isaac Sim (Docker/Local) and verify "Hello Robot".
-- [ ] **Task 03:** Setup WSL2 + CUDA development environment for C++.
+- [x] **Task 03:** Setup WSL2 + CUDA development environment for C++.
 - [ ] **Task 04:** Configure Docker container for Headless Simulation.
 - [ ] **Task 05:** Verify gRPC communication loop (Python Client <-> Sim Server).
 - [ ] **Task 06:** Setup HDF5 data logger infrastructure.
