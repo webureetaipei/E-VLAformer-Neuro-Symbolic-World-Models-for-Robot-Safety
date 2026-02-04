@@ -11,7 +11,7 @@
 - [x] **Task 02:** Deploy Isaac Sim (Docker/Local) and verify "Hello Robot".
 - [x] **Task 03:** Setup AI Environment (PyTorch & CUDA) and prepare for C++.
 - [x] **Task 04:** Configure Docker container for Headless Simulation.
-- [ ] **Task 05:** Verify gRPC communication loop (Python Client <-> Sim Server).
+- [x] **Task 05:** Verify gRPC communication loop (Python Client <-> Sim Server).
 - [ ] **Task 06:** Setup HDF5 data logger infrastructure.
 - [ ] ... (Tasks 07-10: CI/CD, Unit Testing setup)
 

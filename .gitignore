@@ -8,3 +8,7 @@ data/
 checkpoints/
 .vscode/
 .DS_Store
+# Ignore generated simulation data
+data/output/
+logs/
+*.npy
