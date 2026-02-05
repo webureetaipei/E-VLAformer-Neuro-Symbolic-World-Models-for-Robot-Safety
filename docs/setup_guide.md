@@ -74,3 +74,35 @@ docker run --name isaac-sim --entrypoint ./runheadless.native.sh --gpus all -e "
     nvcr.io/nvidia/isaac-sim:4.2.0
 ```
 **Expected Output:** ✅ You should see a stream of "Omniverse Kit" startup logs indicating the simulation server is running.
+
+## 5. gRPC Communication Verification (Task 05)
+Target: Establish the bidirectional command-response loop between Client and Sim Server.
+
+```bash
+# 1. Start Isaac Sim (Windows Native or Docker Headless)
+# 2. Run the gRPC verification script
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\generate_data.py
+```
+
+## 6. HDF5 Data Engine & Validation (Task 06)
+Target: High-performance data logging and visual alignment check.
+```bash
+6.1 Install Dependencies
+# Use the Isaac Sim python wrapper to install h5py
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat -m pip install h5py
+
+6.2 Generate & Verify Dataset
+
+# 1. Generate HDF5 dataset
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\generate_data.py
+
+# 2. Run automated visual validation
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\check_hdf5.py
+```
+**Expected Output:**
+
+✅ dataset_v1.hdf5 created in data/output/.
+
+✅ A popup window showing RGB and Semantic Mask in pixel-perfect alignment.
+
+✅ Standardized plot saved to docs/images/visual_validation.png.
