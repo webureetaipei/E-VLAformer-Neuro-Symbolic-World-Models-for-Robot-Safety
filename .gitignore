@@ -12,3 +12,5 @@ checkpoints/
 data/output/
 logs/
 *.npy
+# Ignore all HDF5 datasets
+*.hdf5

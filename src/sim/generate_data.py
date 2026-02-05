@@ -1,82 +1,71 @@
 # src/sim/generate_data.py
 import isaacsim
 import os
-import time
+import h5py
+import numpy as np
 from omni.isaac.kit import SimulationApp
 
-# 1. Setup Configuration
-config = {
-    "headless": True,
-    "active_gpu": 0,
-    "physics_gpu": 0,
-    "multi_gpu": False,
-    "renderer": "RayTracedLighting",
-    "extra_args": ["--/rtx/verifyDriverVersion/enabled=false"]
-}
-
-print("⏳ Initializing Isaac Sim engine...", flush=True)
+# 1. 初始化
+config = {"headless": True, "active_gpu": 0}
 simulation_app = SimulationApp(config)
 
-# Ensure Absolute Path for Windows
-OUTPUT_DIR = r"C:\Users\Michael\evlaformer_lab\data\output"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# 2. Replicator 延遲導入
+import omni.replicator.core as rep
 
-def generate_synthetic_data():
-    # Late import to avoid extension initialization conflicts
-    import omni.replicator.core as rep 
-    
-    print(f"🚀 Data Generation Started. Target: {OUTPUT_DIR}", flush=True)
-    
+OUTPUT_FILE = r"C:\Users\Michael\evlaformer_lab\data\output\dataset_v1.hdf5"
+os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
+
+def setup_hdf5(num_frames, height, width):
+    """預分配 HDF5 空間以優化效能"""
+    f = h5py.File(OUTPUT_FILE, 'w')
+    # 創建數據集 (RGB: uint8, Segmentation: uint8)
+    f.create_dataset("rgb", (num_frames, height, width, 3), dtype='uint8', compression="gzip")
+    f.create_dataset("semantic", (num_frames, height, width), dtype='uint8', compression="gzip")
+    # 物理數據與語義描述 (JSON String)
+    f.create_dataset("metadata", (num_frames,), dtype=h5py.string_dtype(encoding='utf-8'))
+    return f
+
+def run_task06():
+    num_frames = 10
+    height, width = 512, 512
+    hdf5_file = setup_hdf5(num_frames, height, width)
+
     with rep.new_layer():
-        # Lighting & Scene
         rep.create.light(light_type="dome", intensity=1000)
-        rep.create.plane(scale=10, visible=True)
-        cube = rep.create.cube(position=(0, 0, 10), scale=2.0, semantics=[('class', 'cube')])
-        
-        # Define the randomization logic
-        with rep.trigger.on_frame(max_execs=5): 
+        # 多樣化物體生成 (延續 Task 05)
+        cube = rep.create.cube(semantics=[('class', 'cube')])
+        with rep.trigger.on_frame(max_execs=num_frames):
             with cube:
-                rep.modify.pose(
-                    position=rep.distribution.uniform((-5, -5, 5), (5, 5, 15)),
-                    rotation=rep.distribution.uniform((0, 0, 0), (360, 360, 360))
-                )
-                rep.randomizer.color(colors=rep.distribution.uniform((0, 0, 0), (1, 1, 1)))
+                rep.modify.pose(position=rep.distribution.uniform((-5,-5,5),(5,5,10)))
+        
+        # 綁定 Annotators (不使用 Writer，直接抓取數據)
+        camera = rep.create.camera(position=(15, 15, 15), look_at=(0, 0, 0))
+        rp = rep.create.render_product(camera, (width, height))
+        rgb_annot = rep.AnnotatorRegistry.get_annotator("rgb")
+        rgb_annot.attach(rp)
+        sem_annot = rep.AnnotatorRegistry.get_annotator("semantic_segmentation")
+        sem_annot.attach(rp)
 
-        # Camera & Writer
-        camera = rep.create.camera(position=(20, 20, 20), look_at=(0, 0, 0))
-        render_product = rep.create.render_product(camera, (512, 512))
-        writer = rep.WriterRegistry.get("BasicWriter")
-        writer.initialize(output_dir=OUTPUT_DIR, rgb=True, semantic_segmentation=True)
-        writer.attach(render_product)
+    print(f"🚀 TASK 06: Logging to HDF5 -> {OUTPUT_FILE}", flush=True)
 
-    # --- THE ROBUST STEPPING FIX ---
-    print("📸 Rendering 5 frames with manual GPU sync...", flush=True)
-    
-    # Instead of 'run()', we step manually. 
-    # This prevents the "Unexpected Keyword" or "No Attribute" errors.
-    for i in range(5):
-        print(f"   Step {i+1}/5...", flush=True)
+    for i in range(num_frames):
+        print(f"   Step {i+1}/{num_frames}...", flush=True)
         rep.orchestrator.step()
-        # Give the app a few ticks to handle internal I/O after each step
-        for _ in range(10):
-            simulation_app.update()
+        
+        # 核心：獲取 Annotator 數據
+        rgb_data = rgb_annot.get_data()
+        sem_data = sem_annot.get_data()
+        
+        if rgb_data is not None:
+            # 存入 HDF5 (只存前三通道 RGB)
+            hdf5_file["rgb"][i] = rgb_data[:, :, :3]
+            hdf5_file["semantic"][i] = sem_data["data"]
+            # 存入標註描述 (Event Reasoning 的基礎)
+            hdf5_file["metadata"][i] = str({"frame": i, "description": "Cube randomly placed"})
 
-    # Final "Flush" to ensure Windows writes the files to disk
-    print("💾 Finalizing file I/O...", flush=True)
-    for _ in range(100):
-        simulation_app.update()
-
-    print("✅ SUCCESS! Check your folder now.", flush=True)
+    hdf5_file.close()
+    print("✅ SUCCESS! HDF5 Dataset Generated.", flush=True)
+    simulation_app.close()
 
 if __name__ == "__main__":
-    try:
-        generate_synthetic_data()
-    except Exception as e:
-        print(f"❌ Error: {e}")
-    finally:
-        print("🛑 System Exit.")
-        # Ensure cleanup and hard exit to prevent access violation
-        simulation_app.close()
-        time.sleep(1)
-        import os
-        os._exit(0)
+    run_task06()
