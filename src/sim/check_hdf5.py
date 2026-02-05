@@ -2,44 +2,45 @@ import h5py
 import matplotlib.pyplot as plt
 import os
 
-# 設定路徑
+# Set file paths
 HDF5_PATH = r"C:\Users\Michael\evlaformer_lab\data\output\dataset_v1.hdf5"
 SAVE_PATH = r"C:\Users\Michael\evlaformer_lab\docs\images\visual_validation.png"
 
-# 確保 docs/images 資料夾存在
+# Ensure the docs/images directory exists
 os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
 
 def visualize_standard_config():
+    """Reads data from HDF5 and creates a side-by-side RGB vs Semantic Mask plot."""
     with h5py.File(HDF5_PATH, 'r') as f:
-        # 讀取第 0 幀數據
+        # Read the first frame (index 0)
         rgb = f['rgb'][0]
         semantic = f['semantic'][0]
         
-        # 建立並排圖表 (1 row, 2 columns)
+        # Create side-by-side plot (1 row, 2 columns)
         fig, axes = plt.subplots(1, 2, figsize=(12, 5), dpi=300)
         
-        # 左圖：RGB 原圖
+        # Left subplot: RGB Input Image
         axes[0].imshow(rgb)
         axes[0].set_title("Standardized Input: RGB", fontsize=14, fontweight='bold')
-        axes[0].axis('off') # 隱藏座標軸
+        axes[0].axis('off') # Hide coordinate axes
         
-        # 右圖：彩色編碼遮罩 (使用 'viridis' 或 'cityscapes' 風格調色盤)
+        # Right subplot: Color-encoded Semantic Mask
         im = axes[1].imshow(semantic, cmap='viridis')
         axes[1].set_title("Ground Truth: Semantic Mask", fontsize=14, fontweight='bold')
         axes[1].axis('off')
         
-        # 調整布局
+        # Adjust layout to prevent overlap
         plt.tight_layout()
         
-        # 存檔至 docs/images 以供 README 使用
+        # Save to docs/images for README documentation
         plt.savefig(SAVE_PATH, bbox_inches='tight')
-        print(f"✅ 標準化影像已生成並存檔至: {SAVE_PATH}")
+        print(f"✅ Standardized validation image generated and saved to: {SAVE_PATH}")
         
-        # 顯示視窗
+        # Display the result window
         plt.show()
 
 if __name__ == "__main__":
     if os.path.exists(HDF5_PATH):
         visualize_standard_config()
     else:
-        print(f"❌ 找不到 HDF5 檔案，請先執行 generate_data.py")
+        print(f"❌ Error: HDF5 file not found at {HDF5_PATH}. Please run generate_data.py first.")
