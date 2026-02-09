@@ -129,3 +129,28 @@ C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat sr
 ✅ Terminal Log: 💥 Collision detected at Frame X! (verifying physics-to-metadata sync).
 
 ✅ Validation Plot: collision_validation.png saved to docs/images/, showing the visual impact frame with overlaid causal metadata.
+
+## 8. Domain Randomization (DR) & Dataset Diversity (Task 08)
+Target: Implement automated visual and physical variance to prevent model overfitting.
+```bash
+8.1 Randomized Data Generation
+This step generates a dataset where object colors, lighting conditions, and physical properties (mass) vary across every simulation run.
+# Run the randomization engine
+# This script applies rep.randomizer.color and randomizes mass values
+# while maintaining synchronized causal labeling.
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\generate_data.py
+
+8.2 DR Pipeline Validation
+Verify that the randomization logic is correctly reflected in the HDF5 metadata and that the visuals are rendering with the expected variety.
+# Run the DR validation utility
+# Scans for randomized_data.hdf5 and extracts a sample impact frame
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\check_hdf5.py
+```
+**Expected Output:**
+✅ randomized_data.hdf5 created with unique physical_props (mass_a, mass_b) in the metadata stream.
+
+✅ Validation Plot: randomization_validation.png saved to docs/images/.
+
+✅ Visual Confirmation: Objects appear in randomized colors (not default grey) with varied lighting intensity.
+
+

@@ -83,6 +83,22 @@ The image below captures the exact "Impact Frame." Our system automatically flag
 
 *Figure: Automated Causal Labeling. When the distance threshold is met, the system injects a "Collision" flag into the synchronized metadata.*
 
+## 🎨 Domain Randomization (Task 08)
+To ensure the model generalizes across diverse environments, we implemented Domain Randomization (DR). This acts as a regularization method, forcing the model to learn invariant physical features rather than overfitting to specific visual artifacts or lighting conditions.
+
+### DR Pipeline Validation
+The image below demonstrates the system's ability to automatically vary visual attributes (RGB values, lighting intensity) and physical properties (mass) for every data sequence while maintaining synchronized causal ground truth.
+
+![Randomization Validation](docs/images/randomization_validation.png)
+
+Figure: Domain Randomization Proof. The system randomizes object appearance and physical mass (recorded in metadata) to build a high-entropy dataset for robust world model training.
+
+Visual DR: Randomized primvars:displayColor and dome_light intensity to address the "Appearance Gap" between simulation and reality.
+
+Physical DR: Unique mass values assigned to each object and logged in the metadata stream for System Identification—allowing the model to infer dynamics from visual cues.
+
+Generalization: This infrastructure prepares the E-VLAformer for zero-shot transfer from synthetic environments to real-world laboratory settings.
+
 ---
 
 ## Roadmap & Progress
