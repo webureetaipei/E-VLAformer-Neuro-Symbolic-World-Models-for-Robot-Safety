@@ -99,6 +99,22 @@ Physical DR: Unique mass values assigned to each object and logged in the metada
 
 Generalization: This infrastructure prepares the E-VLAformer for zero-shot transfer from synthetic environments to real-world laboratory settings.
 
+## 🛡️ Dataset Auditing & Certification (Task 09)
+To ensure the high-fidelity requirements of Neuro-Symbolic training, we implemented an automated Quality Gate to audit every generated HDF5 file. This script acts as a "Gatekeeper" to prevent simulation artifacts from polluting the training loop.
+
+### Audit Protocol
+The src/utils/audit_dataset.py utility performs a multi-stage validation:
+
+Structural Check: Verifies HDF5 internal tree consistency and dataset shapes.
+
+Visual Entropy Analysis: Ensures frames are not empty (all black/white) by calculating pixel distribution means.
+
+Causal Synchronization: Validates that collision_event flags mathematically align with the physics-based distance thresholds.
+
+Metadata Integrity: Confirms JSON parsability and verifies that randomized mass values stay within the defined Domain Randomization (DR) bounds.
+
+Current Status: ✅ Phase 1 Infrastructure Certified.
+
 ---
 
 ## Roadmap & Progress

@@ -15,7 +15,7 @@
 - [x] **Task 06:** Setup HDF5 data logger infrastructure.
 - [x] **Task 07:** Physics Event: Multi-Object Collision & Causal Labeling.
 - [x] **Task 08:** Domain Randomization: Automated Material & Visual Variance.
-- [ ] **Task 09:** Unit Testing: Dataset Integrity & Physics Consistency Checks.
+- [x] **Task 09:** Unit Testing: Dataset Integrity & Physics Consistency Checks.
 - [ ] **Task 10:** Phase 1 Review: Finalize Sim-to-Real Data Pipeline Documentation.
 
 ---

@@ -153,4 +153,36 @@ C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat sr
 
 ✅ Visual Confirmation: Objects appear in randomized colors (not default grey) with varied lighting intensity.
 
+## 9. Dataset Auditing & Unit Testing (Task 09)
+Target: Automated verification of HDF5 data integrity and causal metadata accuracy.
+```bash
+9.1 Execute Data Audit
+This script performs a "Stress Test" on the generated randomized_data.hdf5 to ensure no "dead frames" (black/white pixels) or corrupted metadata exist.
+# Run the automated dataset auditor
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\utils\audit_dataset.py
+
+9.2 Audit Checklist
+The auditor validates the following critical research requirements:
+
+- Structural Integrity: Verifies that rgb, collision_event, and metadata datasets are correctly indexed.
+
+- Visual Entropy: Ensures RGB frames contain valid visual information (checks mean pixel density).
+
+- Causal Consistency: Confirms that collision_event flags are synchronized with physical proximity.
+
+- Metadata Parsability: Validates that JSON-encoded physical_props (mass, colors) are within the Domain Randomization (DR) bounds.
+```
+**Expected Output:**
+
+🔍 Starting Dataset Audit...
+
+  ✅ Dataset 'rgb' found.
+
+  ✅ RGB Integrity: Mean pixel value 128.45
+
+  ✅ Causal Check: Found X collision frames.
+
+  ✅ Physics Check: Mass_A (X.XXkg) within DR bounds.
+  
+⭐ AUDIT COMPLETE: Dataset is certified for Phase 2 Training.
 
