@@ -1,46 +1,38 @@
 import h5py
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 
-# Set file paths
-HDF5_PATH = r"C:\Users\Michael\evlaformer_lab\data\output\dataset_v1.hdf5"
-SAVE_PATH = r"C:\Users\Michael\evlaformer_lab\docs\images\visual_validation.png"
+HDF5_PATH = r"C:\Users\Michael\evlaformer_lab\data\output\collision_data.hdf5"
+SAVE_PATH = r"C:\Users\Michael\evlaformer_lab\docs\images\collision_validation.png"
 
-# Ensure the docs/images directory exists
-os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
+def visualize_collision_event():
+    if not os.path.exists(HDF5_PATH):
+        print(f"❌ Error: File not found at {HDF5_PATH}")
+        return
 
-def visualize_standard_config():
-    """Reads data from HDF5 and creates a side-by-side RGB vs Semantic Mask plot."""
     with h5py.File(HDF5_PATH, 'r') as f:
-        # Read the first frame (index 0)
-        rgb = f['rgb'][0]
-        semantic = f['semantic'][0]
+        collision_flags = f['collision_event'][:]
+        collision_frames = np.where(collision_flags == True)[0]
+
+        # Use the first collision frame, or the middle frame if no collision
+        target_idx = collision_frames[0] if len(collision_frames) > 0 else len(collision_flags) // 2
+        print(f"🎯 Target Frame for Visualization: {target_idx}")
+
+        rgb = f['rgb'][target_idx]
+        metadata = f['metadata'][target_idx]
         
-        # Create side-by-side plot (1 row, 2 columns)
-        fig, axes = plt.subplots(1, 2, figsize=(12, 5), dpi=300)
+        fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
+        ax.imshow(rgb)
+        ax.set_title(f"Causal Validation: Impact Detected (Frame {target_idx})", fontsize=16, fontweight='bold')
+        ax.axis('off')
         
-        # Left subplot: RGB Input Image
-        axes[0].imshow(rgb)
-        axes[0].set_title("Standardized Input: RGB", fontsize=14, fontweight='bold')
-        axes[0].axis('off') # Hide coordinate axes
+        plt.figtext(0.5, 0.05, f"Metadata: {metadata}", wrap=True, horizontalalignment='center', fontsize=10)
         
-        # Right subplot: Color-encoded Semantic Mask
-        im = axes[1].imshow(semantic, cmap='viridis')
-        axes[1].set_title("Ground Truth: Semantic Mask", fontsize=14, fontweight='bold')
-        axes[1].axis('off')
-        
-        # Adjust layout to prevent overlap
         plt.tight_layout()
-        
-        # Save to docs/images for README documentation
         plt.savefig(SAVE_PATH, bbox_inches='tight')
-        print(f"✅ Standardized validation image generated and saved to: {SAVE_PATH}")
-        
-        # Display the result window
+        print(f"✅ Validation image saved to: {SAVE_PATH}")
         plt.show()
 
 if __name__ == "__main__":
-    if os.path.exists(HDF5_PATH):
-        visualize_standard_config()
-    else:
-        print(f"❌ Error: HDF5 file not found at {HDF5_PATH}. Please run generate_data.py first.")
+    visualize_collision_event()

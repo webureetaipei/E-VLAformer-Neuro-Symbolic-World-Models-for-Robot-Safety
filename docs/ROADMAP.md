@@ -13,7 +13,10 @@
 - [x] **Task 04:** Configure Docker container for Headless Simulation.
 - [x] **Task 05:** Verify gRPC communication loop (Python Client <-> Sim Server).
 - [x] **Task 06:** Setup HDF5 data logger infrastructure.
-- [ ] ... (Tasks 07-10: CI/CD, Unit Testing setup)
+- [x] **Task 07:** Physics Event: Multi-Object Collision & Causal Labeling.
+- [ ] **Task 08:** Domain Randomization: Automated Material & Visual Variance.
+- [ ] **Task 09:** Unit Testing: Dataset Integrity & Physics Consistency Checks.
+- [ ] **Task 10:** Phase 1 Review: Finalize Sim-to-Real Data Pipeline Documentation.
 
 ---
 *Note: This roadmap is a living document. We will check off tasks as we complete them.*

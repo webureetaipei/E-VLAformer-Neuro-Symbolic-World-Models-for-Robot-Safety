@@ -73,6 +73,16 @@ We implemented an automated validation utility to ensure pixel-perfect alignment
 - **Precision:** Pixel-perfect semantic-to-visual mapping.
 - **Pipeline:** Automated verification of 100Hz control loops and data integrity.
 
+## 💥 Causal Event Reasoning (Task 07)
+We extended the data engine to support **Causal Labeling** by synchronizing physics contact sensors with the HDF5 metadata stream.
+
+### Collision Detection Validation
+The image below captures the exact "Impact Frame." Our system automatically flags this as a `collision_event` in the HDF5 metadata.
+
+![Collision Validation](docs/images/collision_validation.png)
+
+*Figure: Automated Causal Labeling. When the distance threshold is met, the system injects a "Collision" flag into the synchronized metadata.*
+
 ---
 
 ## Roadmap & Progress

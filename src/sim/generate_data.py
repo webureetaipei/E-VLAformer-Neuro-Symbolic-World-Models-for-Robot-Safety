@@ -1,4 +1,3 @@
-# src/sim/generate_data.py
 import isaacsim
 import os
 import h5py
@@ -6,76 +5,69 @@ import numpy as np
 from omni.isaac.kit import SimulationApp
 
 # 1. Initialization
-config = {"headless": True, "active_gpu": 0}
-simulation_app = SimulationApp(config)
+simulation_app = SimulationApp({"headless": True})
 
-# 2. Replicator Deferred Import
 import omni.replicator.core as rep
+import omni.isaac.core.utils.prims as prim_utils
+from omni.isaac.core import World
 
-OUTPUT_FILE = r"C:\Users\Michael\evlaformer_lab\data\output\dataset_v1.hdf5"
+OUTPUT_FILE = r"C:\Users\Michael\evlaformer_lab\data\output\collision_data.hdf5"
 os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
 
-def setup_hdf5(num_frames, height, width):
-    """Pre-allocates HDF5 datasets for optimized I/O performance."""
-    f = h5py.File(OUTPUT_FILE, 'w')
-    
-    # Create datasets (RGB: uint8, Segmentation: uint8)
-    f.create_dataset("rgb", (num_frames, height, width, 3), dtype='uint8', compression="gzip")
-    f.create_dataset("semantic", (num_frames, height, width), dtype='uint8', compression="gzip")
-    
-    # Physics data and semantic descriptions (JSON Strings)
-    f.create_dataset("metadata", (num_frames,), dtype=h5py.string_dtype(encoding='utf-8'))
-    return f
-
-def run_task06():
-    num_frames = 10
+def run_task07():
+    world = World() 
+    num_frames = 20
     height, width = 512, 512
-    hdf5_file = setup_hdf5(num_frames, height, width)
+    
+    # 2. Replicator Camera & Annotator Setup (Fixed: Added this section)
+    camera = rep.create.camera(position=(10, 10, 10), look_at=(0, 0, 0))
+    rp = rep.create.render_product(camera, (width, height))
+    rgb_annot = rep.AnnotatorRegistry.get_annotator("rgb")
+    rgb_annot.attach(rp)
 
-    with rep.new_layer():
-        rep.create.light(light_type="dome", intensity=1000)
-        
-        # Object diversity generation
-        cube = rep.create.cube(semantics=[('class', 'cube')])
-        with rep.trigger.on_frame(max_execs=num_frames):
-            with cube:
-                rep.modify.pose(position=rep.distribution.uniform((-5,-5,5),(5,5,10)))
-        
-        # Attach Annotators (Manual data extraction without Writer)
-        camera = rep.create.camera(position=(15, 15, 15), look_at=(0, 0, 0))
-        rp = rep.create.render_product(camera, (width, height))
-        
-        rgb_annot = rep.AnnotatorRegistry.get_annotator("rgb")
-        rgb_annot.attach(rp)
-        
-        sem_annot = rep.AnnotatorRegistry.get_annotator("semantic_segmentation")
-        sem_annot.attach(rp)
+    # 3. Setup HDF5
+    f = h5py.File(OUTPUT_FILE, 'w')
+    f.create_dataset("rgb", (num_frames, height, width, 3), dtype='uint8')
+    f.create_dataset("collision_event", (num_frames,), dtype='bool')
+    f.create_dataset("metadata", (num_frames,), dtype=h5py.string_dtype())
 
-    print(f"🚀 TASK 06: Logging to HDF5 -> {OUTPUT_FILE}", flush=True)
+    # 4. Create World Objects
+    prim_utils.create_prim("/World/CubeA", "Cube", position=(0, -2, 2))
+    prim_utils.create_prim("/World/CubeB", "Cube", position=(0, 2, 2))
+    rep.create.light(light_type="dome", intensity=1000)
+    
+    print(f"🚀 TASK 07: Starting Collision Simulation...", flush=True)
 
     for i in range(num_frames):
-        print(f"   Step {i+1}/{num_frames}...", flush=True)
-        rep.orchestrator.step()
+        # Apply motion
+        curr_pos_a = prim_utils.get_prim_at_path("/World/CubeA").GetAttribute("xformOp:translate").Get()
+        curr_pos_b = prim_utils.get_prim_at_path("/World/CubeB").GetAttribute("xformOp:translate").Get()
         
-        # Core: Retrieve Annotator data
+        # Move them toward each other (0.2 units per frame)
+        prim_utils.set_prim_attribute_value("/World/CubeA", "xformOp:translate", curr_pos_a + (0, 0.2, 0))
+        prim_utils.set_prim_attribute_value("/World/CubeB", "xformOp:translate", curr_pos_b - (0, 0.2, 0))
+        
+        # Step Physics and Renderer
+        world.step(render=True)
+        rep.orchestrator.step() 
+        
+        # Capture Camera Data (Fixed: Added data retrieval)
         rgb_data = rgb_annot.get_data()
-        sem_data = sem_annot.get_data()
-        
         if rgb_data is not None:
-            # Store into HDF5 (RGB channels only)
-            hdf5_file["rgb"][i] = rgb_data[:, :, :3]
-            hdf5_file["semantic"][i] = sem_data["data"]
-            
-            # Store metadata (Foundation for Event Reasoning)
-            metadata_entry = {
-                "frame": i, 
-                "description": "Cube randomly placed in 3D space"
-            }
-            hdf5_file["metadata"][i] = str(metadata_entry)
+            f["rgb"][i] = rgb_data[:, :, :3]
+        
+        # Simple proximity check for 'Collision' label
+        dist = np.linalg.norm(np.array(curr_pos_a) - np.array(curr_pos_b))
+        is_colliding = dist < 2.0 # Adjusted threshold (cube size is usually 2x2x2 by default)
+        
+        f["collision_event"][i] = is_colliding
+        f["metadata"][i] = str({"frame": i, "dist": float(dist), "event": "collision" if is_colliding else "none"})
+        
+        print(f"   Frame {i}: Distance {dist:.2f} | Colliding: {is_colliding}")
 
-    hdf5_file.close()
-    print("✅ SUCCESS! HDF5 Dataset Generated.", flush=True)
+    f.close()
+    print(f"✅ TASK 07 SUCCESS: Causal data saved to {OUTPUT_FILE}")
     simulation_app.close()
 
 if __name__ == "__main__":
-    run_task06()
+    run_task07()

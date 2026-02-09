@@ -106,3 +106,26 @@ C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat sr
 ✅ A popup window showing RGB and Semantic Mask in pixel-perfect alignment.
 
 ✅ Standardized plot saved to docs/images/visual_validation.png.
+
+## 7. Causal Event Labeling & Physics Validation (Task 07)
+Target: Synchronize physics contact/proximity events with multimodal HDF5 streams.
+```bash
+7.1 Physics Simulation & Event Capture
+This step simulates a multi-object interaction and automatically injects "Collision" flags into the metadata when a specific proximity threshold is met.
+# Execute the collision simulation script
+# This script initializes the World, spawns interacting objects, 
+# and logs synchronized RGB + Physics Metadata.
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\generate_data.py
+
+7.2 Automated Event Verification
+Run the event-aware validation utility. This script scans the HDF5 file for the collision_event == True flag and extracts the exact "Impact Frame" for visual inspection.
+# Run the causal event visualizer
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\check_hdf5.py
+```
+**Expected Output:**
+
+✅ collision_data.hdf5 generated with synchronized collision_event boolean array.
+
+✅ Terminal Log: 💥 Collision detected at Frame X! (verifying physics-to-metadata sync).
+
+✅ Validation Plot: collision_validation.png saved to docs/images/, showing the visual impact frame with overlaid causal metadata.
