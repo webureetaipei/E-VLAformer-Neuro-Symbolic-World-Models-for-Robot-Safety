@@ -122,6 +122,9 @@ Entropy Scaling: Generated multiple 20-frame sequences with unique seeds for mas
 
 Validation: Every batch is automatically indexed and ready for the Phase 2 Graph Neural Network (GNN) training pipeline.
 
+![Randomization Validation](docs/images/randomization_validation.png)
+
+
 Status: ✅ Phase 1 Infrastructure Complete.
 
 ---
@@ -133,7 +136,7 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 
 | Phase | Focus | Key Tech | Status |
 | :--- | :--- | :--- | :--- |
-| **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, WSL2 | 🟡 **In Progress** |
+| **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, WSL2 | 🟡 **Completed** |
 | **Phase 2** | Graph World Model | GNN, Causal Logic | ⚪ Planned |
 | **Phase 3** | Multimodal VLA Model | Transformer, Cross-Attn | ⚪ Planned |
 | **Phase 4** | TinyEngine Optimization | C++17, CUDA, NEON | ⚪ Planned |

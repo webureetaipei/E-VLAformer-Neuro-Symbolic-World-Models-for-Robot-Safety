@@ -1,55 +1,63 @@
 import h5py
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 import os
+import json
 
-# Set file paths for Task 08 randomized data
-HDF5_PATH = r"C:\Users\Michael\evlaformer_lab\data\output\randomized_data.hdf5"
-SAVE_PATH = r"C:\Users\Michael\evlaformer_lab\docs\images\randomization_validation.png"
+# Path Configuration
+BATCH_DIR = r"C:\Users\Michael\evlaformer_lab\data\output\batch_v1"
+REPORT_DIR = r"C:\Users\Michael\evlaformer_lab\docs\images"
+os.makedirs(REPORT_DIR, exist_ok=True)
 
-# Ensure the docs/images directory exists
-os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
-
-def visualize_randomized_collision():
-    """Scans HDF5 for a collision event and saves visual proof with DR metadata."""
-    if not os.path.exists(HDF5_PATH):
-        print(f"❌ Error: HDF5 file not found at {HDF5_PATH}. Run Task 08 generate_data.py first.")
+def visualize_batch_diversity():
+    # Find all hdf5 files in the batch directory
+    files = [f for f in os.listdir(BATCH_DIR) if f.endswith('.hdf5')]
+    files.sort() # Ensure they are in order (001, 002, 003)
+    
+    if not files:
+        print(f"❌ No HDF5 files found in {BATCH_DIR}")
         return
 
-    with h5py.File(HDF5_PATH, 'r') as f:
-        # Scan for the first frame where collision_event is True
-        collision_flags = f['collision_event'][:]
-        collision_frames = np.where(collision_flags == True)[0]
+    num_files = len(files)
+    fig, axes = plt.subplots(1, num_files, figsize=(15, 5))
+    
+    # Handle the case where there's only 1 file
+    if num_files == 1:
+        axes = [axes]
 
-        if len(collision_frames) == 0:
-            print("⚠️ No collision detected. Using middle frame for visualization.")
-            target_idx = len(collision_flags) // 2
-        else:
-            target_idx = collision_frames[0]
-            print(f"💥 Collision detected at Frame {target_idx}!")
+    print(f"🔍 Analyzing {num_files} batches for diversity...")
 
-        # Extract RGB and Metadata
-        rgb = f['rgb'][target_idx]
-        metadata = f['metadata'][target_idx]
+    for i, filename in enumerate(files):
+        file_path = os.path.join(BATCH_DIR, filename)
         
-        # Create professional plot
-        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
-        
-        ax.imshow(rgb)
-        ax.set_title(f"Task 08: Domain Randomization Validation\nImpact Frame: {target_idx}", 
-                     fontsize=16, fontweight='bold')
-        ax.axis('off')
+        with h5py.File(file_path, 'r') as f:
+            # 1. Extract Data
+            # We take frame index 10 (middle of the 20-frame sequence)
+            sample_idx = 10
+            rgb = f['rgb'][sample_idx]
+            collision = f['collision_event'][sample_idx]
+            
+            # 2. Extract Metadata for the label
+            raw_meta = f['metadata'][sample_idx]
+            meta = json.loads(raw_meta)
+            
+            # 3. Plotting
+            axes[i].imshow(rgb)
+            axes[i].set_title(f"Batch: {filename[-8:-5]}\nColliding: {collision}")
+            axes[i].axis('off')
+            
+            # Print stats to terminal
+            print(f"✅ Processed {filename}: Mass_A={meta.get('mass_a', 'N/A'):.2f}kg")
 
-        # Add a text box with the full randomized metadata
-        plt.figtext(0.5, 0.05, f"Captured Metadata:\n{metadata}", 
-                    wrap=True, horizontalalignment='center', 
-                    fontsize=10, bbox=dict(facecolor='white', alpha=0.8))
-
-        # Save and Show
-        plt.tight_layout()
-        plt.savefig(SAVE_PATH, bbox_inches='tight')
-        print(f"✅ Randomization validation image saved to: {SAVE_PATH}")
-        plt.show()
+    plt.tight_layout()
+    
+    # Save the Diversity Grid for README.md
+    output_path = os.path.join(REPORT_DIR, "randomization_validation.png")
+    plt.savefig(output_path)
+    print(f"\n⭐ Diversity Grid saved to: {output_path}")
+    
+    # Show the plot if running locally
+    plt.show()
 
 if __name__ == "__main__":
-    visualize_randomized_collision()
+    visualize_batch_diversity()
