@@ -16,7 +16,12 @@
 - [x] **Task 07:** Physics Event: Multi-Object Collision & Causal Labeling.
 - [x] **Task 08:** Domain Randomization: Automated Material & Visual Variance.
 - [x] **Task 09:** Unit Testing: Dataset Integrity & Physics Consistency Checks.
-- [ ] **Task 10:** Phase 1 Review: Finalize Sim-to-Real Data Pipeline Documentation.
-
+- [x] **Task 10:** Phase 1 Review: Finalize Sim-to-Real Data Pipeline Documentation.
+## Phase 2: Graph World Models (Tasks 11-20)
+- [] **Task 11:** HDF5-to-Graph Dataset Loader (Object-Centric Representation).
+- [] **Task 12:** Construct the Relational Graph (Nodes: Prims, Edges: Physics Constraints).
+- [] **Task 13:** Implement Graph Convolutional Layers (PyTorch Geometric).
+- [] **Task 14:** GNN World Model: Predict Object States across $t+1$.
+- [] **Task 15:** Loss Function: Collision-Aware Physics Consistency.
 ---
 *Note: This roadmap is a living document. We will check off tasks as we complete them.*

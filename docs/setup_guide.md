@@ -186,3 +186,31 @@ The auditor validates the following critical research requirements:
   
 ⭐ AUDIT COMPLETE: Dataset is certified for Phase 2 Training.
 
+## 10. High-Entropy Batch Generation (Task 10)
+Target: Scaling data production to create a diversified research dataset for GNN training.
+```bash
+10.1 Dataset Scaling Strategy
+Due to Windows subprocess environment constraints, we utilize Manual Batch Scaling. This ensures the Isaac Sim environment is correctly initialized for every data sequence while allowing for high visual and physical entropy.
+
+10.2 Generation Workflow
+
+1.Open src/sim/generate_data.py.
+
+2.Update the FILE_ID variable for the current run (e.g., "001", "002", etc.).
+
+3.Execute the generator:
+C:\Users\Michael\Desktop\isaac-sim-standalone-4.5.0-windows-x86_64\python.bat src\sim\generate_data.py
+
+4.Repeat until the desired dataset size is reached in data/output/batch_v1/.
+
+10.3 Verification of Scaling
+The batch generation is successful when the following directory structure is populated:
+
+- data/output/batch_v1/sim_data_batch_001.hdf5
+
+- data/output/batch_v1/sim_data_batch_002.hdf5
+
+- data/output/batch_v1/sim_data_batch_003.hdf5
+
+Each file contains unique Domain Randomization samples (varying mass, colors, and light intensity) but shares a standardized HDF5 schema.
+```

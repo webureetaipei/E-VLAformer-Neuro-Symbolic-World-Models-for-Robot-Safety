@@ -115,6 +115,15 @@ Metadata Integrity: Confirms JSON parsability and verifies that randomized mass 
 
 Current Status: ✅ Phase 1 Infrastructure Certified.
 
+## 📦 Scaled Data Generation (Task 10)
+To bridge the gap between "prototype" and "research dataset," we implemented a manual scaling protocol. This ensures the high-fidelity generation of diverse physical scenarios while maintaining strict environment isolation.
+
+Entropy Scaling: Generated multiple 20-frame sequences with unique seeds for mass, friction, and visual display variables.
+
+Validation: Every batch is automatically indexed and ready for the Phase 2 Graph Neural Network (GNN) training pipeline.
+
+Status: ✅ Phase 1 Infrastructure Complete.
+
 ---
 
 ## Roadmap & Progress
