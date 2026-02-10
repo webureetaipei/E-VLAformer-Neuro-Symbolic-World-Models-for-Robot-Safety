@@ -51,8 +51,12 @@ A custom bare-metal runtime designed for **Jetson Orin/Edge Devices**.
 * **Int8 PTQ:** <10ms latency via NEON-optimized GEMM kernels.
 * **Zero-Dependency:** No PyTorch/ONNX runtime overhead.
 
-### 3. Mobile Manipulation
-Unified **Navigation + Manipulation** capabilities. The system handles room-scale "Fetch & Carry" tasks, proving the model can maintain long-horizon memory.
+### 3. Long-Horizon Causal Manipulation
+Unified Reasoning + Manipulation capabilities. The system handles complex, multi-stage "Desktop Sequence" tasks, proving the model can maintain long-horizon causal memory through graph-based state persistence.
+
+Logic Persistence: Maintains high-fidelity memory of object attributes (e.g., hidden mass, friction coefficients) across 1,000+ frames of interaction, solving the "forgetting" issue in standard VLAs.
+
+Sequential Integrity: Executes multi-step workflows—such as Unstack → Relocate → Re-stack—where the Graph World Model enforces physical consistency to prevent "Causal Hallucination" between action phases.
 
 ### 4. Sim-to-Real Infrastructure
 A distributed data generation pipeline using **NVIDIA Isaac Sim** & **gRPC**. Scales to 1,000+ hours of synthetic data generation using heterogeneous compute clusters.

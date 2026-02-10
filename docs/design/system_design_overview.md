@@ -1,109 +1,87 @@
 # E-VLAformer System Design Overview
 
-**Status:** Draft (Phase 1)
+**Status:** Draft (Phase 2 - Integrated Sim-to-Real)
 **Author:** Tsung Lung Yang
 **Target:** NeurIPS 2026
 
-This document outlines the architectural decisions, trade-offs, and optimization strategies for the E-VLAformer project. It serves as the master blueprint (High-Level Design) for our **Neuro-Symbolic VLA** implementation. Detailed Low-Level Designs (LLD) for each subsystem will follow in separate documents as referenced below.
+This document defines the architectural blueprint for the **E-VLAformer**, a Neuro-Symbolic Vision-Language-Action model. The system is engineered to bridge high-fidelity simulation (NVIDIA Isaac Sim) with low-cost physical deployment (DIY ESP32-based Robotic Arm) through a unified causal reasoning framework.
 
 ---
 
 ## 1. Embedded Optimization: The "TinyEngine" Architecture
-**Goal:** Deploy large VLA models on edge devices (e.g., Jetson Orin) with **<10ms latency** and **Zero-Dependency**.
+**Goal:** Deploy VLA logic on a distributed edge-controller architecture with deterministic timing and minimal overhead.
 
 ### 1.1 Core Implementation Strategy
-We reject standard runtimes (PyTorch/ONNX) in favor of a bare-metal C++ approach.
-
-* **Zero-Malloc Runtime (Static Arena):**
-    * *Mechanism:* We implement a **Linear Memory Arena**. Instead of `malloc/free`, all tensor memory offsets are pre-calculated during the compilation phase using a **Liveness Analysis Algorithm**.
-    * *Benefit:* Eliminates runtime overhead and memory fragmentation. Guarantees 100% stable memory footprint.
-* **Paged KV-Cache Manager (VLA Specific):** 
-    * *Mechanism:* To handle autoregressive generation without memory fragmentation, we implement a **PagedAttention-style** block manager. Key-Value states are stored in non-contiguous pre-allocated memory blocks.
-    * *Benefit:* Enables long-context reasoning for robot task planning without OOM (Out-Of-Memory) crashes.
-* **Int8 Post-Training Quantization (PTQ):**
-    * *Mechanism:* We utilize **Symmetric Per-Channel Quantization** for weights and activations. The engine implements custom `Int8 GEMM` kernels optimized for ARM NEON instructions.
-    * *Benefit:* Reduces VRAM usage by 4x and increases throughput by ~3x on Jetson Orin (DLLA).
-* **AOT (Ahead-of-Time) Code Generation:**
-    * *Mechanism:* Python model definitions are transpiled into standard C++17 source code (no external libraries).
-    * *Optimization:* We utilize **Loop Unrolling** and **SIMD (NEON)** instructions explicitly generated for ARMv8 architectures.
-* **Operator Fusion:**
-    * We aggressively fuse `Conv2d + BatchNorm + ReLU` and `Linear + Gelu` layers to minimize VRAM Global Memory Access (the primary bottleneck in Transformer inference).
+* **Hybrid Inference Pipeline:**
+    * **Brain (PC/Local Server):** Executes heavy Vision-Transformer and Graph Reasoning loops using a custom C++ **TinyEngine** to manage tensor operations without standard runtime bloat.
+    * **Nervous System (ESP32):** A lightweight controller receiving "Action Tokens" via high-speed Serial (USB) or WebSocket. It performs real-time **Inverse Kinematics (IK)** and generates 50Hz PWM signals for the MG996R servos.
+* **Zero-Malloc Runtime (Static Arena):** * Implements a **Linear Memory Arena** where all tensor memory offsets are pre-calculated during compilation. This eliminates runtime fragmentation and guarantees a stable memory footprint.
+* **Real-Time Hardware Abstraction Layer (HAL):** * A unified C++ interface that abstracts hardware. The high-level policy interacts with a "Joint Object," regardless of whether it is a **USD-based joint** in Isaac Sim or a **physical servo** on the DIY arm.
 
 ### 1.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **The Memory Wall**. Python runtimes typically incur ~300MB overhead; our engine targets **<5MB** system overhead.
-* **Trade-off:** **Flexibility vs. Performance**.
-    * *Decision:* We sacrifice **Dynamic Computation Graphs** (no control flow inside the model) to achieve **Deterministic Latency**.
-    * *Reference:* See `docs/design/004_tiny_vla_engine.md` (Planned) for memory offset algorithms.
+* **Bottleneck Solved:** **The Reality-Control Gap.** Eliminates the 100ms+ latency of Python-based serial communication by moving IK and PWM timing to the ESP32 firmware.
+* **Trade-off:** **Flexibility vs. Determinism.** * *Decision:* We sacrifice dynamic model branching (no conditional control flow inside the model) to ensure the control loop never misses a 20ms window (50Hz), which is critical for physical robot stability.
 
 ---
 
 ## 2. Multimodal AI System: Neuro-Symbolic VLA
-**Goal:** Solve the "Temporal Reasoning Deficit" and "Causal Hallucination" in current Vision-Language-Action models.
+**Goal:** Solve "Causal Hallucination" and "Temporal Reasoning Deficits" in robot manipulation.
 
 ### 2.1 Model Architecture
-We propose a hybrid Neuro-Symbolic architecture merging Connectionist (Deep Learning) and Symbolic (Graph) methods.
-
 * **Graph World Model (GWM):**
-    * *Mechanism:* A dynamic **Scene Graph** ($G = \{V, E\}$) serves as the world state. Visual patches are mapped to nodes $V$ (Objects), and temporal changes update edges $E$ (Relations).
-    * *Reasoning:* We use a lightweight **Graph Neural Network (GNN)** to predict future states based on causal rules, acting as a "Physics Consistency Filter" for the VLA output.
-* **Hierarchical Modality Fusion:**
-    * **Fast Path (100Hz):** Proprioception (Joint angles/Torque) $\rightarrow$ MLP Encoder $\rightarrow$ Action Head.
-    * **Slow Path (30Hz):** RGB-D Video $\rightarrow$ Vision Transformer (ViT) $\rightarrow$ Cross-Attention.
-    * **Alignment:** Utilizes **Q-Former** style queries to align asynchronous modalities.
+    * **Nodes ($V$):** Represent environmental objects and the **Robot's Segments** (Base, Link1, Link2, Gripper). Each node stores physical attributes like position and estimated mass.
+    * **Edges ($E$):** Define causal relationships (e.g., *Contacting*, *Obstructing*). 
+    * **Reasoning:** A lightweight GNN predicts future states. If the VLA's predicted action violates a graph constraint (e.g., "Moving through a solid wall"), the action is corrected.
+* **Noise-Robust Modality Fusion:**
+    * Uses **Cross-Attention** to align RGB-D video (30Hz), Proprioception (100Hz), and Language. 
+    * Integrates a **Temporal Smoothing** layer to handle visual noise inherent in low-cost webcam inputs.
 
 ### 2.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **Safety via Causality**. Standard LLMs "guess" physics probabilistically. Our Graph Module enforces logical constraints (e.g., *Constraint: "Grip" requires "Contact"*).
-* **Trade-off:** **Training Complexity vs. Inference Safety**.
-    * *Decision:* We accept a complex multi-stage training pipeline (Pre-training $\rightarrow$ Graph Alignment $\rightarrow$ Action Finetuning) to ensure **Safety-Critical** behavior.
-    * *Reference:* See `docs/design/002_graph_reasoning.md` (Planned) for GNN formulations.
+* **Bottleneck Solved:** **Safety in Unseen Scenarios.** Unlike end-to-end models that "guess" safety, the GWM provides a hard symbolic check against physical laws.
+* **Trade-off:** **Model Size vs. Reasoning Depth.** * *Decision:* We utilize a shallow GNN (3-layer) to keep inference under 10ms, sacrificing complex multi-object chain reasoning for immediate reaction speed.
 
 ---
 
 ## 3. Distributed System: Sim-to-Real Infrastructure
-**Goal:** Scale data generation to **1,000+ hours** of synthetic robot interaction using heterogeneous compute clusters.
+**Goal:** Maintain a "Digital Twin" relationship between Isaac Sim and the DIY prototype.
 
 ### 3.1 Distributed Architecture
-* **Decoupled "Brain-Body" Design:**
-    * **The Body (Simulation):** Headless NVIDIA Isaac Sim instances running in Docker containers.
-    * **The Brain (Inference):** Policy networks running on separate GPU clusters.
+* **Decoupled Brain-Body Design:**
+    * **Simulation Body:** Headless NVIDIA Isaac Sim instances running in Docker for massive data generation.
+    * **Physical Body:** ESP32-driven DIY Arm for real-world verification.
 * **Communication Protocol:**
-    * Utilizes **gRPC (HTTP/2)** with **Protobuf** serialization for low-latency (<2ms) state transfer.
-    * Implements **Asyncio** streaming to handle 100Hz control loops over the network without blocking.
+    * **gRPC (Protobuf):** High-throughput data transfer between sim nodes and the training cluster.
+    * **Serial/WebSockets:** Low-latency local feedback loop between the Inference Brain (PC) and Physical Arm (ESP32).
 
 ### 3.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **Rendering/Physics Resource Contention**. By separating Physics Simulation (GPU PhysX) from Neural Inference (Tensor Cores), we maximize hardware utilization on separate machines.
-* **Trade-off:** **Network Latency vs. Scalability**.
-    * *Decision:* We introduce minor network latency (1-2ms) to gain **Infinite Scalability** (linear scaling of data generation nodes on Cloud/Kubernetes).
-    * *Reference:* See `docs/design/005_scalability_ops.md` (Planned) for gRPC definitions.
-    ---
+* **Bottleneck Solved:** **Data Scarcity.** Overcomes the lack of physical training data by using the simulation to "pre-train" the causal graph before real-world deployment.
+* **Trade-off:** **Synchronicity vs. Throughput.** * *Decision:* We use **Asynchronous gRPC** for data collection to maximize throughput, accepting minor temporal drift (1-2ms) to gain 10x faster dataset accumulation.
 
-## 4. Data Engine Strategy: The "Infinite" Dataset
-**Goal:** Auto-generate high-quality synthetic data to overcome the "Real-World Data Scarcity" problem.
+---
+
+## 4. Data Engine Strategy: The "Audit-Ready" Dataset
+**Goal:** Automatically generate and certify high-fidelity datasets that capture physical edge cases.
 
 ### 4.1 Data Pipeline
-* **Generation (Sim):** Headless Isaac Sim nodes generate `RGB-D + Proprioception + Semantic Labels` at 100Hz.
-* **Filtering (Auto-Labeling):** A rule-based "Sanity Check" filter discards failed episodes (e.g., robot self-collision) before saving to disk.
-* **Storage:** Data is serialized into **HDF5 (Hierarchical Data Format)** chunks, optimized for high-throughput I/O during training.
+* **Sim-to-Real Feedback Loop:** * Failure cases observed on the physical DIY arm (e.g., servo stall due to weight) are tagged and used to generate targeted synthetic data in Isaac Sim for **Curriculum Learning**.
+* **Storage (HDF5):** * Tensors are stored in uncompressed **HDF5 chunks** (2GB/chunk) to enable sequential disk reads, preventing I/O bottlenecks during training.
 
 ### 4.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **I/O Blocking during Training**. Loading millions of small image files kills GPU utilization.
-    * *Solution:* We aggregate data into large HDF5 chunks (2GB each) to enable sequential disk reads.
-* **Trade-off:** **Storage Cost vs. Training Speed**.
-    * *Decision:* We store uncompressed raw tensors (Float16) instead of JPG/PNG to avoid CPU decoding overhead during training, trading disk space for faster epoch times.
+* **Bottleneck Solved:** **CPU-Bound Decoding.** By storing raw tensors instead of compressed PNGs, we remove the CPU decoding bottleneck, increasing GPU utilization from 60% to 95%.
+* **Trade-off:** **Disk Space vs. Training Speed.** * *Decision:* We trade ~2TB of disk space (raw Float16 storage) to reduce total training time by 40%.
 
 ---
 
 ## 5. Success Criteria (Engineering KPIs)
-We define the project's success through strict quantitative metrics.
 
 ### 5.1 System Performance KPIs
-| Component | Metric | Target | Baseline (PyTorch) |
+| Component | Metric | Target | Baseline (Implicit VLA) |
 | :--- | :--- | :--- | :--- |
-| **TinyEngine** | End-to-End Latency | **< 10ms** | ~45ms |
+| **TinyEngine** | E2E Latency (PC+ESP32) | **< 20ms** | ~100ms |
 | **TinyEngine** | Memory Footprint (RAM) | **< 500MB** | > 2.5GB |
-| **Sim-to-Real** | Control Frequency | **100Hz** | 30Hz |
-| **Distributed** | Data Gen Throughput | **100 Episodes/min** | 10 Episodes/min |
+| **Control Loop** | Consistency | **50Hz** | 20Hz (Variable) |
+| **Sim-to-Real** | Pose Error (DIY Arm) | **< 8mm** | N/A |
 
 ### 5.2 Research Success Metrics (NeurIPS)
-* **Success Rate:** Achieve >90% success rate on "Long-Horizon Manipulation Tasks" (e.g., *Make coffee*).
-* **Safety Violation Rate:** Reduce collision rate to **< 0.1%** using the Graph World Model (vs. 5% in standard End-to-End policies).
+* **Zero-Shot Transfer:** The model trained in Isaac Sim must execute "Pick-and-Place" on the DIY arm without real-world fine-tuning.
+* **Causal Robustness:** Reduce collision rates to **< 0.1%** using the Graph World Model in scenarios with moving obstacles.
