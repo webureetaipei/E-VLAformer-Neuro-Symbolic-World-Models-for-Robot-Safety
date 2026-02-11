@@ -238,5 +238,20 @@ pip install torch torchvision --index-url [https://download.pytorch.org/whl/cpu]
 # Install Graph and Data libraries
 pip install torch-geometric h5py requests
 ```
+## 3. Data Architecture
 
+The system transforms raw sensory tensors into a relational graph structure ($G = \{V, E\}$):
 
+- Nodes (V): Feature vectors include [x, y, z, mass, type_id], allowing the model to distinguish between robot joints and environmental objects.
+
+- Edges (E): Physical and spatial constraints stored in COO format (Coordinate format) for optimized GNN message passing.
+
+- Metadata: * sim_path: Logical pointer to NVIDIA Isaac Sim prims for digital twin synchronization.
+
+   - hw_id: Direct hardware mapping for Physical ESP32 (MG996R servos) during real-world execution.4. Verification
+
+## 4. Verification
+To ensure the environment and data pipeline are correctly configured, run the following smoke test to generate and load dummy graph data:
+```bash
+python src/models/graph_dataset.py
+```
