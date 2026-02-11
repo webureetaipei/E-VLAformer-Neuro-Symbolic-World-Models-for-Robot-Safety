@@ -49,5 +49,5 @@ The CRM acts as a **Physics Consistency Filter**.
 ## 5. Technical Implementation (Current Progress)
 - [x] **Data Format:** Object-Centric HDF5 (Task 11)
 - [x] **Graph Layer:** Relational Graph Builder & Edge Logic (Task 12)
-- [ ] **Graph Neural Network:** Message passing blocks (Task 13)
+- [x] **Graph Neural Network:** Message passing blocks (Task 13)
 - [ ] **Policy Head:** Action-Modulated Policy (Task 20+)

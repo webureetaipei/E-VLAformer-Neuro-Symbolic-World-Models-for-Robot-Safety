@@ -283,3 +283,47 @@ python -m src.utils.verify_task12
 Total Edges Found: 8
 
 ✅ Task 12 SUCCESS: Kinematic and Contact edges generated.
+
+# Task 14: Multimodal Fusion Infrastructure
+This guide outlines the technical requirements and implementation steps for fusing the Vision-Language features with the Graph World Model (GWM) outputs.
+
+##　1. Functional Objectives
+
+Gemini said
+Task 14 marks the beginning of the Multimodal Fusion Layer, the critical component that aligns and integrates diverse sensory streams—vision, language, and the GNN-based physical embeddings you just built. This layer serves as the "Global Workspace" where abstract instructions and raw physical data merge into a unified representation for action prediction.
+
+Task 14: Multimodal Fusion Infrastructure
+This guide outlines the technical requirements and implementation steps for fusing the Vision-Language features with the Graph World Model (GWM) outputs.
+
+1. Functional Objectives
+The primary goal is to perform Intermediate Fusion to bridge the "Reality Gap" between visual pixels and symbolic physical constraints.
+- Feature Alignment: Aligning high-frequency proprioception and graph embeddings with lower-frequency visual tokens.
+- Semantic Mapping: Using a Q-Former style query mechanism to extract relevant physical features from the GNN based on the textual instruction (e.g., "pick up the red cube").
+## 2. Technical Architecture
+The MultimodalFusionLayer utilizes Cross-Attention to allow the visual-language backbone to "interrogate" the Graph World Model for physical consistency.
+- Inputs:
+    - Visual Tokens ($\mathbf{T}_{vis}$): From the ViT/CLIP encoder.
+    - Instruction Tokens ($\mathbf{T}_{lang}$): From the language backbone.
+    - GNN Embeddings ($\mathbf{T}_{graph}$): 32-dimensional physical latent vectors from Task 13.
+- Mechanism:
+    - Query ($Q$): Generated from language and vision tokens to focus on task-relevant objects.
+    - Key ($K$) & Value ($V$): Derived from the GNN embeddings to provide physical context (mass, position, hierarchy).
+## 3. Verification & Integration Test
+A successful Task 14 requires verifying that the fused embedding contains information from all three sources.
+```bash
+#Run the verification script (to be created as src/utils/verify_task14.py):
+conda activate evla
+export PYTHONPATH=$PYTHONPATH:.
+python -m src.utils.verify_task14
+```
+**Expected Output:**
+
+--- Task 14: Multimodal Fusion Verification ---
+
+Input Vision Tokens: torch.Size([1, 256, 512])
+
+Input GNN Embeddings: torch.Size([4, 32])
+
+Fused Multimodal Embedding: torch.Size([1, 256, 512])
+
+✅ Task 14 SUCCESS: Multimodal alignment and cross-attention verified.
