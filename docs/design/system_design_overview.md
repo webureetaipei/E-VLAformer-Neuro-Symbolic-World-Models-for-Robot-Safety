@@ -1,6 +1,6 @@
 # E-VLAformer System Design Overview
 
-**Status:** Draft (Phase 2 - Integrated Sim-to-Real)
+**Status:** Status: Active (Phase 2/3 - Brain-Body Integration)
 **Author:** Tsung Lung Yang
 **Target:** NeurIPS 2026
 

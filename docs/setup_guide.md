@@ -215,22 +215,22 @@ The batch generation is successful when the following directory structure is pop
 Each file contains unique Domain Randomization samples (varying mass, colors, and light intensity) but shares a standardized HDF5 schema.
 ```
 
-# Task 11: Graph Data Infrastructure Setup
+## 11. Graph Data Infrastructure Setup (Task 11)
 
 This guide documents the environment configuration and verification for the Object-Centric Dataset Loader.
 
 This guide documents the environment configuration and verification for the Object-Centric Dataset Loader.
 
-## 1. Environment Requirements
+### 1. Environment Requirements
 The project utilizes **WSL2 (Ubuntu)** with a dedicated Conda environment.
 
-### Core Dependencies
+#### Core Dependencies
 * **Python:** 3.10
 * **PyTorch:** Installed via Pip (CPU version) to ensure compatibility with WSL2 symbols.
 * **Torch Geometric:** For Graph Neural Network data structures.
 * **h5py:** For memory-efficient streaming of large dataset chunks.
 
-## 2. Installation Steps
+### 2. Installation Steps
 ```bash
 conda activate evla
 # Ensure PyTorch is compatible with WSL2
@@ -238,7 +238,7 @@ pip install torch torchvision --index-url [https://download.pytorch.org/whl/cpu]
 # Install Graph and Data libraries
 pip install torch-geometric h5py requests
 ```
-## 3. Data Architecture
+### 3. Data Architecture
 
 The system transforms raw sensory tensors into a relational graph structure ($G = \{V, E\}$):
 
@@ -250,26 +250,26 @@ The system transforms raw sensory tensors into a relational graph structure ($G 
 
    - hw_id: Direct hardware mapping for Physical ESP32 (MG996R servos) during real-world execution.4. Verification
 
-## 4. Verification
+### 4. Verification
 To ensure the environment and data pipeline are correctly configured, run the following smoke test to generate and load dummy graph data:
 ```bash
 python src/models/graph_dataset.py
 ```
 
-# Task 12: Relational Graph Construction
+## 12. Relational Graph Construction (Task 12)
 This guide documents the implementation and verification of the Graph Builder, which defines the structural and dynamic relationships between robot components and environment objects.
 
-## 1. Functional Logic
+### 1. Functional Logic
 The RelationalGraphBuilder (Task 12) implements two primary edge types to guide the model's causal reasoning:
 
 - Kinematic Constraints: Establishes a permanent, bi-directional link between the Base, Joints, and Gripper for the 4-DOF DIY arm.
 
 - Contact Detection: Dynamically instantiates edges when the Euclidean distance between the Gripper and a target object falls below a specified threshold (Default: $0.05m$).
 
-## 2. Implementation File
+### 2. Implementation File
 The core logic is stored in src/models/graph_builder.py. This module acts as the intermediate layer between raw data loading and the Graph Neural Network (GNN).
 
-## 3. Verification & Integration Test
+### 3. Verification & Integration Test
 Because this task involves complex spatial logic, an integration test is required to ensure that the "Nervous System" (Task 11) correctly passes data to the "Relational Logic" (Task 12).
 ```bash
 To run the Task 12 verification:
@@ -284,10 +284,24 @@ Total Edges Found: 8
 
 ✅ Task 12 SUCCESS: Kinematic and Contact edges generated.
 
-# Task 14: Multimodal Fusion Infrastructure
+## 13. GNN Message Passing Infrastructure (Task 13)
+This guide documents the implementation of the inductive reasoning processor.
+
+### 1. Functional Logic
+The `EVLAGNNProcessor` utilizes **GraphSAGE (SAGEConv)** layers to perform feature aggregation across the relational graph.
+- **Architecture:** 3-layer GNN with 64 hidden channels and 32-dim output embeddings.
+
+### 2. Verification
+Run the forward pass test to verify neural data flow:
+```bash
+conda activate evla
+export PYTHONPATH=$PYTHONPATH:.
+python -m src.utils.verify_task13
+```
+## 14. Multimodal Fusion Infrastructure (Task 14)
 This guide outlines the technical requirements and implementation steps for fusing the Vision-Language features with the Graph World Model (GWM) outputs.
 
-##　1. Functional Objectives
+### 1. Functional Objectives
 
 Gemini said
 Task 14 marks the beginning of the Multimodal Fusion Layer, the critical component that aligns and integrates diverse sensory streams—vision, language, and the GNN-based physical embeddings you just built. This layer serves as the "Global Workspace" where abstract instructions and raw physical data merge into a unified representation for action prediction.
@@ -295,11 +309,11 @@ Task 14 marks the beginning of the Multimodal Fusion Layer, the critical compone
 Task 14: Multimodal Fusion Infrastructure
 This guide outlines the technical requirements and implementation steps for fusing the Vision-Language features with the Graph World Model (GWM) outputs.
 
-1. Functional Objectives
+- Functional Objectives
 The primary goal is to perform Intermediate Fusion to bridge the "Reality Gap" between visual pixels and symbolic physical constraints.
 - Feature Alignment: Aligning high-frequency proprioception and graph embeddings with lower-frequency visual tokens.
 - Semantic Mapping: Using a Q-Former style query mechanism to extract relevant physical features from the GNN based on the textual instruction (e.g., "pick up the red cube").
-## 2. Technical Architecture
+### 2. Technical Architecture
 The MultimodalFusionLayer utilizes Cross-Attention to allow the visual-language backbone to "interrogate" the Graph World Model for physical consistency.
 - Inputs:
     - Visual Tokens ($\mathbf{T}_{vis}$): From the ViT/CLIP encoder.
@@ -308,7 +322,7 @@ The MultimodalFusionLayer utilizes Cross-Attention to allow the visual-language 
 - Mechanism:
     - Query ($Q$): Generated from language and vision tokens to focus on task-relevant objects.
     - Key ($K$) & Value ($V$): Derived from the GNN embeddings to provide physical context (mass, position, hierarchy).
-## 3. Verification & Integration Test
+### 3. Verification & Integration Test
 A successful Task 14 requires verifying that the fused embedding contains information from all three sources.
 ```bash
 #Run the verification script (to be created as src/utils/verify_task14.py):

@@ -1,7 +1,7 @@
 # E-VLAformer: Neuro-Symbolic World Models for Robot Safety
 
 **Target:** NeurIPS 2026 |
-**Status:** Active Development (Phase 1)
+**Status:** Active Development (Phase 2/3 Integration)
 
 ---
 
@@ -28,7 +28,7 @@ Modern Vision-Language-Action (VLA) models lack explicit world-state reasoning, 
 * *Content:* Cloud-Edge Synergy, gRPC Microservices, Sim-to-Real Pipeline, and **Data Engine Strategy (HDF5 Optimization & Auto-Labeling)**.
 
 ###  4. For AI Research (Neuro-Symbolic)
-* 👉 **[`docs/design/neuro_symbolic_multimodal_system_design.md`](./docs/design/neuro_symbolic_multimodal_system_design.md)** *(Planned)*
+* 👉 **[`docs/design/neuro_symbolic_multimodal_system_design.md`](./docs/design/neuro_symbolic_multimodal_system_design.md)** *✅(Active)*
 * *Content:* Graph World Model (GNN), Multimodal Alignment (Vision + Proprioception), Causal Logic.
 
 ### 5. Evidence & Benchmarks (The Proof)
@@ -93,7 +93,7 @@ To ensure the model generalizes across diverse environments, we implemented Doma
 ### DR Pipeline Validation
 The image below demonstrates the system's ability to automatically vary visual attributes (RGB values, lighting intensity) and physical properties (mass) for every data sequence while maintaining synchronized causal ground truth.
 
-![Randomization Validation](docs/images/randomization_validation.png)
+![Randomization Validation](docs/images/domian_randomization_proof.png)
 
 Figure: Domain Randomization Proof. The system randomizes object appearance and physical mass (recorded in metadata) to build a high-entropy dataset for robust world model training.
 
@@ -131,6 +131,17 @@ Validation: Every batch is automatically indexed and ready for the Phase 2 Graph
 
 Status: ✅ Phase 1 Infrastructure Complete.
 
+🧠 Graph World Model & Fusion (Tasks 11-14)
+
+We have successfully transitioned from raw data to a structured Neuro-Symbolic "Brain." The system now processes environment states as a relational graph rather than flat pixels.
+
+- Object-Centric Pipeline: Automated HDF5-to-Graph translation (Task 11).
+- Relational Logic: Procedural generation of Kinematic and Contact edges (Task 12).
+- Inductive Reasoning: 3-layer GraphSAGE processor for physical latent extraction (Task 13).
+- Multimodal Alignment: Cross-attention fusion between GNN embeddings and Vision tokens (Task 14).
+
+Status: ✅ Phase 2 Core Architecture Verified (Tasks 11-14)
+
 ---
 
 ## Roadmap & Progress
@@ -141,8 +152,8 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 | Phase | Focus | Key Tech | Status |
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, WSL2 | 🟡 **Completed** |
-| **Phase 2** | Graph World Model | GNN, Causal Logic | ⚪ Planned |
-| **Phase 3** | Multimodal VLA Model | Transformer, Cross-Attn | ⚪ Planned |
+| **Phase 2** | Graph World Model | GNN, Causal Logic | 🔵 Active / Refinement |
+| **Phase 3** | Multimodal VLA Model | Transformer, Cross-Attn | 🟡 Starting |
 | **Phase 4** | TinyEngine Optimization | C++17, CUDA, NEON | ⚪ Planned |
 | **Phase 5** | Distributed Operations | gRPC, Kubernetes | ⚪ Planned |
 | **Phase 6** | **Mobile Manipulation Demos** | Sim-to-Real, Safety Eval | ⚪ Planned |

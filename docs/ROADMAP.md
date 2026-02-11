@@ -18,6 +18,7 @@
 - [x] **Task 09:** Unit Testing: Dataset Integrity & Physics Consistency Checks.
 - [x] **Task 10:** Phase 1 Review: Finalize Sim-to-Real Data Pipeline Documentation.
 ## Phase 2: Graph World Models (Tasks 11-20)
+*Status: 🟢 Core Architecture Verified | 🟡 Refining Logic*
 - [x] **Task 11:** HDF5-to-Graph Dataset Loader (Object-Centric Representation) 
       - *Outcome:* Verified HDF5-to-Graph pipeline with lazy-loading and metadata support.
 - [x] **Task 12:** Construct the Relational Graph (Nodes: Prims, Edges: Physics Constraints).
