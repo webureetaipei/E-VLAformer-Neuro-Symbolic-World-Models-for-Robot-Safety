@@ -131,7 +131,7 @@ Validation: Every batch is automatically indexed and ready for the Phase 2 Graph
 
 Status: ✅ Phase 1 Infrastructure Complete.
 
-🧠 Graph World Model & Fusion (Tasks 11-14)
+## 🧠 Graph World Model & Fusion (Tasks 11-14)
 
 We have successfully transitioned from raw data to a structured Neuro-Symbolic "Brain." The system now processes environment states as a relational graph rather than flat pixels.
 
