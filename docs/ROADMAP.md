@@ -18,7 +18,8 @@
 - [x] **Task 09:** Unit Testing: Dataset Integrity & Physics Consistency Checks.
 - [x] **Task 10:** Phase 1 Review: Finalize Sim-to-Real Data Pipeline Documentation.
 ## Phase 2: Graph World Models (Tasks 11-20)
-- [] **Task 11:** HDF5-to-Graph Dataset Loader (Object-Centric Representation).
+- [x] **Task 11:** HDF5-to-Graph Dataset Loader (Object-Centric Representation) 
+      - *Outcome:* Verified HDF5-to-Graph pipeline with lazy-loading and metadata support.
 - [] **Task 12:** Construct the Relational Graph (Nodes: Prims, Edges: Physics Constraints).
 - [] **Task 13:** Implement Graph Convolutional Layers (PyTorch Geometric).
 - [] **Task 14:** GNN World Model: Predict Object States across $t+1$.

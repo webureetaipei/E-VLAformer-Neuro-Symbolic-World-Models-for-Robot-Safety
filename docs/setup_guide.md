@@ -214,3 +214,29 @@ The batch generation is successful when the following directory structure is pop
 
 Each file contains unique Domain Randomization samples (varying mass, colors, and light intensity) but shares a standardized HDF5 schema.
 ```
+
+# Task 11: Graph Data Infrastructure Setup
+
+This guide documents the environment configuration and verification for the Object-Centric Dataset Loader.
+
+This guide documents the environment configuration and verification for the Object-Centric Dataset Loader.
+
+## 1. Environment Requirements
+The project utilizes **WSL2 (Ubuntu)** with a dedicated Conda environment.
+
+### Core Dependencies
+* **Python:** 3.10
+* **PyTorch:** Installed via Pip (CPU version) to ensure compatibility with WSL2 symbols.
+* **Torch Geometric:** For Graph Neural Network data structures.
+* **h5py:** For memory-efficient streaming of large dataset chunks.
+
+## 2. Installation Steps
+```bash
+conda activate evla
+# Ensure PyTorch is compatible with WSL2
+pip install torch torchvision --index-url [https://download.pytorch.org/whl/cpu](https://download.pytorch.org/whl/cpu)
+# Install Graph and Data libraries
+pip install torch-geometric h5py requests
+```
+
+
