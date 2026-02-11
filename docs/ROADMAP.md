@@ -20,7 +20,8 @@
 ## Phase 2: Graph World Models (Tasks 11-20)
 - [x] **Task 11:** HDF5-to-Graph Dataset Loader (Object-Centric Representation) 
       - *Outcome:* Verified HDF5-to-Graph pipeline with lazy-loading and metadata support.
-- [] **Task 12:** Construct the Relational Graph (Nodes: Prims, Edges: Physics Constraints).
+- [x] **Task 12:** Construct the Relational Graph (Nodes: Prims, Edges: Physics Constraints).
+      - *Outcome:* Automated generation of Kinematic and Dynamic Contact edges for the 4-DOF DIY arm.
 - [] **Task 13:** Implement Graph Convolutional Layers (PyTorch Geometric).
 - [] **Task 14:** GNN World Model: Predict Object States across $t+1$.
 - [] **Task 15:** Loss Function: Collision-Aware Physics Consistency.

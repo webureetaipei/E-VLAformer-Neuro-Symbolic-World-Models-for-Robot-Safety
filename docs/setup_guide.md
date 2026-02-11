@@ -255,3 +255,31 @@ To ensure the environment and data pipeline are correctly configured, run the fo
 ```bash
 python src/models/graph_dataset.py
 ```
+
+# Task 12: Relational Graph Construction
+This guide documents the implementation and verification of the Graph Builder, which defines the structural and dynamic relationships between robot components and environment objects.
+
+## 1. Functional Logic
+The RelationalGraphBuilder (Task 12) implements two primary edge types to guide the model's causal reasoning:
+
+- Kinematic Constraints: Establishes a permanent, bi-directional link between the Base, Joints, and Gripper for the 4-DOF DIY arm.
+
+- Contact Detection: Dynamically instantiates edges when the Euclidean distance between the Gripper and a target object falls below a specified threshold (Default: $0.05m$).
+
+## 2. Implementation File
+The core logic is stored in src/models/graph_builder.py. This module acts as the intermediate layer between raw data loading and the Graph Neural Network (GNN).
+
+## 3. Verification & Integration Test
+Because this task involves complex spatial logic, an integration test is required to ensure that the "Nervous System" (Task 11) correctly passes data to the "Relational Logic" (Task 12).
+```bash
+To run the Task 12 verification:
+conda activate evla
+# Run the integration test from the project root
+python -m src.utils.verify_task12
+```
+**Expected Output:**
+
+--- Phase 2: Relational Graph Construction ---
+Total Edges Found: 8
+
+✅ Task 12 SUCCESS: Kinematic and Contact edges generated.
