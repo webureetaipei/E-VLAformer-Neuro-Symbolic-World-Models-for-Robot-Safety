@@ -11,7 +11,7 @@ The GWM is the symbolic heart of the system, representing the environment as a s
 ### 2.1 Node Representation ($V$)
 Following the implementation in `src/models/graph_dataset.py` (Task 11), nodes represent physical entities:
 - **State Features:**
-$$\mathbf{x}_i = [p_x, p_y, p_z, m, \text{type\_id}]$$
+$$\mathbf{x}_i = [p_x, p_y, p_z, m, \mathrm{type\_id}]$$
 - **Semantic Anchors:** Each node is anchored to a specific `sim_path` (Isaac Sim) or `hw_id` (DIY Robot).
 
 ### 2.2 Relational Edges ($E$)
