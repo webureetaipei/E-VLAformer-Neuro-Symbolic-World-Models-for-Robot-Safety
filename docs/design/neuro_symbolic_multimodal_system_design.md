@@ -50,4 +50,7 @@ The CRM acts as a **Physics Consistency Filter**.
 - [x] **Data Format:** Object-Centric HDF5 (Task 11)
 - [x] **Graph Layer:** Relational Graph Builder & Edge Logic (Task 12)
 - [x] **Graph Neural Network:** Message passing blocks (Task 13)
+      - *Specs:* 3-layer GraphSAGE, 64 hidden channels, 32-dim output embeddings.
+- [x] **Multimodal Fusion:** Cross-Attention alignment (Task 14)
+      - *Specs:* 8-head Cross-Attention querying GNN physical latents.
 - [ ] **Policy Head:** Action-Modulated Policy (Task 20+)
