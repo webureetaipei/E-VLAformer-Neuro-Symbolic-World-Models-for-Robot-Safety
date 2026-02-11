@@ -45,6 +45,9 @@ Modern Vision-Language-Action (VLA) models lack explicit world-state reasoning, 
 ### 1. Neuro-Symbolic Core
 Solves "Causal Hallucination" by injecting a **Graph Neural Network (GNN)** into the transformer loop. The graph acts as a "Physics Consistency Filter," preventing the robot from attempting impossible actions (e.g., grasping an object through a closed door).
 
+- Verified Implementation: Transitions from flat pixels to object-centric relational graphs ($G=\{V,E\}$) using GraphSAGE inductive reasoning.
+- Physics Alignment: Features a verified Cross-Attention Fusion layer that interrogates the Graph World Model (GWM) to ensure predicted actions are physically consistent.
+- Current Status: ✅ Phase 2 Core Architecture Complete (Tasks 11-14).
 ### 2. TinyEngine (C++ Inference)
 A custom bare-metal runtime designed for **Jetson Orin/Edge Devices**.
 * **Zero-Malloc:** Static memory arena eliminates fragmentation.
