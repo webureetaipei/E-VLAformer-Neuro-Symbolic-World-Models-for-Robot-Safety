@@ -405,3 +405,46 @@ Once the dependencies are verified, follow these steps to ground your model:
 - Run Trainer: Execute python src/models/train_gnn_contrastive.py.
 
 - Audit Topology: Run the t-SNE visualizer to verify the axis expansion from 150 to 400 units.
+
+## 17. Global State Persistence (Graph Memory Buffer) (Task 17)
+
+This guide details the implementation of the **Object Permanence** layer. This module allows the E-VLAformer to maintain a stable world state even when physical objects are occluded by containers (e.g., the "Lid Test") or move out of the camera's field of view.
+
+---
+
+### 1. Environment & Logic Requirements
+Task 17 utilizes the existing "Graph AI" stack but introduces a TTL-based (Time-To-Live) caching mechanism.
+
+- **Dependency:** `src/models/graph_memory.py`
+- **Core Logic:** Circular persistence buffer with confidence-weighted decay.
+
+
+
+---
+
+### 2. Persistence Strategy
+Unlike standard VLA models that reset the world state every frame, the Graph Memory Buffer implements **Cognitive Anchoring**:
+
+- **Sight Sighting:** When an object is seen, its `TTL` (Time-To-Live) is reset to maximum (e.g., 30 frames).
+- **Occlusion State:** If the object is not detected in the current frame, the system retrieves the last known position and features from the buffer.
+- **Node Decay:** Every frame an object remains hidden, its `TTL` decreases. Once `TTL=0`, the node is removed from the "Mental Map."
+- **Geometric Stability:** Maintained through zero-drift latent caching during the "Hidden" period.
+
+---
+
+###  3. Execution & Verification Workflow
+Follow these steps to verify that your robot has achieved Object Permanence.
+
+#### Step 3.1: Initialize the Memory Class
+Ensure your `src/models/graph_memory.py` is correctly defined with the circular update logic.
+
+#### Step 3.2: Run the Persistence Stress Test
+Execute the automated verification utility. This simulates a "Blink" event where a detected cube disappears for 4 frames and checks if the GNN maintains the node.
+
+```bash
+# Set PYTHONPATH to project root
+export PYTHONPATH=$PYTHONPATH:.
+
+# Run the Task 17 Verification Script
+python -m src.utils.verify_task17
+```
