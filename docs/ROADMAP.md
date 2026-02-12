@@ -40,7 +40,8 @@
     - **Verification:** Successfully passed the "Lid Test" simulation; objects remain in the graph for **30+ frames** (extrapolatable to 1,000+ frames) during 100% occlusion.
     - **Metric:** Zero-drift latent retention confirmed via `verify_task17.py`.
 
-- [] **Task 18:** Edge Case Hardening: Handling Vanishing Nodes (Occlusion).
+- [x] **Task 18:** Edge Case Hardening: Handling Vanishing Nodes (Occlusion) ✅
+    - *Outcome:* Integrated "Blink Logic" in Isaac Sim; verified 10% occlusion resilience in HDF5 stream.
 
 - [] **Task 19:** Latent Separation Validation: Silhouette Score Benchmarking.
 

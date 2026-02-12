@@ -448,3 +448,12 @@ export PYTHONPATH=$PYTHONPATH:.
 # Run the Task 17 Verification Script
 python -m src.utils.verify_task17
 ```
+
+### 18. Hardened Dataset Generation (Occlusion Resilience) (Task 18)
+To train the World Model for object permanence, we use "Blink Logic" to simulate sensor dropouts or physical occlusions.
+
+**1. Verify Blink Logic (Unit Test)**
+Run the simulator-free logic test to ensure the stochastic occlusion math is working:
+```bash
+python src/utils/test_blink_generator.py
+```

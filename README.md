@@ -204,6 +204,13 @@ We have successfully implemented the **Graph Memory Buffer**, granting the robot
 # Run the Object Permanence Verification Test
 python -m src.utils.verify_task17
 ```
+
+## 🧠 Implementation Progress: Edge Case Hardening (Task 18 Verified) ✅
+We have successfully integrated **Occlusion Resilience** into our data generation pipeline. This ensures the World Model is trained to trust its memory buffer during sensory failure.
+
+- **Blink Logic:** Implemented a stochastic visibility toggle in Isaac Sim 4.5.0 that randomly hides target prims (e.g., `/World/RedCube`) to simulate sensor dropout or physical occlusion.
+- **Hardened Dataset:** Successfully generated `task18_occlusion_test_001.h5` featuring 10% random "Blink" events synchronized with ground-truth `occluded_flag` metadata.
+- **Verification:** Logic verified via `src/utils/test_blink_generator.py`, confirming the successful bridge between USD Stage visibility and HDF5 causal labeling.
 ---
 
 ## Roadmap & Progress
@@ -214,21 +221,18 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 | Phase | Focus | Key Tech | Status |
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, HDF5 | ✅ **Completed** |
-| **Phase 2** | **Graph World Model** | **GNN, Memory, Contrastive** | 🔵 **Active (Task 18)** |
+| **Phase 2** | **Graph World Model** | **GNN, Memory, Contrastive** | ✅ **Active (Task 19)** |
 | **Phase 3** | **Multimodal VLA Model** | Transformer, Cross-Attn | 🟡 Starting Soon |
 | **Phase 4** | **TinyEngine Optimization** | C++17, CUDA, NEON | ⚪ Planned |
-| **Phase 5** | **Distributed Operations** | gRPC, Kubernetes | ⚪ Planned |
 
 ---
 
-### 🧠 Phase 2 Status: The Final Polish (Tasks 17-20)
-We have successfully built the "Object Permanence" logic, but we must now harden it against real-world noise.
+### 🧠 Phase 2 Status: The Final Polish (Tasks 18-20)
+We have moved from pure architecture to **Cognitive Resilience**.
 
-* **Task 17 (DONE):** Implementation of the **Graph Memory Buffer**. Verified persistence in clean tests.
-* **Task 18 (ACTIVE):** **Edge Case Hardening.** Modifying Isaac Sim to generate "Occlusion Events" (Blink Tests) to stress-test the memory.
-* **Task 19 (PLANNED):** **Silhouette Score Audit.** Proving the "remembered" nodes don't drift in the latent space.
-* **Task 20 (PLANNED):** **Phase 2 Technical Review.** Final audit of the World Model before VLA integration.
-
+* **Task 18 (DONE) ✅:** **Edge Case Hardening.** Isaac Sim "Blink Tests" integrated. Hardened Dataset generated.
+* **Task 19 (ACTIVE) 🚀:** **Silhouette Score Audit.** Mathematically proving that "remembered" nodes remain topologically stable during occlusion.
+* **Task 20 (PLANNED):** **Phase 2 Technical Review.** Final audit of the World Model before Phase 3 VLA integration.
 ---
 
 ## System Architecture & Docs

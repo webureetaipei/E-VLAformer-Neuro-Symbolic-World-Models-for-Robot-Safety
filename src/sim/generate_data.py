@@ -1,80 +1,72 @@
-# 1. Initialize SimulationApp FIRST to load Replicator modules
-from omni.isaac.kit import SimulationApp
+from isaacsim import SimulationApp
+simulation_app = SimulationApp({"headless": False}) 
 
-# Configuration for headless mode
-CONFIG = {"headless": True}
-simulation_app = SimulationApp(CONFIG)
-
-# 2. Now import Replicator and Isaac core modules
-import omni.replicator.core as rep
-from omni.isaac.core import World
-from omni.isaac.core.utils.stage import get_current_stage
-import h5py
-import numpy as np
 import os
+import h5py
+import random
+import numpy as np
+import isaacsim.core.utils.prims as prim_utils
+import isaacsim.core.utils.stage as stage_utils
 
-def setup_scene():
-    """Sets up a basic ground plane and lighting."""
-    with rep.new_layer():
-        # Create a basic ground plane so the camera isn't looking at a void
-        rep.create.plane(scale=10, position=(0, 0, 0))
-        
-        # Studio Lighting: Dome for ambient and Distant for shadows
-        rep.create.light(light_type="dome", intensity=800)
-        rep.create.light(light_type="distant", intensity=1500, rotation=(45, 45, 0))
-
-def generate_randomized_batch(num_frames=20):
-    # Initialize the high-level Isaac World
-    world = World(stage_units_in_meters=1.0)
-    setup_scene()
-
-    # 3. Setup Camera: Positioned to see the center of the stage
-    # (2, 2, 2) is far enough to see the robot/objects without clipping
-    camera = rep.create.camera(position=(2.0, 2.0, 2.0), look_at=(0, 0, 0))
-    rp = rep.create.render_product(camera, (512, 512))
+def apply_occlusion_blink(cube_prim_path_str, occlusion_probability=0.10):
+    # Fix: Use the direct USD Stage API to get the prim
+    stage = stage_utils.get_current_stage()
+    prim = stage.GetPrimAtPath(cube_prim_path_str)
     
-    # Initialize and attach the RGB annotator
-    rgb_annot = rep.AnnotatorRegistry.get_annotator("rgb")
-    rgb_annot.attach(rp)
+    if not prim or not prim.IsValid():
+        return None
 
-    # 4. Start Simulation and Warm Up
-    world.play()
-    print("⏳ Warming up RTX renderer (60 steps)...")
-    for _ in range(60):
-        world.step(render=True)
+    blink = random.random() < occlusion_probability
+    if blink:
+        prim_utils.set_prim_visibility(prim, visible=False)
+        return True
+    else:
+        prim_utils.set_prim_visibility(prim, visible=True)
+        return False
+
+def generate_hardened_batch(output_path, num_frames=100):
+    print("DEBUG: Function started...")
     
-    # 5. Data Capture Loop
-    os.makedirs('data/output', exist_ok=True)
-    output_path = 'data/output/randomized_data.hdf5'
+    abs_output_path = os.path.abspath(output_path)
+    os.makedirs(os.path.dirname(abs_output_path), exist_ok=True)
 
-    with h5py.File(output_path, 'w') as f:
-        rgb_ds = f.create_dataset("rgb", (num_frames, 512, 512, 3), dtype='uint8')
+    try:
+        # Create the environment
+        cube_path = "/World/RedCube"
+        prim_utils.create_prim(cube_path, "Cube", position=np.array([0, 0, 0.5]))
         
-        print(f"🚀 Capturing {num_frames} frames...")
+        # Warmup
+        for i in range(60):
+            simulation_app.update()
         
-        for i in range(num_frames):
-            # Step the orchestrator (subframes ensure high-quality light)
-            rep.orchestrator.step(rt_subframes=12) 
+        print(f"--- 🚀 Starting Data Generation: {abs_output_path} ---")
+        
+        with h5py.File(abs_output_path, 'w') as f:
+            dset = f.create_dataset("occluded_flag", (num_frames,), dtype='i')
             
-            # Fetch data from GPU buffer
-            data = rgb_annot.get_data()
-            
-            if data is not None:
-                # Remove alpha channel and save
-                rgb_ds[i] = data[:, :, :3]
-                mean_val = np.mean(rgb_ds[i])
-                print(f"✅ Frame {i} | Mean Brightness: {mean_val:.2f}")
+            for frame in range(num_frames):
+                res = apply_occlusion_blink(cube_path)
                 
-                # Check for absolute black
-                if mean_val < 0.1:
-                    print("⚠️ Warning: Image is still very dark. Check camera/lights.")
-            else:
-                print(f"❌ Frame {i} failed to capture data.")
+                if res is None:
+                    # Try to wait one more frame if prim is missing
+                    simulation_app.update()
+                    res = apply_occlusion_blink(cube_path)
+                
+                dset[frame] = 1 if res else 0
+                simulation_app.update()
+                
+                if frame % 20 == 0:
+                    status = "🕶️ BLINK" if res else "👁️ VISIBLE"
+                    print(f"Frame {frame:03d}: {status}")
 
-    # 6. Cleanup
-    world.stop()
-    simulation_app.close()
-    print(f"🎉 Process Complete. File saved to {output_path}")
+        print("✅ Task 18 Complete. Dataset secured.")
+
+    except Exception as e:
+        print(f"❌ CRITICAL ERROR INSIDE GENERATOR: {e}")
 
 if __name__ == "__main__":
-    generate_randomized_batch()
+    try:
+        generate_hardened_batch("data/raw/task18_occlusion_test_001.h5")
+    finally:
+        print("🛑 Shutting down Simulation App...")
+        simulation_app.close()

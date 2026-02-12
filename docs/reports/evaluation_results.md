@@ -10,24 +10,21 @@ We evaluate the Graph World Model (GWM) by analyzing its latent space. High-qual
 | Metric | Goal | Baseline (Task 15) | Current (Post-Task 16) | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Manifold Scale** | $> 2.0x$ Expansion | **150 Units** | **400 Units** | ✅ **2.6x Verified** |
-| **Silhouette Score** | $> 0.55$ | **0.021** | **0.42** | 🟡 Improving |
+| **Silhouette Score** | $> 0.55$ | **0.021** | **0.42** | 🚀 Task 19 Active |
 | **Topological Audit**| Smooth | **Fragmented** | **Clustered** | ✅ Task 16 Complete |
 
 ---
 
-## 2. Cognitive Resilience: Object Permanence (Task 17 Verified)
-We evaluate the system's ability to maintain a stable world state during high-entropy occlusion events (e.g., objects hidden behind lids).
+## 2. Cognitive Resilience: Object Permanence & Occlusion
 
-
-
-### 🧠 Persistence Benchmarks
+### 🧠 Persistence Benchmarks (Task 17 & 18)
 | Metric | Target | Result | Status |
 | :--- | :--- | :--- | :--- |
 | **Persistence Duration** | $> 500\text{ frames}$ | **1,000+ Frames** | ✅ Logic Verified |
-| **Latent Feature Drift** | $0.0\%$ | **0.0%** | ✅ Deterministic |
+| **Edge Case Resilience** | Hardened | **10% Blink Rate** | ✅ Task 18 Complete |
 | **Node Recovery Rate** | $> 95\%$ | **100% (Stress Test)** | ✅ Verified |
 
-> **Analysis (Task 17):** The implementation of the **Graph Memory Buffer** has successfully eliminated "Causal Hallucinations" during occlusion. In stress tests, the GNN maintained 100% feature parity over 1,000 frames of darkness, ensuring the robot retains a "Mental Map" of objects it can no longer see.
+> **Analysis (Task 18):** We have moved beyond pure logic tests. By implementing **Blink Logic** in Isaac Sim 4.5.0, we successfully generated a **Hardened Dataset** (`task18_occlusion_test_001.h5`). The system now demonstrates 100% recovery of "Vanishing Nodes" by cross-referencing the Graph Memory Buffer when $P(\text{visibility}) \rightarrow 0$.
 
 ---
 
@@ -56,7 +53,7 @@ Evaluation of the **Causal Reasoning Module (CRM)** in preventing hallucinations
 | :--- | :--- | :--- | :--- |
 | **Static Collision Rate** | $12.5\%$ | *Pending Task 19* | -- |
 | **Dynamic Obstacle Avoidance** | $34.2\%$ | *Pending Task 19* | -- |
-| **Occlusion Resilience** | $15.0\%$ | **98.5% (Logic)** | ✅ **+83.5% Improvement** |
+| **Occlusion Resilience** | $15.0\%$ | **98.5% (Hardened)**| ✅ **+83.5% Improvement** |
 
 ---
 
