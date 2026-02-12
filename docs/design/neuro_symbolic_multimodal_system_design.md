@@ -55,6 +55,6 @@ The CRM acts as a **Physics Consistency Filter**.
       - *Specs:* 8-head Cross-Attention querying GNN physical latents.
 - [x] **Latent Manifold Analysis:** t-SNE Topology Audit (Task 15) - Outcome: Verified that the GNN projects high-dimensional graph states into a topologically consistent 2D manifold. Established baseline for measuring "Safety Separation" in Phase 3.
       - *Specs:* 8-head Cross-Attention querying GNN physical latents.
-- [] **Contrastive Physics Training:** Causal State Separation (Task 16)
+- [ ] **Contrastive Physics Training:** Causal State Separation (Task 16)
       - *Specs:* 8-head Cross-Attention querying GNN physical latents.
 - [ ] **Policy Head:** Action-Modulated Policy (Task 20+)
