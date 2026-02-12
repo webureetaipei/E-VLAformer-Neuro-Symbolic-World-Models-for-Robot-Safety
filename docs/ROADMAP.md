@@ -27,5 +27,17 @@
       - *Outcome:* Built 3-layer GraphSAGE processor for inductive physical reasoning.
 - [x] **Task 14:** Multimodal Fusion Layer (Vision + Language + GNN).
       - *Outcome:* Verified Cross-Attention alignment between ViT tokens and GNN embeddings.
+
+- [x] **Task 15:** Latent Space Topology & t-SNE Manifold Visualization. - Outcome: Successfully projected 32-dim physical embeddings into 2D space. Established baseline for topological consistency audit. - Artifact: docs/reports/gnn_latent_clusters.png
+
+- [] **Task 16:** Supervised Contrastive Training (Safe vs. Collision). - Objective: Train GNN to maximize latent distance between safety-critical states using InfoNCE loss.
+
+- [] **Task 17:** Global State Persistence: Graph Memory Buffer (1,000+ Frames).
+
+- [] **Task 18:** Edge Case Hardening: Handling Vanishing Nodes (Occlusion).
+
+- [] **Task 19:** Latent Separation Validation: Silhouette Score Benchmarking.
+
+- [] **Task 20:** Phase 2 Review: GNN Performance Metrics & Inference Latency Audit.
 ---
 *Note: This roadmap is a living document. We will check off tasks as we complete them.*

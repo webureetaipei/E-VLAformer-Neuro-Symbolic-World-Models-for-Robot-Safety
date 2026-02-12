@@ -341,3 +341,30 @@ Input GNN Embeddings: torch.Size([4, 32])
 Fused Multimodal Embedding: torch.Size([1, 256, 512])
 
 ✅ Task 14 SUCCESS: Multimodal alignment and cross-attention verified.
+
+## Task 15: Latent Space Visualization Setup (Task 15)
+
+### 1. Additional Dependencies
+Task 15 requires scikit-learn for manifold learning and seaborn for high-fidelity scientific plotting.
+```bash
+# Install visualization stack
+pip install scikit-learn seaborn matplotlib
+```
+### 2. Directory Preparation
+
+The visualization script exports high-resolution PNGs to the reports directory. Ensure the path exists:
+```bash
+mkdir -p docs/reports
+```
+### 3. Execution Protocol
+
+To generate the t-SNE manifold of the GNN latent space, run the utility from the project root. This command ensures the src package is correctly indexed in your PYTHONPATH.
+
+```bash
+export PYTHONPATH=$PYTHONPATH:.
+python -m src.utils.visualize_graph_latents
+```
+
+**Expected Output:**
+- Console: You should see 🔄 Processing X samples... followed by 📉 Computing t-SNE....
+- Artifact: A file named gnn_latent_clusters.png will be generated in docs/reports/.

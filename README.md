@@ -145,6 +145,26 @@ We have successfully transitioned from raw data to a structured Neuro-Symbolic "
 
 Status: ✅ Phase 2 Core Architecture Verified (Tasks 11-14)
 
+## 📉 Latent Space Topology & Manifold Analysis (Task 15)
+
+To ensure the GNN World Model is learning distinct physical concepts, we implemented an automated Latent Visualization pipeline. This utility projects high-dimensional graph embeddings into a 2D manifold using t-SNE (t-Distributed Stochastic Neighbor Embedding).
+
+### Manifold Validation
+
+The visualization below confirms the successful integration of the Graph-to-Latent pipeline. This acts as a "Physical Sanity Check" before large-scale multimodal training.
+
+Figure: t-SNE projection of 32-dimensional GNN embeddings. Each point represents the latent physical state of the robot's gripper node across different simulation frames.
+
+- Dimensionality Reduction: Successfully mapped $\mathbb{R}^{32} \rightarrow \mathbb{R}^{2}$ manifold density.
+
+- Pipeline Handshake: Verified end-to-end connectivity: HDF5 Adaptive Loader → GraphSAGE Processor → t-SNE Manifold Generator.
+
+- Topological Audit: Provides a baseline for Task 16 (Contrastive Learning), where we will measure the "Separation Force" between Safe and Collision states.
+
+- Metric Integration: Includes automated Silhouette Score calculation to quantitatively measure cluster cohesion and separation for the final NeurIPS evaluation.
+
+Status: ✅ Task 15 Pipeline Verified & Visualized.
+
 ---
 
 ## Roadmap & Progress

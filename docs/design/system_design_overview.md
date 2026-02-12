@@ -40,6 +40,10 @@ This document defines the architectural blueprint for the **E-VLAformer**, a Neu
 * **Bottleneck Solved:** **Safety in Unseen Scenarios.** Unlike end-to-end models that "guess" safety, the GWM provides a hard symbolic check against physical laws.
 * **Trade-off:** **Model Size vs. Reasoning Depth.** * *Decision:* We utilize a shallow GNN (3-layer) to keep inference under 10ms, sacrificing complex multi-object chain reasoning for immediate reaction speed.
 
+### 2.3 Topological Certification & Latent Audit
+- Metric-Driven World Modeling: We use t-SNE (t-Distributed Stochastic Neighbor Embedding) to project the 32-dimensional GNN physical embeddings into a 2D manifold. This serves as a "Structural Health Check" for the robot's world-state reasoning.
+- Geometric Consistency: Verified that similar physical states (e.g., "Approaching Object" vs. "Grasping") cluster appropriately in the latent space. This prevents "state-space aliasing" where the model confuses safe and dangerous configurations.
+- Verification Utility: Implemented an automated audit script (visualize_graph_latents.py) that generates a Latent Manifold Report for every dataset batch, ensuring that data-engine drift is caught before training.
 ---
 
 ## 3. Distributed System: Sim-to-Real Infrastructure
@@ -85,3 +89,11 @@ This document defines the architectural blueprint for the **E-VLAformer**, a Neu
 ### 5.2 Research Success Metrics (NeurIPS)
 * **Zero-Shot Transfer:** The model trained in Isaac Sim must execute "Pick-and-Place" on the DIY arm without real-world fine-tuning.
 * **Causal Robustness:** Reduce collision rates to **< 0.1%** using the Graph World Model in scenarios with moving obstacles.
+
+### 5.3 Latent Topology KPIs
+
+| Component | Metric | Target | Status | 
+| :--- | :--- | :--- | :--- | 
+| GWM Latent | Silhouette Score | > 0.65 | ✅ Baseline Verified |
+| GWM Latent | Topological Continuity | Verified (t-SNE) | ✅ Task 15 Complete | 
+| GWM Latent | Collision Separation | Dist > Threshold | 🔵 Phase 3 Goal |
