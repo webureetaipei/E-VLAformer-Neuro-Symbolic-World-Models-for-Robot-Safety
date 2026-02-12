@@ -58,7 +58,8 @@ class EVLAGraphDataset(Dataset):
         coll_val = coll_raw[0] if hasattr(coll_raw, '__len__') else coll_raw
         
         data = Data(x=x, edge_index=edge_index, y=y)
-        data.collision_event = torch.tensor([coll_val], dtype=torch.long)
+       # Explicitly cast to int to prevent numpy.bool error
+        data.collision_event = torch.tensor([int(coll_val)], dtype=torch.long)
         return data
 
 if __name__ == "__main__":

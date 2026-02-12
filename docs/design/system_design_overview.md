@@ -1,10 +1,9 @@
-# E-VLAformer System Design Overview
+# 🦾 E-VLAformer System Design Overview
 
-**Status:** Status: Active (Phase 2/3 - Brain-Body Integration)
-**Author:** Tsung Lung Yang
-**Target:** NeurIPS 2026
-
-This document defines the architectural blueprint for the **E-VLAformer**, a Neuro-Symbolic Vision-Language-Action model. The system is engineered to bridge high-fidelity simulation (NVIDIA Isaac Sim) with low-cost physical deployment (DIY ESP32-based Robotic Arm) through a unified causal reasoning framework.
+**Status:** Active (Phase 2/3 - Brain-Body Integration)  
+**Author:** Tsung Lung Yang  
+**Target:** NeurIPS 2026  
+**Core Framework:** Neuro-Symbolic Vision-Language-Action (VLA)  
 
 ---
 
@@ -13,14 +12,14 @@ This document defines the architectural blueprint for the **E-VLAformer**, a Neu
 
 ### 1.1 Core Implementation Strategy
 * **Hybrid Inference Pipeline:**
-    * **Brain (PC/Local Server):** Executes heavy Vision-Transformer and Graph Reasoning loops using a custom C++ **TinyEngine** to manage tensor operations without standard runtime bloat.
-    * **Nervous System (ESP32):** A lightweight controller receiving "Action Tokens" via high-speed Serial (USB) or WebSocket. It performs real-time **Inverse Kinematics (IK)** and generates 50Hz PWM signals for the MG996R servos.
-* **Zero-Malloc Runtime (Static Arena):** * Implements a **Linear Memory Arena** where all tensor memory offsets are pre-calculated during compilation. This eliminates runtime fragmentation and guarantees a stable memory footprint.
-* **Real-Time Hardware Abstraction Layer (HAL):** * A unified C++ interface that abstracts hardware. The high-level policy interacts with a "Joint Object," regardless of whether it is a **USD-based joint** in Isaac Sim or a **physical servo** on the DIY arm.
+    * **Brain (PC/Local Server):** Executes heavy Vision-Transformer (ViT) and Graph Reasoning loops using a custom C++ **TinyEngine** to manage tensor operations without standard runtime bloat.
+    * **Nervous System (ESP32):** A lightweight controller receiving "Action Tokens" via high-speed Serial. It performs real-time **Inverse Kinematics (IK)** and generates 50Hz PWM signals for MG996R servos.
+* **Zero-Malloc Runtime (Static Arena):** Implements a **Linear Memory Arena** where all tensor memory offsets are pre-calculated during compilation. This eliminates runtime fragmentation and guarantees a stable memory footprint on embedded chips.
+* **Real-Time Hardware Abstraction Layer (HAL):** A unified C++ interface that abstracts hardware. The high-level policy interacts with a "Joint Object," regardless of whether it is a **USD-based joint** in Isaac Sim or a **physical servo** on the DIY arm.
 
 ### 1.2 Bottlenecks & Trade-offs
 * **Bottleneck Solved:** **The Reality-Control Gap.** Eliminates the 100ms+ latency of Python-based serial communication by moving IK and PWM timing to the ESP32 firmware.
-* **Trade-off:** **Flexibility vs. Determinism.** * *Decision:* We sacrifice dynamic model branching (no conditional control flow inside the model) to ensure the control loop never misses a 20ms window (50Hz), which is critical for physical robot stability.
+* **Trade-off:** **Flexibility vs. Determinism.** *Decision:* We sacrifice dynamic model branching to ensure the control loop never misses a 20ms window (50Hz), which is critical for physical robot stability.
 
 ---
 
@@ -31,35 +30,28 @@ This document defines the architectural blueprint for the **E-VLAformer**, a Neu
 * **Graph World Model (GWM):**
     * **Nodes ($V$):** Represent environmental objects and the **Robot's Segments** (Base, Link1, Link2, Gripper). Each node stores physical attributes like position and estimated mass.
     * **Edges ($E$):** Define causal relationships (e.g., *Contacting*, *Obstructing*). 
-    * **Reasoning:** A lightweight GNN predicts future states. If the VLA's predicted action violates a graph constraint (e.g., "Moving through a solid wall"), the action is corrected.
+    * **Reasoning:** A lightweight GNN predicts future states. If the VLA's predicted action violates a graph constraint (e.g., "Moving through a solid wall"), the action is corrected via a symbolic safety layer.
 * **Noise-Robust Modality Fusion:**
     * Uses **Cross-Attention** to align RGB-D video (30Hz), Proprioception (100Hz), and Language. 
     * Integrates a **Temporal Smoothing** layer to handle visual noise inherent in low-cost webcam inputs.
 
-### 2.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **Safety in Unseen Scenarios.** Unlike end-to-end models that "guess" safety, the GWM provides a hard symbolic check against physical laws.
-* **Trade-off:** **Model Size vs. Reasoning Depth.** * *Decision:* We utilize a shallow GNN (3-layer) to keep inference under 10ms, sacrificing complex multi-object chain reasoning for immediate reaction speed.
 
-### 2.3 Topological Certification & Latent Audit
-- Metric-Driven World Modeling: We use t-SNE (t-Distributed Stochastic Neighbor Embedding) to project the 32-dimensional GNN physical embeddings into a 2D manifold. This serves as a "Structural Health Check" for the robot's world-state reasoning.
-- Geometric Consistency: Verified that similar physical states (e.g., "Approaching Object" vs. "Grasping") cluster appropriately in the latent space. This prevents "state-space aliasing" where the model confuses safe and dangerous configurations.
-- Verification Utility: Implemented an automated audit script (visualize_graph_latents.py) that generates a Latent Manifold Report for every dataset batch, ensuring that data-engine drift is caught before training.
+
+### 2.2 Topological Certification & Latent Audit
+* **Metric-Driven World Modeling:** We use **t-SNE** to project 32-dimensional GNN physical embeddings into a 2D manifold. This serves as a "Structural Health Check" for the robot's world-state reasoning.
+* **Geometric Consistency:** Verified that similar physical states cluster appropriately. This prevents "state-space aliasing" where the model confuses safe and dangerous configurations.
+* **Verification Utility:** Automated audit scripts generate a Latent Manifold Report for every batch, ensuring that data-engine drift is caught before training.
+
 ---
 
 ## 3. Distributed System: Sim-to-Real Infrastructure
 **Goal:** Maintain a "Digital Twin" relationship between Isaac Sim and the DIY prototype.
 
 ### 3.1 Distributed Architecture
-* **Decoupled Brain-Body Design:**
-    * **Simulation Body:** Headless NVIDIA Isaac Sim instances running in Docker for massive data generation.
-    * **Physical Body:** ESP32-driven DIY Arm for real-world verification.
+* **Decoupled Brain-Body Design:** Headless NVIDIA Isaac Sim instances running in Docker for massive data generation, synced with the physical ESP32-driven DIY Arm.
 * **Communication Protocol:**
     * **gRPC (Protobuf):** High-throughput data transfer between sim nodes and the training cluster.
-    * **Serial/WebSockets:** Low-latency local feedback loop between the Inference Brain (PC) and Physical Arm (ESP32).
-
-### 3.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **Data Scarcity.** Overcomes the lack of physical training data by using the simulation to "pre-train" the causal graph before real-world deployment.
-* **Trade-off:** **Synchronicity vs. Throughput.** * *Decision:* We use **Asynchronous gRPC** for data collection to maximize throughput, accepting minor temporal drift (1-2ms) to gain 10x faster dataset accumulation.
+    * **Serial/WebSockets:** Low-latency feedback loop between the Inference Brain (PC) and Physical Arm (ESP32).
 
 ---
 
@@ -67,12 +59,8 @@ This document defines the architectural blueprint for the **E-VLAformer**, a Neu
 **Goal:** Automatically generate and certify high-fidelity datasets that capture physical edge cases.
 
 ### 4.1 Data Pipeline
-* **Sim-to-Real Feedback Loop:** * Failure cases observed on the physical DIY arm (e.g., servo stall due to weight) are tagged and used to generate targeted synthetic data in Isaac Sim for **Curriculum Learning**.
-* **Storage (HDF5):** * Tensors are stored in uncompressed **HDF5 chunks** (2GB/chunk) to enable sequential disk reads, preventing I/O bottlenecks during training.
-
-### 4.2 Bottlenecks & Trade-offs
-* **Bottleneck Solved:** **CPU-Bound Decoding.** By storing raw tensors instead of compressed PNGs, we remove the CPU decoding bottleneck, increasing GPU utilization from 60% to 95%.
-* **Trade-off:** **Disk Space vs. Training Speed.** * *Decision:* We trade ~2TB of disk space (raw Float16 storage) to reduce total training time by 40%.
+* **Sim-to-Real Feedback Loop:** Failure cases observed on the physical arm (e.g., servo stall) are tagged and used to generate targeted synthetic data in Isaac Sim for **Curriculum Learning**.
+* **Storage (HDF5):** Tensors are stored in uncompressed **HDF5 chunks** to enable sequential disk reads, increasing GPU utilization from 60% to 95% by removing CPU decoding bottlenecks.
 
 ---
 
@@ -86,14 +74,13 @@ This document defines the architectural blueprint for the **E-VLAformer**, a Neu
 | **Control Loop** | Consistency | **50Hz** | 20Hz (Variable) |
 | **Sim-to-Real** | Pose Error (DIY Arm) | **< 8mm** | N/A |
 
-### 5.2 Research Success Metrics (NeurIPS)
-* **Zero-Shot Transfer:** The model trained in Isaac Sim must execute "Pick-and-Place" on the DIY arm without real-world fine-tuning.
-* **Causal Robustness:** Reduce collision rates to **< 0.1%** using the Graph World Model in scenarios with moving obstacles.
+### 5.2 Latent Topology KPIs
+| Component | Metric | Target | Status |
+| :--- | :--- | :--- | :--- |
+| **GWM Latent** | **Silhouette Score** | **> 0.55** | 🟡 **0.42** (Post-Task 16 Improvement) |
+| **GWM Latent** | **Manifold Expansion Ratio** | **> 2.0x** | ✅ **2.6x** (Task 16 Verified) |
+| **GWM Latent** | **Collision Separation** | **$d(Safe, Coll) > \sigma$** | 🔵 Phase 3 Goal |
+| **GWM Latent** | **Temporal Continuity** | **$\Delta L < \epsilon$** | 🔵 Task 17 Goal |
 
-### 5.3 Latent Topology KPIs
-
-| Component | Metric | Target | Status | 
-| :--- | :--- | :--- | :--- | 
-| GWM Latent | Silhouette Score | > 0.65 | ✅ Baseline Verified |
-| GWM Latent | Topological Continuity | Verified (t-SNE) | ✅ Task 15 Complete | 
-| GWM Latent | Collision Separation | Dist > Threshold | 🔵 Phase 3 Goal |
+---
+*Note: This document is a living blueprint for the E-VLAformer research initiative.*

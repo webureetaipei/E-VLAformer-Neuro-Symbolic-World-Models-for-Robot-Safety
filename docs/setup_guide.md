@@ -342,7 +342,7 @@ Fused Multimodal Embedding: torch.Size([1, 256, 512])
 
 ✅ Task 14 SUCCESS: Multimodal alignment and cross-attention verified.
 
-## Task 15: Latent Space Visualization Setup (Task 15)
+## 15. Latent Space Visualization Setup (Task 15)
 
 ### 1. Additional Dependencies
 Task 15 requires scikit-learn for manifold learning and seaborn for high-fidelity scientific plotting.
@@ -368,3 +368,40 @@ python -m src.utils.visualize_graph_latents
 **Expected Output:**
 - Console: You should see 🔄 Processing X samples... followed by 📉 Computing t-SNE....
 - Artifact: A file named gnn_latent_clusters.png will be generated in docs/reports/.
+
+## 16. Supervised Contrastive Training (Task 16)
+
+This guide details the implementation of the **Supervised Contrastive Learning** pipeline. This process transforms the GNN from a random feature extractor into a physical world model capable of distinguishing between "Safe" and "Collision" states.
+
+---
+
+### 1. Environment & Dependencies
+Ensure your "Graph AI" stack is installed in your WSL2/Conda environment:
+
+```bash
+# Core Machine Learning
+pip install torch torchvision torchaudio
+# Graph Neural Networks
+pip install torch-geometric
+# Data Handling
+pip install h5py
+```
+
+### 2. Training Strategy
+
+Unlike standard classification, we use InfoNCE (Information Noise Contrastive Estimation) to shape the latent manifold.
+
+- Positive Pairs: Successive frames in a "Safe" trajectory should be pulled together.
+
+- Negative Pairs: A "Safe" state and a "Collision" state must be pushed apart.
+
+- Objective: Maximize the Manifold Expansion Ratio to create clear safety boundaries.
+
+### 3. Execution Workflow
+Once the dependencies are verified, follow these steps to ground your model:
+
+- Initialize Weights: Ensure models/weights/ exists to store the .pth artifacts.
+
+- Run Trainer: Execute python src/models/train_gnn_contrastive.py.
+
+- Audit Topology: Run the t-SNE visualizer to verify the axis expansion from 150 to 400 units.
