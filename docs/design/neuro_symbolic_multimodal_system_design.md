@@ -42,12 +42,14 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 - **Latent Identity Mapping (Task 19):** Instead of distinct clusters for sight and memory, we enforced **Identity Collapse**. This ensures the manifold distance between a "Seen" object and a "Remembered" object is mathematically zero ($S = 0.00$).
 - **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich, non-collapsed representation of the object even during 100% occlusion.
 
-### 4.2 Proprioception & Action Loop (Tasks 21-24 Verified) ✅
-The action loop is now grounded in real-time physical feedback and synchronized multimodal inference:
+### 4.2 Proprioception & Action Loop (Tasks 21-25 Verified) ✅
+The action loop is now grounded in real-time physical feedback and supervised expert intelligence:
 - **Normalization:** Raw joint angles ($\pm 90^\circ$) are mapped to the $[-1, 1]$ unit range (Task 22).
 - **Denoising:** Integrated a **Low-Pass Alpha Filter ($\alpha=0.7$)** to eliminate simulation jitter.
-- **Language Grounding:** Utilizes a **768 → 512 Projection Layer** to align DistilRoBERTa instructions with the policy manifold (Task 23).
+- **Language Grounding:** Utilizes a **768 → 512 Projection Layer** to align semantic instructions with the policy manifold (Task 23).
 - **Synchronized Inference:** The **Inference Engine** orchestrates the 32-dim GNN, 4-dim Proprioception, and 512-dim Language streams into a unified **548-dim fusion vector** for the Policy Head (Task 24).
+- **Behavioral Cloning Pipeline:** Certified the `BCTrainer` gradient path, enabling supervised optimization of the policy head by mapping 548-dim fusion vectors to expert joint deltas ($\Delta \theta$) (Task 25).
+
 
 ### 4.3 Action Correction Loop
 1. **Prediction:** The VLA proposes a raw action $A_{raw}$.
@@ -72,8 +74,9 @@ The action loop is now grounded in real-time physical feedback and synchronized 
 - [x] **Proprioception Handler:** Real-time Joint Normalization (Task 22) ✅ 
 - [x] **Language Grounding:** Text Instruction Embedding (Task 23) ✅ 
 - [x] **Inference Engine:** Multimodal Sync & Live Control (Task 24) ✅ 
-    - *Outcome:* Established first end-to-end "pixels-to-actions" pipeline via 548-dim fusion.
-- [ ] **Behavioral Cloning:** Expert Trajectory Training (Task 25) 🚀 *ACTIVE*
+- [x] **Behavioral Cloning:** Expert Trajectory Training (Task 25) ✅ 
+    - *Outcome:* Certified functional gradient path for 548-dim fusion optimization.
+- [ ] **Expert Data Harvesting:** Isaac Sim Trajectory Recording (Task 26) 🚀 *ACTIVE*
 
 ---
 *Generated: 2026-02-13 | E-VLAformer Research Lab*

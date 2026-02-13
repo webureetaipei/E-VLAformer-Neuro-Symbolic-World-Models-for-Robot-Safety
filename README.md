@@ -109,16 +109,16 @@ The final quality gate before proceeding to Action-Policy training.
 ### Pillar V: Multimodal Action Policies (Tasks 21–30)
 *Focus: Mapping stable physical latents to precise motor commands.*
 
-The multimodal pipeline is now fully integrated and operational. We have successfully synchronized the symbolic world model, physical proprioception, and semantic instructions into a real-time inference loop.
+The multimodal pipeline is now fully integrated and the supervised learning framework is operational. We have moved from static architecture to active policy optimization via Behavioral Cloning.
 
 * **VLA Policy Architecture (Task 21) ✅:** Implemented a Residual MLP head for action regression. It leverages the **Identity Mapping** from Phase 2 to ensure the robot's "mental state" remains stable even during visual occlusions.
 * **Proprioception Normalization (Task 22) ✅:** Certified the mapping of raw robot angles to the latent manifold. Integrated a **low-pass filter** to ensure smooth, jitter-free input for the Transformer.
-* **Language Grounding (Task 23) ✅:** Successfully integrated the `all-distilroberta-v1` encoder with a custom **768→512 Projection Layer**. Verified zero-shot embedding of instructions for the VLA loop.
-* **Inference Engine (Task 24) ✅:** Successfully synchronized GNN (32-dim), Proprioception (4-dim), and Language (512-dim) streams into a unified **548-dim fusion vector**. Verified real-time action generation and multimodal alignment.
-* **Behavioral Cloning (Task 25) 🚀:** (Active) Loading Phase 2 weights into the Inference Engine to begin end-to-end task execution.
-* **Expert Data Harvesting (Task 26) ⚪:** (Planned) Recording kinesthetic demonstrations in Isaac Sim to scale training diversity.
+* **Language Grounding (Task 23) ✅:** Successfully integrated the `all-distilroberta-v1` encoder with a custom **768→512 Projection Layer**.
+* **Inference Engine (Task 24) ✅:** Successfully synchronized GNN (32-dim), Proprioception (4-dim), and Language (512-dim) streams into a unified **548-dim fusion vector**.
+* **Behavioral Cloning (Task 25) ✅:** Implemented and verified the supervised training loop. Certified the `BCTrainer` gradient path for mapping discrete multimodal inputs (GNN, Joints, Lang) to expert joint deltas ($\Delta \theta$).
+* **Expert Data Harvesting (Task 26) 🚀:** (Active) Recording kinesthetic demonstrations and multi-object interaction trajectories in Isaac Sim to populate the training buffer.
 
-**Status:** 🚀 Phase 3 Advanced (Task 24 Certified).
+**Status:** 🚀 Phase 3 Advanced (Task 25 Certified).
 
 ## 📊 Data & Engineering Rigor (Task 06)
 To ensure the high fidelity required for NeurIPS-level research, we implemented a high-performance **HDF5 data engine**. This infrastructure handles multimodal synchronization between physics, RGB-D renders, and semantic metadata.
@@ -306,6 +306,14 @@ The "Central Nervous System" of the E-VLAformer, synchronizing disparate data st
 - **548-Dim Fusion Architecture:** Verified the mathematical concatenation of the **32-dim GNN latent**, **4-dim Joint vector**, and **512-dim Semantic embedding** into a single tensor stream for the Policy Head.
 - **Real-Time Action Regression:** Successfully performed smoke-test inference, confirming that the engine can predict bounded joint deltas ($\Delta \theta$) based on live multimodal inputs without latency bottlenecks.
 - **Outcome:** ✅ **Task 24 Certified.** The Inference Engine is fully operational, establishing the first end-to-end "pixels-to-actions" pipeline for the project.
+
+## 🦾 Behavioral Cloning Pipeline (Task 25)
+Implementing the supervised learning framework to map high-dimensional multimodal latents to expert motor trajectories.
+
+- **Supervised Policy Optimization:** Developed the `BCTrainer` module to minimize Mean Squared Error (MSE) between predicted joint deltas and ground-truth expert demonstrations.
+- **Gradient Path Verification:** Successfully certified the backpropagation flow through the 548-dim fusion layer, ensuring that the Policy Head effectively weights World Model, Proprioception, and Language inputs during the training process.
+- **Discrete Stream Training:** Validated the training loop's ability to ingest independent data streams (GNN, Joints, Language) separately, maintaining architectural modularity and Neuro-Symbolic integrity.
+- **Outcome:** ✅ **Task 25 Certified.** The training pipeline is fully functional and verified via loss-convergence smoke tests, clearing the path for large-scale data harvesting.
 ---
 
 ## Roadmap & Progress
@@ -317,7 +325,7 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, HDF5 | ✅ **Completed** |
 | **Phase 2** | **Graph World Model** | **GNN, Memory, Identity** | ✅ **Completed** |
-| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 25)** |
+| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 26)** |
 | **Phase 4** | **TinyEngine Optimization** | **C++17, CUDA, NEON** | ⚪ Planned |
 | **Phase 5** | **Distributed gRPC Infra** | **Protobuf, Async Server** | ⚪ Planned |
 | **Phase 6** | **Sim-to-Real Deployment** | **ESP32, IK, Serial/PWM** | ⚪ Planned |

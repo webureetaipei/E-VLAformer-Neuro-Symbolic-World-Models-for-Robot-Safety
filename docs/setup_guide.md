@@ -603,3 +603,32 @@ export PYTHONPATH=$PYTHONPATH:.
 # Execute Inference Engine Verification
 python src/vla/inference_engine.py
 ```
+## 25. Behavioral Cloning Pipeline (Task 25)
+This task implements the supervised learning framework (BC) required to map the 548-dimensional multimodal input space to expert-level motor trajectories.
+
+### 1. Implementation: BC Trainer
+Verify or create the training orchestrator in `src/vla/bc_trainer.py`. This module handles the backpropagation logic and ensures that the **GNN**, **Proprioception**, and **Language** streams are correctly weighted during optimization.
+
+### 2. Execute Gradient Path Verification
+Run the trainer in "Smoke Test" mode to certify that the `MSELoss` is calculating correctly and that the model weights are capable of updating across the multimodal fusion layers.
+
+```bash
+# Activate Phase 3 Environment
+conda activate evla
+
+# Set PYTHONPATH to project root
+export PYTHONPATH=$PYTHONPATH:.
+
+# Execute BC Training Verification
+python src/vla/bc_trainer.py
+```
+
+### 3. Expected Verification Output
+
+🛠️ Testing Task 25: Behavioral Cloning Pipeline...
+✅ Policy Head initialized with keyword arguments.
+🏋️ BC Trainer Initialized on cuda (or cpu)
+
+--- Task 25: Behavioral Cloning Verification ---
+Initial Training Loss: 0.842109 (values will vary)
+✅ SUCCESS: BC Training Loop verified with discrete multimodal inputs.

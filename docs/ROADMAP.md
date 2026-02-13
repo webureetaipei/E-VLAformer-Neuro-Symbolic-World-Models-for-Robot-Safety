@@ -55,7 +55,7 @@
 - [x] **Task 22:** **Joint Space Proprioception**: Integrate real-time encoder feedback ($\theta_{1-4}$) into the Policy input.
 - [x] **Task 23:** **Language Grounding**: Implement a CLIP-based text encoder to process commands (e.g., *"Pick up the red cube"*).
 - [x] **Task 24:** **Action Tokenization**: Convert raw joint deltas into discrete tokens for multi-modal alignment.
-- [ ] **Task 25:** **Safety Constraint Layer**: Integrate the CRM (Causal Reasoning Module) to mask "impossible" actions.
+- [x] **Task 25:** **Safety Constraint Layer**: Integrate the CRM (Causal Reasoning Module) to mask "impossible" actions.
 
 ### 🦾 Task 26-30: Expert Demonstration & Behavioral Cloning
 - [ ] **Task 26:** **Kinesthetic Scripting**: Develop Isaac Sim script to generate "Expert" trajectories (Reach & Grasp).

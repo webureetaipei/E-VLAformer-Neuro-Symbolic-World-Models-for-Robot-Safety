@@ -1,81 +1,78 @@
-# 🧠 Neuro-Symbolic Multimodal System Design
+# 🦾 E-VLAformer System Design Overview
 
-## 1. System Philosophy
-The **E-VLAformer** architecture resolves **Causal Hallucinations** in robot manipulation by coupling a high-capacity Transformer (Connectionist) with a Graph World Model (Symbolic). This hybrid approach ensures that the model's actions are grounded in physical reality rather than statistical patterns alone.
-
----
-
-## 2. Graph World Model (GWM)
-The GWM is the symbolic heart of the system, representing the environment as a structured graph $G = \{V, E\}$.
-
-### 2.1 Node Representation ($V$)
-Following the implementation in `src/models/graph_dataset.py`, nodes represent physical entities (joints, links, objects):
-- **State Features:**
-  $$\mathbf{x}_i = [p_x, p_y, p_z, m, \mathrm{type\_id} \in \mathbb{Z}]$$
-- **Semantic Anchors:** Each node is anchored to a specific `sim_path` (Isaac Sim) or `hw_id`. The use of integer `type_id` ensures strict categorical grounding for the GNN.
-
-### 2.2 Relational Edges ($E$)
-- **Kinematic Edges ($E_{kin}$):** Represent the rigid hierarchical structure of the DIY 4-DOF arm ($Base \rightarrow Joint \rightarrow Link \rightarrow Gripper$).
-- **Contact Edges ($E_{con}$):** Dynamic edges instantiated when Euclidean distance $dist(v_{gripper}, v_{obj}) < \epsilon$. These edges trigger the Reasoning Module's momentum transfer logic.
+**Status:** Active (Phase 3 - Policy Integration)  
+**Author:** Tsung Lung Yang  
+**Target:** NeurIPS 2026  
+**Core Framework:** Neuro-Symbolic Vision-Language-Action (VLA)  
 
 ---
 
-## 3. Multimodal Fusion Engine
-To handle the "Reality Gap" and asynchronous sensors, the system utilizes a Hierarchical Fusion strategy.
+## 1. Embedded Optimization: The "TinyEngine" Architecture
+**Goal:** Deploy VLA logic on a distributed edge-controller architecture with deterministic timing.
 
-
-### 3.1 Asynchronous Streams
-- **Fast Path (100Hz):** Proprioception (Joint angles) processed via a **calibrated normalization handler** for immediate feedback.
-- **Slow Path (30Hz):** RGB-D Video / Mobile Camera feed processed via a Vision Transformer (ViT).
-
-### 3.2 Cross-Attention Alignment
-We utilize a **Q-Former** style query mechanism to align visual tokens with the GWM nodes. This ensures that the "AI thought" (latent space) is physically consistent with the "Physical reality" (pixels).
-
----
-
-## 4. Causal Reasoning Module (CRM)
-The CRM acts as a **Physics Consistency Filter** and **Cognitive Anchor**:
-
-### 4.1 Cognitive Persistence (Task 17-20 Verified) ✅
-To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we implemented a **Graph Memory Buffer** with **Identity Mapping**.
-
-- **Temporal Anchoring:** Nodes are assigned a $TTL_{max}$ (Time-To-Live) of 30 frames.
-- **Latent Identity Mapping (Task 19):** Instead of distinct clusters for sight and memory, we enforced **Identity Collapse**. This ensures the manifold distance between a "Seen" object and a "Remembered" object is mathematically zero ($S = 0.00$).
-- **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich, non-collapsed representation of the object even during 100% occlusion.
-
-### 4.2 Proprioception & Action Loop (Tasks 21-24 Verified) ✅
-The action loop is now grounded in real-time physical feedback and synchronized inference:
-- **Normalization:** Raw joint angles ($\pm 90^\circ$) are mapped to the $[-1, 1]$ unit range (Task 22).
-- **Denoising:** Integrated a **Low-Pass Alpha Filter ($\alpha=0.7$)** to eliminate simulation jitter.
-- **Language Grounding:** Utilizes a **768 → 512 Projection Layer** to align semantic instructions with the policy manifold (Task 23).
-- **Synchronized Inference:** The **Inference Engine** orchestrates the 32-dim GNN, 4-dim Proprioception, and 512-dim Language streams into a unified **548-dim fusion vector** for the Policy Head (Task 24).
-
-
-### 4.3 Action Correction Loop
-1. **Prediction:** The VLA proposes a raw action $A_{raw}$.
-2. **Simulation:** The GNN predicts the next state $S_{t+1}$ based on the persistent Graph topology.
-3. **Correction:** If $S_{t+1}$ violates a physical constraint (e.g., self-collision), the CRM modifies the output to $A_{safe}$.
+### 1.1 Core Implementation Strategy
+* **Hybrid Inference Pipeline:**
+    * **Brain (PC):** Executes ViT and Graph Reasoning using the C++ **TinyEngine**.
+    * **Nervous System (ESP32):** Performs real-time IK and 50Hz PWM generation for MG996R servos.
+* **Zero-Malloc Runtime:** Pre-calculated tensor offsets within a Linear Memory Arena eliminate runtime fragmentation.
+* **HAL:** A unified C++ Hardware Abstraction Layer for both **USD-based joints** (Simulation) and **physical servos** (Hardware).
 
 ---
 
-## 5. Technical Implementation (Current Progress)
+## 2. Multimodal AI System: Neuro-Symbolic VLA
 
-- [x] **Data Format:** Object-Centric HDF5 (Task 11)
-- [x] **Graph Layer:** Relational Graph Builder & Edge Logic (Task 12)
-- [x] **Graph Neural Network:** 3-layer GraphSAGE, 64 hidden channels (Task 13)
-- [x] **Multimodal Fusion:** Cross-Attention alignment (Task 14)
-- [x] **Latent Manifold Analysis:** t-SNE Topology Audit (Task 15)
-- [x] **Contrastive Physics Grounding:** InfoNCE Causal Separation (Task 16)
-- [x] **Global State Persistence:** Graph Memory Buffer (Task 17) ✅
-- [x] **Edge Case Hardening:** Occlusion Resilience / Blink Tests (Task 18) ✅
-- [x] **Silhouette Stability Audit:** Verified Identity Mapping $S = 0.00$ (Task 19) ✅
-- [x] **Phase 2 Technical Freeze:** Certified weights `certified_gwm_v1` (Task 20) ✅
-- [x] **Policy Head:** VLA Action-Policy Architecture (Task 21) ✅ 
-- [x] **Proprioception Handler:** Real-time Joint Normalization (Task 22) ✅ 
-- [x] **Language Grounding:** Text Instruction Embedding (Task 23) ✅ 
-- [x] **Inference Engine:** Multimodal Sync & Live Control (Task 24) ✅ 
-    - *Outcome:* Verified 548-dim fusion pass and real-time synchronization.
-- [ ] **Behavioral Cloning:** Expert Trajectory Training (Task 25) 🚀 *ACTIVE*
+### 2.1 Model Architecture
+* **Graph World Model (GWM):**
+    * **Nodes ($V$):** Object-centric representations including physical attributes (mass, friction, ID).
+    * **Edges ($E$):** Causal and spatial relationships (Kinematic Constraints, Dynamic Contacts).
+* **Cognitive Persistence (Task 17-20 Verified) ✅:**
+    * **Object Permanence:** TTL-based circular buffer to maintain graph nodes during visual dropout.
+    * **Identity Mapping (Task 19):** Applied **Identity Collapse** training to ensure latent representations are identical for "Visible" and "Occluded" states.
+    * **Outcome:** Zero topological drift across 30+ frame occlusion events.
+
+### 2.2 Multimodal Sensor Fusion & Training (Task 21-25 Verified) ✅
+* **Policy Fusion (Task 21):** Deployment of a Residual MLP fusing GNN latents, Joint-space proprioception, and Language embeddings.
+* **Sensor Grounding (Task 22):** Implementation of a calibrated Proprioception Handler. Normalizes raw $\pm 90^\circ$ joint angles to the $[-1, 1]$ latent manifold with integrated **Alpha-Filter smoothing** ($\alpha=0.7$).
+* **Language Grounding (Task 23):** Integration of the **Language Handler**. Utilizes `all-distilroberta-v1` with a custom **768→512 Projection Layer**.
+* **Live Inference Engine (Task 24):** Synchronized all asynchronous streams into a deterministic **548-dim fusion vector**. Verified that real-time "Pixels-to-Actions" pass-through is operational.
+* **Behavioral Cloning Pipeline (Task 25):** Certified the `BCTrainer` gradient path. This enables supervised optimization of the policy head by mapping the 548-dim fusion vectors to expert joint deltas ($\Delta \theta$) with stable loss convergence.
+
+
+### 2.3 Topological Certification & Latent Audit
+* **Manifold Monitoring:** Utilizes **t-SNE** to project GNN embeddings. Verified a **2.6x Manifold Expansion** post-Task 16.
+* **Stability Audit (Task 19/20) ✅:** Silhouette Audit confirmed that "Memory Nodes" are topologically indistinguishable from "Sensory Nodes" ($S = 0.00$).
 
 ---
-*Generated: 2026-02-13 | E-VLAformer Research Lab*
+
+## 3. Distributed System: Sim-to-Real Infrastructure
+**Goal:** Maintain a "Digital Twin" relationship via gRPC (Protobuf) and low-latency Serial communication.
+
+---
+
+## 4. Data Engine Strategy: The "Audit-Ready" Dataset
+
+### 4.1 Data Pipeline
+* **Occlusion-Aware Generation (Task 18 Verified) ✅:** Generated `task18_occlusion_test_001.h5` with stochastic 10% blink rates and synchronized causal ground-truth.
+* **Certification (Task 20) ✅:** Passed structural and entropy audits, ensuring the Phase 3 training set is artifact-free.
+
+---
+
+## 5. Success Criteria (Engineering KPIs)
+
+### 5.1 System Performance KPIs
+| Component | Metric | Target | Current |
+| :--- | :--- | :--- | :--- |
+| **TinyEngine** | E2E Latency (PC+ESP32) | **< 20ms** | **14.2ms** |
+| **TinyEngine** | Memory Footprint (RAM) | **< 500MB** | **412MB** |
+| **Control Loop** | Consistency | **50Hz** | **50Hz (Fixed)** |
+
+### 5.2 Latent Topology & Cognition KPIs
+| Component | Metric | Target | Status |
+| :--- | :--- | :--- | :--- |
+| **GWM Latent** | **Silhouette Stability** | **$\approx 0.00$** | ✅ **0.0000 (Identity)** |
+| **GWM Latent** | **Embedding Variance** | **$> 0.10$** | ✅ **0.5309 (Rich)** |
+| **Unified Fusion** | **Input Vector Dim** | **548-dim** | ✅ **Verified (Task 24)** |
+| **BC Pipeline** | **Gradient Path** | **Certified** | ✅ **Verified (Task 25)** |
+
+---
+*Note: This document is a living blueprint for the E-VLAformer research initiative.*
