@@ -51,7 +51,7 @@
 *Status: 🚀 Initiating | Focus: Decision Making & Trajectory Generation*
 
 ### 🧠 Task 21-25: Policy Architecture
-- [ ] **Task 21:** Implement the **VLA Transformer Head**: Multi-layer MLP/Transformer for action prediction.
+- [x] **Task 21:** Implement the **VLA Transformer Head**: Multi-layer MLP/Transformer for action prediction.
 - [ ] **Task 22:** **Joint Space Proprioception**: Integrate real-time encoder feedback ($\theta_{1-4}$) into the Policy input.
 - [ ] **Task 23:** **Language Grounding**: Implement a CLIP-based text encoder to process commands (e.g., *"Pick up the red cube"*).
 - [ ] **Task 24:** **Action Tokenization**: Convert raw joint deltas into discrete tokens for multi-modal alignment.

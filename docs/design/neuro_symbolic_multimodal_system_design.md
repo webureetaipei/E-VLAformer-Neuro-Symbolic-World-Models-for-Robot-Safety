@@ -24,7 +24,6 @@ Following the implementation in `src/models/graph_dataset.py`, nodes represent p
 To handle the "Reality Gap" and asynchronous sensors, the system utilizes a Hierarchical Fusion strategy.
 
 
-
 ### 3.1 Asynchronous Streams
 - **Fast Path (100Hz):** Proprioception (Joint angles) processed via a linear encoder for immediate feedback.
 - **Slow Path (30Hz):** RGB-D Video / Mobile Camera feed processed via a Vision Transformer (ViT).
@@ -45,7 +44,6 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 - **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich, non-collapsed representation of the object even during 100% occlusion.
 
 
-
 ### 4.2 Action Correction Loop
 1. **Prediction:** The VLA proposes a raw action $A_{raw}$.
 2. **Simulation:** The GNN predicts the next state $S_{t+1}$ based on the persistent Graph topology.
@@ -53,7 +51,7 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 
 ---
 
-## 5. Technical Implementation (Phase 2 Certification)
+## 5. Technical Implementation (Current Progress)
 
 - [x] **Data Format:** Object-Centric HDF5 (Task 11)
 - [x] **Graph Layer:** Relational Graph Builder & Edge Logic (Task 12)
@@ -61,11 +59,13 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 - [x] **Multimodal Fusion:** Cross-Attention alignment (Task 14)
 - [x] **Latent Manifold Analysis:** t-SNE Topology Audit (Task 15)
 - [x] **Contrastive Physics Grounding:** InfoNCE Causal Separation (Task 16)
-- [x] **Global State Persistence:** Graph Memory Buffer (Task 17) 
-- [x] **Edge Case Hardening:** Occlusion Resilience / Blink Tests (Task 18) 
+- [x] **Global State Persistence:** Graph Memory Buffer (Task 17) ✅
+- [x] **Edge Case Hardening:** Occlusion Resilience / Blink Tests (Task 18) ✅
 - [x] **Silhouette Stability Audit:** Verified Identity Mapping $S = 0.00$ (Task 19) ✅
 - [x] **Phase 2 Technical Freeze:** Certified weights `certified_gwm_v1` (Task 20) ✅
-- [ ] **Policy Head:** VLA Action-Policy Architecture (Task 21) 🚀 *INITIATING*
+- [x] **Policy Head:** VLA Action-Policy Architecture (Task 21) ✅ 
+    - *Outcome:* Verified 548-dim fusion (GNN + Joint + Lang) with Residual MLP.
+- [ ] **Proprioception Handler:** Real-time Joint Normalization (Task 22) 🚀 *ACTIVE*
 
 ---
 *Generated: 2026-02-13 | E-VLAformer Research Lab*

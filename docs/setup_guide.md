@@ -496,3 +496,26 @@ Verify that the Hardened Dataset (task18_occlusion_test_001.h5) is indexed and r
 python src/utils/audit_dataset.py --file data/raw/task18_occlusion_test_001.h5
 ```
 Note: Once archived, certified_gwm_v1.pth becomes the frozen backbone for all Phase 3 Action Policy tasks.
+
+---
+
+
+## 21. VLA Policy Head Architecture (Task 21)
+This task initializes the neural bridge between the stable World Model (Phase 2) and the robotic actuators.
+
+### 1. Implementation: Policy Head**
+Create or verify the core architecture in `src/models/vla_policy_head.py`. This Residual MLP is designed to fuse multimodal latents into normalized joint deltas.
+
+### 2. Verify Architecture & Forward Pass**
+Run the integration smoke test to ensure the dimensions for GNN (32), Proprioception (4), and Language (512) are correctly aligned.
+
+```bash
+# Activate Phase 3 Environment
+conda activate evla
+
+# Set PYTHONPATH to project root
+export PYTHONPATH=$PYTHONPATH:.
+
+# Execute Smoke Test
+python src/models/vla_policy_head.py
+```
