@@ -540,3 +540,46 @@ export PYTHONPATH=$PYTHONPATH:.
 # Execute Proprioception Verification
 python src/vla/proprioception_handler.py
 ```
+
+## 23. Language Grounding (Task 23)
+This task integrates the high-level command layer, converting natural language instructions into the 512-dimensional latent space required for the VLA Policy Head.
+
+### 1. Install NLP Dependencies
+Ensure the `sentence-transformers` library is installed within the `evla` environment to support the DistilRoBERTa backbone.
+
+```bash
+conda activate evla
+pip install sentence-transformers
+```
+
+### 2. Implementation: Language Handler
+Create or verify the handler in src/vla/language_handler.py. This module includes the 768 → 512 Projection Layer to ensure dimensionality alignment with the Task 21 Policy Head.
+
+### 3. Verify Semantic Alignment
+Run the verification script to certify that text strings are successfully mapped to 512-dimensional unit tensors.
+```bash
+# Set PYTHONPATH to project root
+export PYTHONPATH=$PYTHONPATH:.
+
+# Execute Language Verification
+python src/vla/language_handler.py
+```
+### 4. Expected Verification Output
+```bash
+🧠 Loading Language Encoder: all-distilroberta-v1...
+📏 Projection Layer Initialized: 768 -> 512
+
+--- Task 23: Aligned Language Verification ---
+Command: 'Pick up the red cube'
+Final Embedding Shape: [1, 512]
+✅ DIMENSION ALIGNMENT SUCCESS: True
+```
+
+### 5. Multimodal Integration Audit
+- Model Backbone: all-distilroberta-v1 (Lightweight/Fast).
+
+- Output Dimension: 512-dim (Projected).
+
+- Fusion Check: Aligned for 548-dim concatenation (32 GNN + 4 Joint + 512 Lang).
+
+Note: The projection layer weights are currently initialized via nn.Linear. These will be fine-tuned during Phase 3 Behavioral Cloning to align semantic meaning with physical trajectories.

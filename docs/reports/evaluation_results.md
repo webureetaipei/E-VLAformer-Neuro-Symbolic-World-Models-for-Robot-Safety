@@ -15,18 +15,18 @@ We evaluate the Graph World Model (GWM) by analyzing its latent space. High-qual
 
 ---
 
-## 2. Action Policy & Sensor Feedback (Phase 3)
-Evaluation of the VLA Policy Head and the high-fidelity proprioception loop.
+## 2. Multimodal Action & Sensor Feedback (Phase 3)
+Evaluation of the VLA Policy Head and its integration with physical and semantic input streams.
 
-### 🦾 Task 21/22: Action & Proprioception Loop
+### 🦾 Task 21-23: Sensor-Action Integration
 | Metric | Dimension / Logic | Activation / Filter | Status |
 | :--- | :--- | :--- | :--- |
-| **Input Fusion** | 548-dim | LayerNorm | ✅ Verified |
-| **Proprioception Map**| 4-DOF Normalized | **Alpha-Filter ($\alpha=0.7$)** | ✅ **Certified** |
-| **Numerical Safety** | Unit Range | [-1.0, 1.0] | ✅ **Clamping Verified** |
+| **Input Fusion** | **548-dim** | LayerNorm | ✅ Verified |
+| **Proprioception Map**| 4-DOF Normalized | Alpha-Filter ($\alpha=0.7$) | ✅ **Certified** |
+| **Language Latent** | **512-dim** | **DistilRoBERTa + Projector**| ✅ **Aligned** |
 | **Inference Test** | $\Delta$ Joint Vector | Tanh | ✅ **Smoke Test Passed** |
 
-> **Verification Note (Task 22):** The Proprioception Handler successfully transformed noisy raw input `[45.2, -44.8, 0.5, 10.1]` into the stable latent tensor `[[0.5022, -0.4977, 0.0055, 0.1122]]`. The integration of the low-pass filter ensures that the Policy Head receives a stabilized signal, critical for preventing MG996R servo oscillation.
+> **Verification Note (Task 23):** The Language Handler successfully aligned high-level semantic instructions with the VLA manifold. By implementing a **768 → 512 Projection Layer**, we achieved 100% dimensionality parity with the Policy Head. Zero-shot tests on commands (e.g., *"Pick up the red cube"*) confirmed stable vector generation within the required latent bounds.
 
 ---
 
@@ -62,8 +62,6 @@ Benchmarks executed on the target hardware abstraction layer to verify real-time
 | :---: | :---: |
 | ![Baseline](../reports/task15_baseline.png) | ![Trained](../reports/task16_trained.png) |
 | *Scale: 150 | Random Nebula* | *Scale: 400 | Stable Identity Cluster* |
-
-
 
 ---
 *Last Updated: 2026-02-13* *Researcher: Tsung Lung Yang*

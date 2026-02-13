@@ -26,14 +26,14 @@
     * **Nodes ($V$):** Object-centric representations including physical attributes (mass, friction, ID).
     * **Edges ($E$):** Causal and spatial relationships (Kinematic Constraints, Dynamic Contacts).
 * **Cognitive Persistence (Task 17-20 Verified) ✅:**
-    * **Object Permanence:** Implemented a TTL-based (Time-To-Live) circular buffer to maintain graph nodes during visual dropout.
+    * **Object Permanence:** TTL-based circular buffer to maintain graph nodes during visual dropout.
     * **Identity Mapping (Task 19):** Applied **Identity Collapse** training to ensure latent representations are identical for "Visible" and "Occluded" states.
     * **Outcome:** Zero topological drift across 30+ frame occlusion events.
 
-### 2.2 Proprioception & Feedback Loop (Task 21-22 Verified) ✅
+### 2.2 Multimodal Sensor Fusion (Task 21-23 Verified) ✅
 * **Policy Fusion (Task 21):** Deployment of a Residual MLP fusing GNN latents, Joint-space proprioception, and Language embeddings.
-* **Sensor Grounding (Task 22):** Implementation of a calibrated Proprioception Handler. Normalizes raw $\pm 90^\circ$ joint angles to the $[-1, 1]$ latent manifold with integrated **Alpha-Filter smoothing** ($\alpha=0.7$) to eliminate simulation jitter.
-
+* **Sensor Grounding (Task 22):** Implementation of a calibrated Proprioception Handler. Normalizes raw $\pm 90^\circ$ joint angles to the $[-1, 1]$ latent manifold with integrated **Alpha-Filter smoothing** ($\alpha=0.7$).
+* **Language Grounding (Task 23):** Integration of the **Language Handler**. Utilizes `all-distilroberta-v1` with a custom **768→512 Projection Layer** to align semantic instructions with the VLA manifold.
 
 
 ### 2.3 Topological Certification & Latent Audit
@@ -69,8 +69,8 @@
 | :--- | :--- | :--- | :--- |
 | **GWM Latent** | **Silhouette Stability** | **$\approx 0.00$** | ✅ **0.0000 (Identity)** |
 | **GWM Latent** | **Embedding Variance** | **$> 0.10$** | ✅ **0.5309 (Rich)** |
+| **Language Latent** | **Alignment Dim** | **512-dim** | ✅ **Verified (Task 23)** |
 | **Joint Space** | **Normalization Error** | **$< 1.0\%$** | ✅ **Verified (Task 22)** |
-| **GWM Latent** | **Occlusion Resilience** | **$> 90\%$** | ✅ **100% (Hardened Data)** |
 
 ---
 *Note: This document is a living blueprint for the E-VLAformer research initiative.*

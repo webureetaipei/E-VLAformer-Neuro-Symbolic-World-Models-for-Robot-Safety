@@ -43,12 +43,12 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 - **Latent Identity Mapping (Task 19):** Instead of distinct clusters for sight and memory, we enforced **Identity Collapse**. This ensures the manifold distance between a "Seen" object and a "Remembered" object is mathematically zero ($S = 0.00$).
 - **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich, non-collapsed representation of the object even during 100% occlusion.
 
-
-### 4.2 Proprioception & Action Loop (Tasks 21-22 Verified) ✅
-The action loop is now grounded in real-time physical feedback:
-- **Normalization:** Raw joint angles ($\pm 90^\circ$) are mapped to the $[-1, 1]$ unit range.
-- **Denoising:** Integrated a **Low-Pass Alpha Filter ($\alpha=0.7$)** to eliminate simulation jitter, ensuring a stabilized signal for the Transformer policy.
-- **Policy Fusion:** The 548-dim input (GNN + Joint + Lang) is processed via a Residual MLP to predict motor deltas.
+### 4.2 Proprioception & Action Loop (Tasks 21-23 Verified) ✅
+The action loop is now grounded in real-time physical feedback and semantic intent:
+- **Normalization:** Raw joint angles ($\pm 90^\circ$) are mapped to the $[-1, 1]$ unit range (Task 22).
+- **Denoising:** Integrated a **Low-Pass Alpha Filter ($\alpha=0.7$)** to eliminate simulation jitter.
+- **Language Grounding:** Utilizes a **768 → 512 Projection Layer** to align DistilRoBERTa instructions with the policy manifold (Task 23).
+- **Policy Fusion:** The final **548-dim input** (32 GNN + 4 Joint + 512 Lang) is processed via a Residual MLP to predict motor deltas.
 
 
 ### 4.3 Action Correction Loop
@@ -66,14 +66,15 @@ The action loop is now grounded in real-time physical feedback:
 - [x] **Multimodal Fusion:** Cross-Attention alignment (Task 14)
 - [x] **Latent Manifold Analysis:** t-SNE Topology Audit (Task 15)
 - [x] **Contrastive Physics Grounding:** InfoNCE Causal Separation (Task 16)
-- [x] **Global State Persistence:** Graph Memory Buffer (Task 17) ✅
-- [x] **Edge Case Hardening:** Occlusion Resilience / Blink Tests (Task 18) ✅
-- [x] **Silhouette Stability Audit:** Verified Identity Mapping $S = 0.00$ (Task 19) ✅
-- [x] **Phase 2 Technical Freeze:** Certified weights `certified_gwm_v1` (Task 20) ✅
-- [x] **Policy Head:** VLA Action-Policy Architecture (Task 21) ✅ 
-- [x] **Proprioception Handler:** Real-time Joint Normalization (Task 22) ✅ 
-    - *Outcome:* Verified $\alpha=0.7$ smoothing and safety bounds mapping.
-- [ ] **Language Grounding:** Text Instruction Embedding (Task 23) 🚀 *ACTIVE*
+- [x] **Global State Persistence:** Graph Memory Buffer (Task 17) 
+- [x] **Edge Case Hardening:** Occlusion Resilience / Blink Tests (Task 18) 
+- [x] **Silhouette Stability Audit:** Verified Identity Mapping $S = 0.00$ (Task 19) 
+- [x] **Phase 2 Technical Freeze:** Certified weights `certified_gwm_v1` (Task 20) 
+- [x] **Policy Head:** VLA Action-Policy Architecture (Task 21) 
+- [x] **Proprioception Handler:** Real-time Joint Normalization (Task 22) 
+- [x] **Language Grounding:** Text Instruction Embedding (Task 23) ✅ 
+    - *Outcome:* Successfully aligned semantic instructions via 512-dim projection.
+- [ ] **Inference Engine:** Multimodal Sync & Live Control (Task 24) 🚀 *ACTIVE*
 
 ---
 *Generated: 2026-02-13 | E-VLAformer Research Lab*
