@@ -583,3 +583,23 @@ Final Embedding Shape: [1, 512]
 - Fusion Check: Aligned for 548-dim concatenation (32 GNN + 4 Joint + 512 Lang).
 
 Note: The projection layer weights are currently initialized via nn.Linear. These will be fine-tuned during Phase 3 Behavioral Cloning to align semantic meaning with physical trajectories.
+
+## 24. Multimodal Inference Engine (Task 24)
+This task establishes the "Central Nervous System" of the E-VLAformer by synchronizing the frozen World Model, the physical sensor handlers, and the semantic instruction encoders into a single execution loop.
+
+### 1. Implementation: Inference Engine**
+Verify or create the master orchestrator in `src/vla/inference_engine.py`. This script handles the asynchronous data streams and performs the final **548-dimensional fusion** before passing the tensor to the Policy Head.
+
+### 2. Execute Multimodal Synchronization Test**
+Run the engine in "Smoke Test" mode to certify that all handlers (GNN, Proprioception, and Language) are communicating correctly without dimensionality mismatches.
+
+```bash
+# Activate Phase 3 Environment
+conda activate evla
+
+# Set PYTHONPATH to project root
+export PYTHONPATH=$PYTHONPATH:.
+
+# Execute Inference Engine Verification
+python src/vla/inference_engine.py
+```
