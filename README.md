@@ -202,7 +202,7 @@ The visualization below confirms the successful integration of the Graph-to-Late
 
 **Status:** ✅ Task 15 Pipeline Verified & Visualized.
 
-## 🧠 Task 16: Supervised Contrastive Training
+## 🧠 Supervised Contrastive Training (Task 16)
 
 In this stage, we transitioned from a randomly initialized Graph Neural Network (GNN) to a **Neuro-Symbolic World Model** capable of understanding physical states. We utilized **Supervised Contrastive Learning (InfoNCE)** to "ground" the robot's latent space in physical reality.
 
