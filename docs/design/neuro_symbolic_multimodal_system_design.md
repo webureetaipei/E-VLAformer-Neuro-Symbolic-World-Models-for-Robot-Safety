@@ -25,7 +25,7 @@ To handle the "Reality Gap" and asynchronous sensors, the system utilizes a Hier
 
 
 ### 3.1 Asynchronous Streams
-- **Fast Path (100Hz):** Proprioception (Joint angles) processed via a linear encoder for immediate feedback.
+- **Fast Path (100Hz):** Proprioception (Joint angles) processed via a **calibrated normalization handler** for immediate feedback.
 - **Slow Path (30Hz):** RGB-D Video / Mobile Camera feed processed via a Vision Transformer (ViT).
 
 ### 3.2 Cross-Attention Alignment
@@ -44,7 +44,14 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 - **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich, non-collapsed representation of the object even during 100% occlusion.
 
 
-### 4.2 Action Correction Loop
+### 4.2 Proprioception & Action Loop (Tasks 21-22 Verified) ✅
+The action loop is now grounded in real-time physical feedback:
+- **Normalization:** Raw joint angles ($\pm 90^\circ$) are mapped to the $[-1, 1]$ unit range.
+- **Denoising:** Integrated a **Low-Pass Alpha Filter ($\alpha=0.7$)** to eliminate simulation jitter, ensuring a stabilized signal for the Transformer policy.
+- **Policy Fusion:** The 548-dim input (GNN + Joint + Lang) is processed via a Residual MLP to predict motor deltas.
+
+
+### 4.3 Action Correction Loop
 1. **Prediction:** The VLA proposes a raw action $A_{raw}$.
 2. **Simulation:** The GNN predicts the next state $S_{t+1}$ based on the persistent Graph topology.
 3. **Correction:** If $S_{t+1}$ violates a physical constraint (e.g., self-collision), the CRM modifies the output to $A_{safe}$.
@@ -64,8 +71,9 @@ To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we i
 - [x] **Silhouette Stability Audit:** Verified Identity Mapping $S = 0.00$ (Task 19) ✅
 - [x] **Phase 2 Technical Freeze:** Certified weights `certified_gwm_v1` (Task 20) ✅
 - [x] **Policy Head:** VLA Action-Policy Architecture (Task 21) ✅ 
-    - *Outcome:* Verified 548-dim fusion (GNN + Joint + Lang) with Residual MLP.
-- [ ] **Proprioception Handler:** Real-time Joint Normalization (Task 22) 🚀 *ACTIVE*
+- [x] **Proprioception Handler:** Real-time Joint Normalization (Task 22) ✅ 
+    - *Outcome:* Verified $\alpha=0.7$ smoothing and safety bounds mapping.
+- [ ] **Language Grounding:** Text Instruction Embedding (Task 23) 🚀 *ACTIVE*
 
 ---
 *Generated: 2026-02-13 | E-VLAformer Research Lab*

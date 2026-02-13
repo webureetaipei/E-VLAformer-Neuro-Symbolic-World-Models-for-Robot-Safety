@@ -109,11 +109,12 @@ The final quality gate before proceeding to Action-Policy training.
 ### Pillar V: Multimodal Action Policies (Tasks 21–30)
 *Focus: Mapping stable physical latents to precise motor commands.*
 
-We are currently bridging the gap between "Understanding" and "Acting." The Policy Head integrates the frozen GWM with language instructions and joint-space proprioception.
+We have successfully closed the "Sense-Act" loop. The Policy Head now integrates the frozen GWM with language instructions and real-time joint-space proprioception.
 
-* **VLA Policy Architecture (Task 21):** Implemented a Residual MLP head for action regression. It leverages the **Identity Mapping** from Phase 2 to ensure the robot's "mental state" remains stable even during visual occlusions.
-* **Proprioception Normalization (Task 22):** (Active) Aligning raw robot angles with the latent manifold to prevent gradient explosion.
-* **Expert Data Harvesting (Task 26):** (Planned) Recording kinesthetic demonstrations in Isaac Sim to begin Behavioral Cloning.
+* **VLA Policy Architecture (Task 21) ✅:** Implemented a Residual MLP head for action regression. It leverages the **Identity Mapping** from Phase 2 to ensure the robot's "mental state" remains stable even during visual occlusions.
+* **Proprioception Normalization (Task 22) ✅:** Certified the mapping of raw robot angles to the latent manifold. Integrated a **low-pass filter** to ensure smooth, jitter-free input for the Transformer.
+* **Language Grounding (Task 23) 🚀:** (Active) Embedding natural language commands (e.g., CLIP/BERT) into the action loop.
+* **Expert Data Harvesting (Task 26) ⚪:** (Planned) Recording kinesthetic demonstrations in Isaac Sim to begin Behavioral Cloning.
 
 **Status:** 🚀 Phase 3 Initiated (Task 21 Certified).
 
@@ -279,6 +280,14 @@ Phase 3 initiates the "Brain-to-Body" mapping by implementing the Action-Policy 
 - **Residual MLP Design:** Implemented a deep reasoning head with GELU activations and skip-connections to ensure stable gradient flow during long-horizon manipulation.
 - **Action Regression:** Verified the regression of 4-DOF joint deltas ($\Delta \theta$), bounded by Tanh activation to ensure safe motor scaling for MG996R servos.
 - **Outcome:** ✅ **Task 21 Certified.** The model successfully predicts valid motor commands based on stable latent identities from Phase 2.
+
+## 🦾 Joint Space Proprioception (Task 22)
+Closing the "Sense-Act" loop by grounding the model in the robot's own physical state.
+
+- **Normalization & Mapping:** Developed a high-precision handler to map raw Isaac Sim joint angles ($\pm 90^\circ$) into the normalized $[-1, 1]$ latent manifold required by the Policy Head.
+- **Sensor Denoising:** Integrated a **Low-Pass Alpha Filter** to smooth simulation jitter, ensuring that the VLA input remains stable and prevents erratic motor "chatter."
+- **Numerical Safety:** Verified strict range clamping and unit-testing to prevent gradient explosion in the Transformer layers during high-frequency control loops.
+- **Outcome:** ✅ **Task 22 Certified.** The Proprioception Handler successfully generates verified 4-dimensional joint tensors, enabling the robot to "feel" its own position in real-time.
 ---
 
 ## Roadmap & Progress
@@ -290,7 +299,7 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, HDF5 | ✅ **Completed** |
 | **Phase 2** | **Graph World Model** | **GNN, Memory, Identity** | ✅ **Completed** |
-| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 22)** |
+| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 23)** |
 | **Phase 4** | **TinyEngine Optimization** | **C++17, CUDA, NEON** | ⚪ Planned |
 | **Phase 5** | **Distributed gRPC Infra** | **Protobuf, Async Server** | ⚪ Planned |
 | **Phase 6** | **Sim-to-Real Deployment** | **ESP32, IK, Serial/PWM** | ⚪ Planned |

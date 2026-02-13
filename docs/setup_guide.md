@@ -519,3 +519,24 @@ export PYTHONPATH=$PYTHONPATH:.
 # Execute Smoke Test
 python src/models/vla_policy_head.py
 ```
+
+
+## 22. Joint Space Proprioception (Task 22)
+This task establishes the mathematical bridge between raw sensor data (Degrees/Radians) and the normalized latent space required for Transformer-based policy inference.
+
+### 1. Implementation: Proprioception Handler**
+Create or verify the handler in `src/vla/proprioception_handler.py`. This module implements a low-pass alpha filter to prevent simulation jitter from destabilizing the Policy Head.
+
+### 2. Verify Normalization & Safety Clamping**
+Run the verification script to ensure raw joint angles are mapped correctly to the $[-1, 1]$ range and that the smoothing logic is active.
+
+```bash
+# Activate Phase 3 Environment
+conda activate evla
+
+# Set PYTHONPATH to project root
+export PYTHONPATH=$PYTHONPATH:.
+
+# Execute Proprioception Verification
+python src/vla/proprioception_handler.py
+```

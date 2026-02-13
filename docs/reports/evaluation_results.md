@@ -15,17 +15,18 @@ We evaluate the Graph World Model (GWM) by analyzing its latent space. High-qual
 
 ---
 
-## 2. Action Policy Performance (Phase 3 Targets)
-Evaluation of the VLA Policy Head's ability to map multimodal latents to motor commands.
+## 2. Action Policy & Sensor Feedback (Phase 3)
+Evaluation of the VLA Policy Head and the high-fidelity proprioception loop.
 
-### 🦾 Task 21 Action Verification
-| Metric | Dimension | Activation | Status |
+### 🦾 Task 21/22: Action & Proprioception Loop
+| Metric | Dimension / Logic | Activation / Filter | Status |
 | :--- | :--- | :--- | :--- |
 | **Input Fusion** | 548-dim | LayerNorm | ✅ Verified |
-| **Action Output** | 4-DOF ($\Delta$) | Tanh | ✅ Verified |
-| **Inference Test** | Unit Vector | [-1.0, 1.0] | ✅ **Smoke Test Passed** |
+| **Proprioception Map**| 4-DOF Normalized | **Alpha-Filter ($\alpha=0.7$)** | ✅ **Certified** |
+| **Numerical Safety** | Unit Range | [-1.0, 1.0] | ✅ **Clamping Verified** |
+| **Inference Test** | $\Delta$ Joint Vector | Tanh | ✅ **Smoke Test Passed** |
 
-> **Verification Note (Task 21):** The Policy Head successfully regressed a sample action vector: `[[-0.1171, -0.2274, -0.6294, 0.2765]]`. This confirms the architecture can process frozen GWM latents and output safe, bounded motor deltas for the 4-DOF hardware.
+> **Verification Note (Task 22):** The Proprioception Handler successfully transformed noisy raw input `[45.2, -44.8, 0.5, 10.1]` into the stable latent tensor `[[0.5022, -0.4977, 0.0055, 0.1122]]`. The integration of the low-pass filter ensures that the Policy Head receives a stabilized signal, critical for preventing MG996R servo oscillation.
 
 ---
 
@@ -35,7 +36,7 @@ Evaluation of the VLA Policy Head's ability to map multimodal latents to motor c
 | Metric | Target | Result | Status |
 | :--- | :--- | :--- | :--- |
 | **Persistence Duration** | $> 500\text{ frames}$ | **1,000+ Frames** | ✅ Logic Verified |
-| **Latent Drift** | $< 5.0\%$ | **0.0%** | ✅ **Task 19 Verified** |
+| **Latent Drift** | $< 5.0 \%$ | **0.0%** | ✅ **Task 19 Verified** |
 | **Edge Case Resilience** | Hardened | **10% Blink Rate** | ✅ Task 18 Complete |
 | **Phase 2 Freeze** | Certified | **certified_gwm_v1** | ✅ **Task 20 Locked** |
 
@@ -61,6 +62,8 @@ Benchmarks executed on the target hardware abstraction layer to verify real-time
 | :---: | :---: |
 | ![Baseline](../reports/task15_baseline.png) | ![Trained](../reports/task16_trained.png) |
 | *Scale: 150 | Random Nebula* | *Scale: 400 | Stable Identity Cluster* |
+
+
 
 ---
 *Last Updated: 2026-02-13* *Researcher: Tsung Lung Yang*
