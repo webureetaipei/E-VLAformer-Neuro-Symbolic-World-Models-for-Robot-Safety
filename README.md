@@ -72,6 +72,40 @@ A distributed data generation pipeline using **NVIDIA Isaac Sim** & **gRPC**. Sc
 
 ---
 
+## 🔬 Research & Engineering Pillars (Tasks 06–20)
+
+### Pillar I: High-Fidelity Data Engineering (Tasks 06–10)
+To ensure the data quality required for NeurIPS-level research, we developed a high-performance HDF5 Data Engine. This infrastructure serves as the single source of truth for multimodal synchronization.
+
+- Multimodal Sync (Task 06): Synchronous logging of RGB-D, physics states, and semantic metadata.
+
+- Causal Grounding (Task 07): Automated injection of "Collision" and "Proximity" flags based on real-time PhysX contact sensors.
+
+- Entropy Scaling (Tasks 08-10): Implementation of Domain Randomization (DR) and automated dataset auditing to certify high-variance data for generalized training.
+
+### Pillar II: Relational World Modeling (Tasks 11–15)
+
+We transition from raw pixel-based learning to an Object-Centric Relational Graph, allowing the model to reason about physical entities and their interactions.
+
+- Graph Construction (Tasks 11-12): Translation of USD prims into a relational graph $G=\{V,E\}$ with Kinematic and Dynamic edges.
+- Inductive Reasoning (Tasks 13-14): Deployment of a 3-layer GraphSAGE processor and Cross-Attention Fusion to align physical latents with visual tokens.
+- Topological Baseline (Task 15): Establishing a latent space baseline via t-SNE manifold analysis, identifying a fragmented ~150-unit scale distribution.
+
+### Pillar III: Physics Grounding & Cognitive Persistence (Tasks 16–18)
+
+In this phase, we "hardened" the latent space to survive sensory failure and physical occlusion.
+
+- Supervised Contrastive Learning (Task 16): Utilizing InfoNCE loss to stretch the manifold (400-unit expansion), mathematically separating "Safe" from "Collision" topologies.
+- Cognitive Persistence (Task 17): Implementation of the Graph Memory Buffer (TTL-based), enabling 1,000+ frame stable state retention.
+- Occlusion Resilience (Task 18): "Blink Test" integration in Isaac Sim, training the model to trust its internal memory during 100% visual dropout.
+
+### Pillar IV: Latent Stability Certification (Tasks 19–20)
+
+The final quality gate before proceeding to Action-Policy training.
+
+- Identity Mapping Audit (Task 19): Achieving a 0.0000 Silhouette Coefficient. This proves that the robot’s "mental representation" of an object is identical whether the object is visible or hidden.
+- Technical Freeze (Task 20): Certification of embedding richness ($\sigma^2 = 0.53$) and the formal locking of the certified_gwm_v1.pth weights.
+
 ## 📊 Data & Engineering Rigor (Task 06)
 To ensure the high fidelity required for NeurIPS-level research, we implemented a high-performance **HDF5 data engine**. This infrastructure handles multimodal synchronization between physics, RGB-D renders, and semantic metadata.
 
