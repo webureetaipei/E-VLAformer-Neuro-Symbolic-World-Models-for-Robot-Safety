@@ -457,3 +457,42 @@ Run the simulator-free logic test to ensure the stochastic occlusion math is wor
 ```bash
 python src/utils/test_blink_generator.py
 ```
+## 🔬 Model Validation & Certification (Phase 2 Freeze)
+
+### Task 19: Silhouette Latent Audit (Identity Stability)
+This audit calculates the mathematical overlap between "Visible" and "Occluded" states to ensure the memory buffer is stable.
+
+**1. Run the Real-Weight Audit**
+Ensure you have trained the GNN with Identity Mapping (Task 16.1) before running this. This script loads `gnn_contrastive_beta.pth` and interrogates the latent manifold.
+```bash
+export PYTHONPATH=$PYTHONPATH:.
+python src/utils/silhouette_audit.py
+```
+#### 2. Interpret the Result
+- Score ~0.00: ✅ Success (Identity Preservation). The model perceives the object identically regardless of visibility.
+
+- Score > 0.50: 🟡 Marginal (Clustered). The model distinguishes sight from memory (possible drift).
+
+- Score < 0.00: ❌ Fail. The manifold is collapsing or corrupted.
+
+### Task 20: Phase 2 Technical Review & Performance Freeze 
+Before moving to the Action Policy (Phase 3), we must certify the Graph World Model.
+
+#### 1. Verify Weight Integrity
+Check the variance of the trained embeddings to ensure the "Brain" is producing rich features:
+```bash
+python -c "import torch; from src.models.gnn_processor import EVLAGNNProcessor; model = EVLAGNNProcessor(5, 64, 32); model.load_state_dict(torch.load('models/weights/gnn_contrastive_beta.pth')); x = torch.randn(1, 5); out = model(x, torch.tensor([[0],[0]])); print('Variance:', torch.var(out).item())"
+```
+Requirement: Variance > 0.1.
+####  2. Lock Model Weights
+Archive the certified weights to prevent accidental overwriting during Phase 3:
+```bash
+mkdir -p models/archive/phase2_freeze
+cp models/weights/gnn_contrastive_beta.pth models/archive/phase2_freeze/certified_gwm_v1.pth
+```
+#### 3. Dataset Certification
+Verify that the Hardened Dataset (task18_occlusion_test_001.h5) is indexed and ready for VLA Training:
+```bash
+python src/utils/audit_dataset.py --file data/raw/task18_occlusion_test_001.h5
+```
+Note: Once archived, certified_gwm_v1.pth becomes the frozen backbone for all Phase 3 Action Policy tasks.
