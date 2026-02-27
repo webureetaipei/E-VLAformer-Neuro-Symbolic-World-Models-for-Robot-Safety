@@ -56,7 +56,7 @@ Solves "Causal Hallucination" by injecting a **Graph Neural Network (GNN)** into
     - ✅ **Task 27 (Domain Randomization):** Verified environmental entropy and movement auditing.
     - 🚀 **Task 28 (Advanced Manipulation):** Implementing Multi-Phase State Machines for True Pick-and-Place.
 
-### 2. Cognitive Persistence (Task 17 & 27 Verified)
+### 3. Cognitive Persistence (Task 17 & 27 Verified)
 Unlike standard VLAs that suffer from "out-of-sight, out-of-mind" hallucinations, E-VLAformer maintains a **Global State Persistence** layer.
 - **Object Permanence:** Successfully implemented a TTL-based (Time-To-Live) **Graph Memory Buffer**.
 - **The Lid Test:** Verified that the GWM retains node attributes (position, mass, ID) even when $P(\text{visibility}) = 0$ due to physical occlusion.
@@ -65,19 +65,19 @@ Unlike standard VLAs that suffer from "out-of-sight, out-of-mind" hallucinations
 
 
 
-### 3. TinyEngine (C++ Inference)
+### 4. TinyEngine (C++ Inference)
 A custom bare-metal runtime designed for **Jetson Orin/Edge Devices**.
 * **Zero-Malloc:** Static memory arena eliminates fragmentation.
 * **Int8 PTQ:** <10ms latency via NEON-optimized GEMM kernels.
 * **Zero-Dependency:** No PyTorch/ONNX runtime overhead.
 
-### 4. Long-Horizon Causal Manipulation
+### 5. Long-Horizon Causal Manipulation
 Unified Reasoning + Manipulation capabilities. The system handles complex, multi-stage "Desktop Sequence" tasks, proving the model can maintain long-horizon causal memory through graph-based state persistence.
 
 - **Logic Persistence:** Maintains high-fidelity memory of object attributes (e.g., hidden mass, friction coefficients) across 1,000+ frames of interaction.
 - **Sequential Integrity:** Executes multi-step workflows—such as Unstack → Relocate → Re-stack—where the Graph World Model enforces physical consistency.
 
-### 5. Sim-to-Real Infrastructure
+### 6. Sim-to-Real Infrastructure
 A distributed data generation pipeline using **NVIDIA Isaac Sim** & **gRPC**. Scales to 1,000+ hours of synthetic data generation using heterogeneous compute clusters.
 
 - **Data Scaling:** Capable of generating 1,000+ hours of synthetic data with automated causal labeling.
@@ -332,10 +332,13 @@ Implementing the supervised learning framework to map high-dimensional multimoda
 ## 🦾 Synthetic Data Harvesting Engine (Task 26)
 Establishing the visual-action data generation pipeline in Isaac Sim to capture expert robot trajectories for the training buffer.
 
-| Data Harvesting Execution |
-| :---: |
-| [![▶️ Watch Task 26 Demo](docs/images/task26_thumbnail.png)](./docs/videos/task26.mp4) |
-| *Robot arm executing synchronized pushing trajectory in Isaac Sim 4.5.0.* |
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/b065ffbd-eea9-4853-8e2c-f27acf583c6b" width="100%" controls>
+    Your browser does not support the video tag.
+  </video>
+  <br>
+  <em>Robot arm executing synchronized pushing trajectory in Isaac Sim 4.5.0.</em>
+</p>
 
 - **Renderer Synchronization:** Solved the "frozen time" and "black void" rendering bugs by strictly synchronizing the GPU drawing loop (`render=True`) with the underlying physics steps via Isaac Sim's Replicator API.
 - **Trajectory Capture:** Recorded reliable single-object interaction ("Pushing" trajectories) to verify that the camera captures continuous robot motion synced perfectly with joint state logs.
