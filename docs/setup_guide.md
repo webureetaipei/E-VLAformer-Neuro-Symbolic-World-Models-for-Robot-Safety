@@ -632,3 +632,50 @@ python src/vla/bc_trainer.py
 --- Task 25: Behavioral Cloning Verification ---
 Initial Training Loss: 0.842109 (values will vary)
 ✅ SUCCESS: BC Training Loop verified with discrete multimodal inputs.
+
+## 26. Synthetic Data Harvesting Engine (Task 26)
+This task establishes the high-speed data generation pipeline in Isaac Sim, ensuring that visual renders are perfectly synchronized with robot joint states in the HDF5 buffer.
+
+### 1. Implementation: Data Harvester
+Verify the harvester logic in `src/data/expert_harvester.py`. This module manages the `SimulationApp` lifecycle and coordinates the Replicator API to capture non-frozen RGB frames.
+
+### 2. Execute Harvesting Verification
+Run the harvester to capture a sample episode. This test confirms that the renderer is correctly drawing the robot's motion and saving it to the expert buffer.
+
+```bash
+# Execute Expert Data Harvesting
+python src/data/expert_harvester.py
+```
+### 3. Expected Verification Output
+
+🛠️ Testing Task 26: Data Harvesting Engine...
+--- 
+🎬 Starting Episode 0 ---
+
+📊 DATA AUDIT: Max Pixel = 255
+
+💾 Successfully written episode_0 to Disk.
+
+✅ SUCCESS: Data Engine verified. 150 frames captured and synchronized.
+
+## 27. Domain Randomization & Quality Audit (Task 27)
+This task certifies the dataset for AI training by enforcing environmental entropy and mathematically auditing the "Action Quality" of the captured sequences.
+
+### 1. Implementation: Randomization & Audit
+Ensure the randomize_scene and pixel_audit functions are active. These prevent overfitting by varying colors/positions and prevent "Empty Data" by checking for pixel movement.
+### 2. Execute Entropy & Audit Verification
+Run the randomized harvesting script. The system will automatically perform a Mean Absolute Difference (MAD) test to confirm the robot actually moved.
+```bash
+# Execute Randomized Harvesting with Auto-Audit
+python src/data/expert_harvester_randomized.py
+```
+### 3. Expected Verification Output
+--- 🎬 Starting Episode 0 | Target: [0.45, -0.12, 0.05] ---
+
+📊 DATA AUDIT: Max Pixel = 255
+
+✅ MOVEMENT VERIFIED: Pixel change score = 11.25
+
+💾 Successfully written episode_0 to Disk.
+
+✅ SUCCESS: Task 27 Certified. Dataset audited for high-entropy movement.

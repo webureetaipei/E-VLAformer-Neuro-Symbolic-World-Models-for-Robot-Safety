@@ -8,6 +8,8 @@ The **E-VLAformer** architecture resolves **Causal Hallucinations** in robot man
 ## 2. Graph World Model (GWM)
 The GWM is the symbolic heart of the system, representing the environment as a structured graph $G = \{V, E\}$.
 
+
+
 ### 2.1 Node Representation ($V$)
 Following the implementation in `src/models/graph_dataset.py`, nodes represent physical entities (joints, links, objects):
 - **State Features:**
@@ -39,16 +41,16 @@ The CRM acts as a **Physics Consistency Filter** and **Cognitive Anchor**:
 To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we implemented a **Graph Memory Buffer** with **Identity Mapping**.
 
 - **Temporal Anchoring:** Nodes are assigned a $TTL_{max}$ (Time-To-Live) of 30 frames.
-- **Latent Identity Mapping (Task 19):** Instead of distinct clusters for sight and memory, we enforced **Identity Collapse**. This ensures the manifold distance between a "Seen" object and a "Remembered" object is mathematically zero ($S = 0.00$).
-- **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich, non-collapsed representation of the object even during 100% occlusion.
+- **Latent Identity Mapping (Task 19):** We enforced **Identity Collapse** to ensure the manifold distance between a "Seen" object and a "Remembered" object is mathematically zero ($S = 0.00$).
+- **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich representation of the object even during 100% occlusion.
 
-### 4.2 Proprioception & Action Loop (Tasks 21-25 Verified) ✅
-The action loop is now grounded in real-time physical feedback and supervised expert intelligence:
-- **Normalization:** Raw joint angles ($\pm 90^\circ$) are mapped to the $[-1, 1]$ unit range (Task 22).
-- **Denoising:** Integrated a **Low-Pass Alpha Filter ($\alpha=0.7$)** to eliminate simulation jitter.
-- **Language Grounding:** Utilizes a **768 → 512 Projection Layer** to align semantic instructions with the policy manifold (Task 23).
-- **Synchronized Inference:** The **Inference Engine** orchestrates the 32-dim GNN, 4-dim Proprioception, and 512-dim Language streams into a unified **548-dim fusion vector** for the Policy Head (Task 24).
-- **Behavioral Cloning Pipeline:** Certified the `BCTrainer` gradient path, enabling supervised optimization of the policy head by mapping 548-dim fusion vectors to expert joint deltas ($\Delta \theta$) (Task 25).
+### 4.2 Proprioception & Action Loop (Tasks 21-27 Verified) ✅
+The action loop is grounded in real-time physical feedback and high-entropy synthetic demonstrations:
+- **Normalization (Task 22):** Raw joint angles ($\pm 90^\circ$) mapped to the $[-1, 1]$ unit range.
+- **Language Grounding (Task 23):** Utilizes a **768 → 512 Projection Layer** to align semantic instructions.
+- **Synchronized Inference (Task 24):** Orchestrates GNN, Proprioception, and Language into a unified **548-dim fusion vector**.
+- **Data Harvesting (Task 26-27):** High-speed HDF5 engine with **Automated Movement Auditing** and **Domain Randomization** to ensure expert trajectories are verified and unfrozen.
+
 
 
 ### 4.3 Action Correction Loop
@@ -58,12 +60,10 @@ The action loop is now grounded in real-time physical feedback and supervised ex
 
 ---
 
-## 5. Technical Implementation (Current Progress)
+## 5. Technical Implementation (Progress Tracking)
 
 - [x] **Data Format:** Object-Centric HDF5 (Task 11)
-- [x] **Graph Layer:** Relational Graph Builder & Edge Logic (Task 12)
-- [x] **Graph Neural Network:** 3-layer GraphSAGE, 64 hidden channels (Task 13)
-- [x] **Multimodal Fusion:** Cross-Attention alignment (Task 14)
+- [x] **Graph Neural Network:** 3-layer GraphSAGE architecture (Task 13)
 - [x] **Latent Manifold Analysis:** t-SNE Topology Audit (Task 15)
 - [x] **Contrastive Physics Grounding:** InfoNCE Causal Separation (Task 16)
 - [x] **Global State Persistence:** Graph Memory Buffer (Task 17) ✅
@@ -72,11 +72,11 @@ The action loop is now grounded in real-time physical feedback and supervised ex
 - [x] **Phase 2 Technical Freeze:** Certified weights `certified_gwm_v1` (Task 20) ✅
 - [x] **Policy Head:** VLA Action-Policy Architecture (Task 21) ✅ 
 - [x] **Proprioception Handler:** Real-time Joint Normalization (Task 22) ✅ 
-- [x] **Language Grounding:** Text Instruction Embedding (Task 23) ✅ 
 - [x] **Inference Engine:** Multimodal Sync & Live Control (Task 24) ✅ 
-- [x] **Behavioral Cloning:** Expert Trajectory Training (Task 25) ✅ 
-    - *Outcome:* Certified functional gradient path for 548-dim fusion optimization.
-- [ ] **Expert Data Harvesting:** Isaac Sim Trajectory Recording (Task 26) 🚀 *ACTIVE*
+- [x] **Behavioral Cloning:** Expert Trajectory Trainer (Task 25) ✅ 
+- [x] **Expert Data Engine:** High-Speed Harvester (Task 26) ✅
+- [x] **Quality Audit:** Domain Randomization & Pixel MAD Test (Task 27) ✅
+- [ ] **Advanced Manipulation:** Multi-Phase Pick-and-Place Logic (Task 28) 🚀 *ACTIVE*
 
 ---
-*Generated: 2026-02-13 | E-VLAformer Research Lab*
+*Generated: 2026-02-27 | E-VLAformer Research Lab*

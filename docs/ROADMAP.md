@@ -58,24 +58,24 @@
 - [x] **Task 25:** **Safety Constraint Layer**: Integrate the CRM (Causal Reasoning Module) to mask "impossible" actions.
 
 ### 🦾 Task 26-30: Expert Demonstration & Behavioral Cloning
-- [ ] **Task 26:** **Kinesthetic Scripting**: Develop Isaac Sim script to generate "Expert" trajectories (Reach & Grasp).
-- [ ] **Task 27:** **Demonstration Harvesting**: Generate 500+ episodes of successful tasks with the Hardened GNN.
-- [ ] **Task 28:** **Behavioral Cloning (BC) Training**: Train the Policy Head to mimic expert joint trajectories using MSE/Cross-Entropy.
-- [ ] **Task 29:** **Rollout Testing**: Execute first autonomous simulation loop without hardcoded paths.
-- [ ] **Task 30:** **Success Rate Benchmarking**: Record autonomous KPI (Success Rate vs. Path Smoothness).
+- [x] **Task 26:** **Kinesthetic Scripting (Verified)**: Develop Isaac Sim script to generate "Expert" trajectories (Pushing/Reach).
+- [x] **Task 27:** **Demonstration Harvesting (Verified)**: Generate high-entropy episodes with Domain Randomization and Automated Movement Auditing.
+- [ ] **Task 28:** **Pick-and-Place State Machine**: Upgrade the controller to a Multi-Phase Logic (Hover -> Dive -> Grasp -> Lift -> Place).
+- [ ] **Task 29:** **Behavioral Cloning (BC) Training**: Train the Policy Head to mimic expert joint trajectories using MSE/Cross-Entropy.
+- [ ] **Task 30:** **Autonomous Rollout Testing**: Execute the first simulation loop without hardcoded paths, relying on the VLA Policy.
 
 ### 🧪 Task 31-35: Long-Horizon Reasoning
-- [ ] **Task 31:** **Multi-Stage Sequences**: Implement "Unstack → Move → Restack" causal workflows.
-- [ ] **Task 32:** **Graph-Guided Search**: Use the GNN to predict intermediate sub-goals for complex tasks.
-- [ ] **Task 33:** **Recovery Policies**: Train the model to "re-try" if the cube is dropped or grippers slip.
-- [ ] **Task 34:** **Hallucination Audit**: Verify the Policy doesn't "reach for shadows" during occlusion (Task 19 validation).
-- [ ] **Task 35:** **Hierarchical VLA**: Separate High-level "Intent" from Low-level "Joint Control."
+- [ ] **Task 31:** **Multi-Stage Sequences**: Implement "Unstack → Move → Restack" causal workflows using the Persistent GWM.
+- [ ] **Task 32:** **Graph-Guided Search**: Use the GNN to predict intermediate sub-goals for complex, multi-object tasks.
+- [ ] **Task 33:** **Recovery Policies**: Train the model to "re-try" or "re-acquire" if the cube is dropped or grippers slip.
+- [ ] **Task 34:** **Hallucination Audit**: Verify the Policy doesn't "reach for shadows" during occlusion (Task 19 Identity Validation).
+- [ ] **Task 35:** **Hierarchical VLA**: Formally separate High-level "Intent" from Low-level "Joint Control" streams.
 
 ### 🔬 Task 36-40: Optimization & Technical Freeze
-- [ ] **Task 36:** **Inference Latency Profile**: Measure End-to-End time from Pixel to PWM in Python.
-- [ ] **Task 37:** **Policy Quantization (PTQ)**: Prepare weights for Int8 conversion in TinyEngine.
-- [ ] **Task 38:** **Dataset Scaling**: Expand to 10,000+ synthetic episodes with diverse Domain Randomization.
-- [ ] **Task 39:** **Phase 3 Documentation**: Draft the "Methodology" section for the NeurIPS paper.
-- [ ] **Task 40:** **VLA Performance Freeze**: Lock the Action-Head architecture before Phase 4 (C++ Porting).
+- [ ] **Task 36:** **Inference Latency Profile**: Measure End-to-End time from Pixel input to PWM output in Python/WSL2.
+- [ ] **Task 37:** **Policy Quantization (PTQ)**: Prepare weights for Int8 conversion and TinyEngine (C++) compatibility.
+- [ ] **Task 38:** **Dataset Scaling**: Expand to 10,000+ synthetic episodes with extreme Domain Randomization (DR).
+- [ ] **Task 39:** **Phase 3 Documentation**: Draft the "Action Policy Methodology" section for the NeurIPS paper.
+- [ ] **Task 40:** **VLA Performance Freeze**: Lock the Action-Head architecture and weights before Phase 4 (Embedded Porting).
 ---
 *Note: This roadmap is a living document. We will check off tasks as we complete them.*

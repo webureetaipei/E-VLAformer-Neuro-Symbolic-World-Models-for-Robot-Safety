@@ -30,17 +30,14 @@
     * **Identity Mapping (Task 19):** Applied **Identity Collapse** training to ensure latent representations are identical for "Visible" and "Occluded" states.
     * **Outcome:** Zero topological drift across 30+ frame occlusion events.
 
-### 2.2 Multimodal Sensor Fusion & Training (Task 21-25 Verified) ✅
+### 2.2 Multimodal Sensor Fusion & Training (Task 21-27 Verified) ✅
 * **Policy Fusion (Task 21):** Deployment of a Residual MLP fusing GNN latents, Joint-space proprioception, and Language embeddings.
 * **Sensor Grounding (Task 22):** Implementation of a calibrated Proprioception Handler. Normalizes raw $\pm 90^\circ$ joint angles to the $[-1, 1]$ latent manifold with integrated **Alpha-Filter smoothing** ($\alpha=0.7$).
 * **Language Grounding (Task 23):** Integration of the **Language Handler**. Utilizes `all-distilroberta-v1` with a custom **768→512 Projection Layer**.
-* **Live Inference Engine (Task 24):** Synchronized all asynchronous streams into a deterministic **548-dim fusion vector**. Verified that real-time "Pixels-to-Actions" pass-through is operational.
-* **Behavioral Cloning Pipeline (Task 25):** Certified the `BCTrainer` gradient path. This enables supervised optimization of the policy head by mapping the 548-dim fusion vectors to expert joint deltas ($\Delta \theta$) with stable loss convergence.
-
-
-### 2.3 Topological Certification & Latent Audit
-* **Manifold Monitoring:** Utilizes **t-SNE** to project GNN embeddings. Verified a **2.6x Manifold Expansion** post-Task 16.
-* **Stability Audit (Task 19/20) ✅:** Silhouette Audit confirmed that "Memory Nodes" are topologically indistinguishable from "Sensory Nodes" ($S = 0.00$).
+* **Live Inference Engine (Task 24):** Synchronized all asynchronous streams into a deterministic **548-dim fusion vector**.
+* **Behavioral Cloning Pipeline (Task 25):** Certified the `BCTrainer` gradient path. Enables supervised optimization of the policy head by mapping 548-dim vectors to expert joint deltas ($\Delta \theta$).
+* **Data Harvesting Engine (Task 26) ✅:** Implementation of the high-speed HDF5 harvester. Fixed renderer synchronization to prevent frozen frames and black-screen artifacts.
+* **Domain Randomization (Task 27) ✅:** Verified environmental entropy (color/position) and integrated **Automated Movement Auditing** via Mean Absolute Difference (MAD) pixel analysis.
 
 ---
 
@@ -52,8 +49,9 @@
 ## 4. Data Engine Strategy: The "Audit-Ready" Dataset
 
 ### 4.1 Data Pipeline
-* **Occlusion-Aware Generation (Task 18 Verified) ✅:** Generated `task18_occlusion_test_001.h5` with stochastic 10% blink rates and synchronized causal ground-truth.
-* **Certification (Task 20) ✅:** Passed structural and entropy audits, ensuring the Phase 3 training set is artifact-free.
+* **Occlusion-Aware Generation (Task 18 Verified) ✅:** Generated `task18_occlusion_test_001.h5` with stochastic 10% blink rates.
+* **Movement Verification (Task 27 Verified) ✅:** Automated quality gate that rejects frozen simulation episodes by certifying a **Pixel Change Score > 0**.
+* **Time-Step Dilation:** Leverages custom engine overrides ($physics\_dt=1/15$) to capture lag-free, high-speed trajectories for expert demonstrations.
 
 ---
 
@@ -63,14 +61,14 @@
 | Component | Metric | Target | Current |
 | :--- | :--- | :--- | :--- |
 | **TinyEngine** | E2E Latency (PC+ESP32) | **< 20ms** | **14.2ms** |
-| **TinyEngine** | Memory Footprint (RAM) | **< 500MB** | **412MB** |
+| **Data Engine** | **Pixel Audit Status** | **Certified** | ✅ **MAD Verified (Task 27)** |
 | **Control Loop** | Consistency | **50Hz** | **50Hz (Fixed)** |
 
 ### 5.2 Latent Topology & Cognition KPIs
 | Component | Metric | Target | Status |
 | :--- | :--- | :--- | :--- |
 | **GWM Latent** | **Silhouette Stability** | **$\approx 0.00$** | ✅ **0.0000 (Identity)** |
-| **GWM Latent** | **Embedding Variance** | **$> 0.10$** | ✅ **0.5309 (Rich)** |
+| **Expert Data** | **Demonstration Quality** | **Unfrozen** | ✅ **Verified (Task 26)** |
 | **Unified Fusion** | **Input Vector Dim** | **548-dim** | ✅ **Verified (Task 24)** |
 | **BC Pipeline** | **Gradient Path** | **Certified** | ✅ **Verified (Task 25)** |
 
