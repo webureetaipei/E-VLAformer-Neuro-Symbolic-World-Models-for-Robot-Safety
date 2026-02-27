@@ -352,16 +352,6 @@ Establishing the visual-action data generation pipeline in Isaac Sim to capture 
 - **Format Optimization:** Ensured robust `uint8` image conversion and scaled the RGB sensor arrays to prevent data corruption or visual static before saving to the HDF5 archives.
 - **Outcome:** ✅ **Task 26 Certified.** The data engine successfully outputs high-fidelity, moving RGB frames directly mapped to robot joint actions.
 
-
-
-## 🎲 Domain Randomization & Quality Audit (Task 27)
-Scaling the data engine to generate diverse, high-entropy datasets to prevent the AI model from overfitting to specific visual features.
-
-- **Environment Variance:** Implemented episode-level randomization for object attributes (e.g., dynamic material colors) and spatial coordinates to enforce robust visual representation learning.
-- **Automated Movement Auditing:** Built a mathematical frame-differencing auditor (**Mean Absolute Difference**) that subtracts the first frame's pixels from the last frame's pixels. This guarantees that the HDF5 file contains true kinematic movement (Pixel Change Score > 0) and not a frozen graphics buffer.
-- **Time-Step Dilation:** Applied professional Action Repeat and custom engine overrides (`physics_dt=1/15`) to compress simulation time, allowing the system to capture rapid, lag-free trajectories without overloading the CPU/GPU.
-- **Outcome:** ✅ **Task 27 Certified.** The automated pipeline is fully functional, producing verified, high-speed, diverse HDF5 datasets ready for VLA policy training.
-
 ## 🎲 Domain Randomization & Quality Audit (Task 27)
 Scaling the data engine to generate diverse, high-entropy datasets to prevent the AI model from overfitting to specific visual features.
 
