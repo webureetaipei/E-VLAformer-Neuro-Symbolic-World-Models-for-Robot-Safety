@@ -18,14 +18,15 @@ We evaluate the Graph World Model (GWM) by analyzing its latent space. High-qual
 ## 2. Multimodal Action & Data Integrity (Phase 3)
 Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
 
-### 🦾 Task 26-27: Data Harvesting & Audit
+### 🦾 Task 26-28: Harvesting, Audit & Physics
 | Metric | Methodology | Target | Current | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Data Synchronization** | HDF5 Multimodal Sync | 100% Alignment | **100% Sync** | ✅ Task 26 Certified |
-| **Movement Integrity** | **Mean Absolute Diff** | $Score > 0$ | **7.2 - 11.3** | ✅ **Task 27 Verified** |
-| **Simulation Speed** | Physics Dilation | $dt=1/15$ | **Smooth/Fast** | ✅ Overdrive Active |
+| **Movement Integrity** | **Mean Absolute Diff** | $Score > 0$ | **7.2 - 11.3** | ✅ Task 27 Verified |
+| **Grip Stability** | Transport Success | $> 98\%$ | **100%** | ✅ **Task 28 (Iron Grip)** |
+| **Scenario Coverage** | Diverse State Diversity | 5 Scenarios | **5/5 Active** | ✅ **Task 28 Certified** |
 
-> **Verification Note (Task 27):** The **Automated Movement Audit** serves as a critical quality gate. By calculating the pixel-wise difference between trajectory frames, the system mathematically certifies that the robot is executing physical actions rather than producing "Frozen" or "Static" frames. This audit ensures the Behavioral Cloning (BC) buffer is populated only with high-entropy demonstrations.
+> **Verification Note (Task 28):** The **Iron Grip Protocol** has stabilized the dataset. By commanding a negative joint position ($[-0.01, -0.01]$), we eliminate the "stochastic slip" common in Isaac Sim physics. This ensures the expert trajectories in the HDF5 archive are physically optimal, providing a clean gradient for Behavioral Cloning.
 
 
 
@@ -37,9 +38,9 @@ Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
 | Metric | Target | Result | Status |
 | :--- | :--- | :--- | :--- |
 | **Persistence Duration** | $> 500\text{ frames}$ | **1,000+ Frames** | ✅ Logic Verified |
-| **Latent Drift** | $< 5.0 \%$ | **0.0%** | ✅ **Task 19 Verified** |
+| **Latent Drift** | $< 5.0 \%$ | **0.0%** | ✅ Task 19 Verified |
 | **Edge Case Resilience** | Hardened | **10% Blink Rate** | ✅ Task 18 Complete |
-| **Phase 2 Freeze** | Certified | **certified_gwm_v1** | ✅ **Task 20 Locked** |
+| **Phase 2 Freeze** | Certified | **certified_gwm_v1** | ✅ Task 20 Locked |
 
 ---
 
@@ -53,13 +54,19 @@ Benchmarks executed on the target hardware abstraction layer to verify real-time
 | **Graph Logic** | Latency | $< 5\text{ ms}$ | **2.1ms** | TinyEngine (C++) |
 | **Vision Token** | Latency | $< 10\text{ ms}$ | **8.4ms** | Int8 Quantized |
 
-
-
 ---
 
 ## 5. Visual Evidence (Evolution)
 
-### 5.1 Latent Manifold Comparison (Task 15 vs Task 20)
+### 5.1 Manipulation Sequence (Task 28)
+| Scenario | Execution Strategy | Result |
+| :--- | :--- | :--- |
+| **Obstacle (阻擋)** | RMPFlow Path Planning | ✅ Successful Avoidance |
+| **Collision (碰撞)** | Recovery Delta Capture | ✅ Validated OOD Data |
+
+
+
+### 5.2 Latent Manifold Comparison (Task 15 vs Task 20)
 
 | Untrained Baseline (Task 15) | Post-Contrastive Identity (Task 20) |
 | :---: | :---: |

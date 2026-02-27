@@ -8,8 +8,6 @@ The **E-VLAformer** architecture resolves **Causal Hallucinations** in robot man
 ## 2. Graph World Model (GWM)
 The GWM is the symbolic heart of the system, representing the environment as a structured graph $G = \{V, E\}$.
 
-
-
 ### 2.1 Node Representation ($V$)
 Following the implementation in `src/models/graph_dataset.py`, nodes represent physical entities (joints, links, objects):
 - **State Features:**
@@ -39,19 +37,16 @@ The CRM acts as a **Physics Consistency Filter** and **Cognitive Anchor**:
 
 ### 4.1 Cognitive Persistence (Task 17-20 Verified) ✅
 To solve the "Out-of-Sight, Out-of-Mind" hallucination problem (occlusion), we implemented a **Graph Memory Buffer** with **Identity Mapping**.
-
 - **Temporal Anchoring:** Nodes are assigned a $TTL_{max}$ (Time-To-Live) of 30 frames.
 - **Latent Identity Mapping (Task 19):** We enforced **Identity Collapse** to ensure the manifold distance between a "Seen" object and a "Remembered" object is mathematically zero ($S = 0.00$).
-- **Verification:** Variance analysis ($\sigma^2 = 0.53$) confirms that the model maintains a rich representation of the object even during 100% occlusion.
 
-### 4.2 Proprioception & Action Loop (Tasks 21-27 Verified) ✅
+### 4.2 Proprioception & Action Loop (Tasks 21-28 Verified) ✅
 The action loop is grounded in real-time physical feedback and high-entropy synthetic demonstrations:
-- **Normalization (Task 22):** Raw joint angles ($\pm 90^\circ$) mapped to the $[-1, 1]$ unit range.
-- **Language Grounding (Task 23):** Utilizes a **768 → 512 Projection Layer** to align semantic instructions.
+- **Normalization (Task 22):** Raw joint angles mapped to the $[-1, 1]$ unit range.
+- **Language Grounding (Task 23):** Utilizes a **768 → 512 Projection Layer** to align instructions.
 - **Synchronized Inference (Task 24):** Orchestrates GNN, Proprioception, and Language into a unified **548-dim fusion vector**.
-- **Data Harvesting (Task 26-27):** High-speed HDF5 engine with **Automated Movement Auditing** and **Domain Randomization** to ensure expert trajectories are verified and unfrozen.
-
-
+- **Data Harvesting (Task 26-27):** High-speed HDF5 engine with **Automated Movement Auditing** (MAD test).
+- **Advanced Manipulation (Task 28):** Implementation of the **"Iron Grip" Protocol**. Forces negative joint commanding ($[-0.01, -0.01]$) to ensure torque saturation during high-acceleration transport.
 
 ### 4.3 Action Correction Loop
 1. **Prediction:** The VLA proposes a raw action $A_{raw}$.
@@ -76,7 +71,7 @@ The action loop is grounded in real-time physical feedback and high-entropy synt
 - [x] **Behavioral Cloning:** Expert Trajectory Trainer (Task 25) ✅ 
 - [x] **Expert Data Engine:** High-Speed Harvester (Task 26) ✅
 - [x] **Quality Audit:** Domain Randomization & Pixel MAD Test (Task 27) ✅
-- [ ] **Advanced Manipulation:** Multi-Phase Pick-and-Place Logic (Task 28) 🚀 *ACTIVE*
+- [x] **Advanced Manipulation:** Multi-Phase Pick-and-Place & Iron Grip (Task 28) ✅
 
 ---
 *Generated: 2026-02-27 | E-VLAformer Research Lab*

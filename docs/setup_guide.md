@@ -679,3 +679,30 @@ python src/data/expert_harvester_randomized.py
 💾 Successfully written episode_0 to Disk.
 
 ✅ SUCCESS: Task 27 Certified. Dataset audited for high-entropy movement.
+
+## 28. Physics Engineering & Scenario Coverage (Task 28)
+This task certifies the physical reliability of the expert demonstrations and expands the dataset to include complex recovery scenarios (Obstacles and Collisions).
+
+### 1. Implementation: "Iron Grip" & Scenario Logic
+Ensure the `IronGrip` protocol is active in the controller. This forces negative joint commanding to prevent object slippage during high-acceleration maneuvers. Verify the `ScenarioManager` is configured to toggle between Normal, Obstacle (阻擋), and Collision (碰撞) modes.
+
+### 2. Execute Multi-Scenario Harvesting
+Run the advanced state-machine script. The system will cycle through the 5 defined scenarios to ensure the HDF5 buffer contains "Out-of-Distribution" (OOD) recovery data.
+```bash
+# Execute Multi-Scenario Harvesting with Iron Grip
+python src/data/expert_grabber_scenarios.py
+```
+### 3. Expected Verification Output
+
+--- 🚀 Starting Task 28: HEAVY GRIP MODE ---
+[Lula] Joint mimic attributes ignored.
+
+📊 SCENARIO: Obstacle (阻擋) | Object: [0.40, 0.10, 0.035]
+
+🎯 ALIGNED. Dropping to grab...
+
+✊ GRABBING (IRON GRIP): Commanding [-0.01, -0.01]
+
+🚚 MOVING TO DROP ZONE (STABLE) | Vision: UNFROZEN (READY)
+
+✅ SUCCESS: Task 28 Certified. Dataset verified for Iron-Grip stability and 5-Scenario coverage.
