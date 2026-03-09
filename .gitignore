@@ -14,3 +14,5 @@ logs/
 *.npy
 # Ignore all HDF5 datasets
 *.hdf5
+# Ignore all HDF5 data files (individual episodes and master)
+*.h5

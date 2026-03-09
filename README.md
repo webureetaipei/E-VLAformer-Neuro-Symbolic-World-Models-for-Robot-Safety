@@ -54,10 +54,15 @@ Solves "Causal Hallucination" by injecting a **Graph Neural Network (GNN)** into
 **Current Sprint: Expert Data Harvesting & Behavioral Cloning**
 
 - **Objective:** Mapping the stable physical latents from Phase 2 to precise motor commands ($\Delta \theta$) using a Transformer-based Policy Head.
-- **Active Tasks:** - ✅ **Task 25 (Behavioral Cloning):** Verified the supervised training loop and gradient path.
+- **Active Tasks:**
+    - ✅ **Task 25 (Behavioral Cloning):** Verified the supervised training loop and gradient path.
     - ✅ **Task 26 (Data Engine):** Certified the high-fidelity HDF5 harvesting pipeline with "unfrozen" frame capture.
     - ✅ **Task 27 (Domain Randomization):** Verified environmental entropy and automated pixel-diff auditing.
-    - ✅ **Task 28 (Advanced Manipulation):** Certified the **"Iron Grip" physics protocol** and Multi-Phase State Machines. Completed the 5-Scenario training framework (Normal, Spatial Offset, **Obstacles**, and **Collisions**) to ensure high-coverage training data.
+    - ✅ **Task 28 (Advanced Manipulation):** Certified the **"Iron Grip" physics protocol** and Multi-Phase State Machines. Completed the 5-Scenario training framework (Normal, Spatial Offset, Obstacles, and Collisions) to ensure high-coverage training data.
+    - ✅ **Task 29 (Robustness Production):** Certified mass-production scaling. Successfully generated and audited a 50-episode "Robustness Trinity" dataset. 
+        - **Data Distribution:** Verified 24% Baseline (Normal), 40% Visual Occlusion (Object Permanence Stress-Test), and 36% Dynamic Perturbation (Reactive Closed-Loop).
+        - **Integrity Audit:** 100% pass rate via HDF5 Batch Auditor; verified "Total Blackout" persistence and "Target Jump" trajectory correction.
+        - **Serialization:** Compiled into a unified Master HDF5 structure for high-throughput Phase 3 training.
 
 
 
@@ -136,10 +141,18 @@ The multimodal pipeline is now fully integrated and the supervised learning fram
 * **Expert Data Harvesting (Task 26) ✅:** Successfully built the synthetic data pipeline to record synchronized visual-action trajectories (single-object manipulation) in Isaac Sim without frame-freezing.
 * **Data Domain Randomization (Task 27) ✅:** Automated environment variance (colors, starting positions) and mathematical movement verification to build high-entropy HDF5 datasets.
 * **Physics & Scenario Engineering (Task 28) ✅:** Developed the **"Iron Grip" protocol** to solve gripper slippage via negative joint commanding. Certified 5-scenario coverage (Normal, Spatial Offset, Obstacles (阻擋), and Collisions (碰撞)) to support long-horizon recovery learning.
+* **Robustness Production (Task 29) ✅:** Certified mass-production scaling for high-difficulty edge cases. Successfully generated and audited a 50-episode **"Robustness Trinity"** dataset.
+    * **Scenario Distribution:** Verified 24% Baseline (Normal), 40% Visual Occlusion (Object Permanence Stress-Test), and 36% Dynamic Perturbation (Reactive Closed-Loop).
+    * **Integrity Audit:** 100% pass rate via HDF5 Batch Auditor; verified **"Total Blackout"** persistence and **"Target Jump"** trajectory correction logic.
+    * **Serialization:** Compiled individual trajectories into a unified **Master HDF5 structure** for high-throughput Phase 3 training.
 
 
+### 🚀 Phase 3: Learning & Policy Optimization (Active)
+**Status:** ✅ **Task 29 Certified.** Transitioning to **Task 30 (Unified Training Pipeline).**
 
-**Status:** 🚀 Phase 3 Advanced (Task 28 Certified). Ready for Behavioral Cloning Training.
+- **Dataset State:** 50-episode "Robustness Trinity" dataset generated, audited, and serialized into Master HDF5. 
+- **Learning Readiness:** Gradient paths (Task 25) and Domain Randomization (Task 27) are live. 
+- **Next Milestone:** Task 30 (Dataset & DataLoader) to initiate full-scale Behavioral Cloning for the E-VLAformer.
 
 ## 📊 Data & Engineering Rigor (Task 06)
 To ensure the high fidelity required for NeurIPS-level research, we implemented a high-performance **HDF5 data engine**. This infrastructure handles multimodal synchronization between physics, RGB-D renders, and semantic metadata.
@@ -372,9 +385,38 @@ Refining the physical interaction layer to ensure high-fidelity expert demonstra
 </p>
 
 - **"Iron Grip" Protocol:** Solved the common simulation "slippery gripper" issue by commanding negative joint positions (`-0.01`) to maintain maximum clamping force during high-acceleration lateral movements.
-- **Multi-Scenario Architecture:** Developed a framework for generating five distinct training conditions: Normal, Spatial Offsets, Obstacles (**阻擋**), and intentional Collisions (**碰撞**).
+- **Multi-Scenario Architecture:** Developed a framework for generating five distinct training conditions: Normal, Spatial Offsets, Obstacles, and intentional Collisions.
 - **Recovery Foundation:** By capturing data where the robot encounters obstacles or slight collisions, we provide the "out-of-distribution" examples necessary for the AI to learn recovery behaviors in Task 33.
 - **Outcome:** ✅ **Task 28 Certified.** The expert script is stabilized and physics-hardened. The pipeline is now ready for Task 29: Behavioral Cloning (BC) Training.
+## 🌪️ Robustness Production & Stochastic Data Scaling (Task 29)
+Scaling the data engine to generate high-entropy trajectories for training resilient, long-horizon policies.
+
+<p align="center">
+  <table align="center">
+    <tr>
+      <td>
+        <video src="https://github.com/user-attachments/assets/51a7333a-c138-4abe-b1b0-2d84bc367c40" width="100%" controls></video>
+        <p align="center"><strong>Normal</strong></p>
+      </td>
+      <td>
+        <video src="https://github.com/user-attachments/assets/0be5fa49-3628-478a-9c24-0fe5bb534e3d" width="100%" controls></video>
+        <p align="center"><strong>Occlusion</strong></p>
+      </td>
+      <td>
+        <video src="https://github.com/user-attachments/assets/b4f42cc8-ef76-4212-956c-a51b0f0ff03e" width="100%" controls></video>
+        <p align="center"><strong>Perturbation</strong></p>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <em>Robustness Trinity: Normal Baseline (Left), Visual Occlusion (Center), and Dynamic Perturbation (Right).</em>
+</p>
+
+- **Robustness Trinity:** Successfully scaled the harvesting pipeline to generate a balanced 50-episode dataset across three critical categories: **Normal** (Success baseline), **Occlusion** (Visual dropout), and **Perturbation** (Dynamic target shifts).
+- **Cognitive Persistence Test:** Verified that the "Total Blackout" occlusion (large-scale visual masking) forces the model to rely on proprioceptive memory and GWM state persistence rather than reactive visual servoing.
+- **Reactive Re-Planning:** Captured "Target Jump" episodes where the ball coordinates shift mid-trajectory, providing the necessary gradient signals for the E-VLAformer to learn real-time path correction.
+- **Automated HDF5 Auditing:** Implemented a batch-verification script to ensure 100% data integrity, verifying frame counts and metadata labels across the unified **Master Dataset**.
+- **Outcome:** ✅ **Task 29 Certified.** The "Robustness Trinity" dataset is serialized and ready for consumption. The project is now transitioning to Task 30: Unified Training Pipeline.
 ---
 
 ## Roadmap & Progress
@@ -386,7 +428,7 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, HDF5 | ✅ **Completed** |
 | **Phase 2** | **Graph World Model** | **GNN, Memory, Identity** | ✅ **Completed** |
-| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 29)** |
+| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 30)** |
 | **Phase 4** | **TinyEngine Optimization** | **C++17, CUDA, NEON** | ⚪ Planned |
 | **Phase 5** | **Distributed gRPC Infra** | **Protobuf, Async Server** | ⚪ Planned |
 | **Phase 6** | **Sim-to-Real Deployment** | **ESP32, IK, Serial/PWM** | ⚪ Planned |

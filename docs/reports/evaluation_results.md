@@ -18,17 +18,15 @@ We evaluate the Graph World Model (GWM) by analyzing its latent space. High-qual
 ## 2. Multimodal Action & Data Integrity (Phase 3)
 Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
 
-### 🦾 Task 26-28: Harvesting, Audit & Physics
+### 🦾 Task 26-29: Harvesting, Audit & Robustness
 | Metric | Methodology | Target | Current | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Data Synchronization** | HDF5 Multimodal Sync | 100% Alignment | **100% Sync** | ✅ Task 26 Certified |
-| **Movement Integrity** | **Mean Absolute Diff** | $Score > 0$ | **7.2 - 11.3** | ✅ Task 27 Verified |
 | **Grip Stability** | Transport Success | $> 98\%$ | **100%** | ✅ **Task 28 (Iron Grip)** |
-| **Scenario Coverage** | Diverse State Diversity | 5 Scenarios | **5/5 Active** | ✅ **Task 28 Certified** |
+| **Robustness Entropy** | **Scenario Variance** | 3 Classes | **"Trinity" Verified** | ✅ **Task 29 Certified** |
+| **Dataset Scale** | Batch Throughput | 50 Episodes | **50/50 Harvested** | ✅ **Task 29 Certified** |
 
-> **Verification Note (Task 28):** The **Iron Grip Protocol** has stabilized the dataset. By commanding a negative joint position ($[-0.01, -0.01]$), we eliminate the "stochastic slip" common in Isaac Sim physics. This ensures the expert trajectories in the HDF5 archive are physically optimal, providing a clean gradient for Behavioral Cloning.
-
-
+> **Verification Note (Task 29):** The **Robustness Trinity** production has achieved a high-entropy distribution: 24% Normal, 40% Occlusion, and 36% Perturbation. The inclusion of "Total Blackout" (Occlusion) and "Mid-Trajectory Target Jumps" (Perturbation) ensures the training data covers the extreme corners of the state space required for robust Behavioral Cloning.
 
 ---
 
@@ -39,12 +37,21 @@ Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
 | :--- | :--- | :--- | :--- |
 | **Persistence Duration** | $> 500\text{ frames}$ | **1,000+ Frames** | ✅ Logic Verified |
 | **Latent Drift** | $< 5.0 \%$ | **0.0%** | ✅ Task 19 Verified |
-| **Edge Case Resilience** | Hardened | **10% Blink Rate** | ✅ Task 18 Complete |
 | **Phase 2 Freeze** | Certified | **certified_gwm_v1** | ✅ Task 20 Locked |
 
 ---
 
-## 4. Embedded Performance: TinyEngine Benchmarks
+## 4. Visual Evidence: Robustness Trinity (Task 29)
+
+| Normal Baseline | Visual Occlusion | Dynamic Perturbation |
+| :---: | :---: | :---: |
+| <video src="https://github.com/user-attachments/assets/51a7333a-c138-4abe-b1b0-2d84bc367c40" width="100%"></video> | <video src="https://github.com/user-attachments/assets/0be5fa49-3628-478a-9c24-0fe5bb534e3d" width="100%"></video> | <video src="https://github.com/user-attachments/assets/b4f42cc8-ef76-4212-956c-a51b0f0ff03e" width="100%"></video> |
+
+
+
+---
+
+## 5. Embedded Performance: TinyEngine Benchmarks
 Benchmarks executed on the target hardware abstraction layer to verify real-time safety constraints.
 
 ### ⚡ Inference Latency
@@ -55,23 +62,4 @@ Benchmarks executed on the target hardware abstraction layer to verify real-time
 | **Vision Token** | Latency | $< 10\text{ ms}$ | **8.4ms** | Int8 Quantized |
 
 ---
-
-## 5. Visual Evidence (Evolution)
-
-### 5.1 Manipulation Sequence (Task 28)
-| Scenario | Execution Strategy | Result |
-| :--- | :--- | :--- |
-| **Obstacle (阻擋)** | RMPFlow Path Planning | ✅ Successful Avoidance |
-| **Collision (碰撞)** | Recovery Delta Capture | ✅ Validated OOD Data |
-
-
-
-### 5.2 Latent Manifold Comparison (Task 15 vs Task 20)
-
-| Untrained Baseline (Task 15) | Post-Contrastive Identity (Task 20) |
-| :---: | :---: |
-| ![Baseline](../reports/task15_baseline.png) | ![Trained](../reports/task16_trained.png) |
-| Scale: 150 | Random Nebula | *Scale: 400 | Stable Identity Cluster* |
-
----
-*Last Updated: 2026-02-27* | *Researcher: Tsung Lung Yang*
+*Last Updated: 2026-03-09* | *Researcher: Tsung Lung Yang*

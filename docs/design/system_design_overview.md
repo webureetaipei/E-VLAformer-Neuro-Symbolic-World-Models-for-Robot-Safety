@@ -25,12 +25,12 @@
 * **Graph World Model (GWM):**
     * **Nodes ($V$):** Object-centric representations including physical attributes (mass, friction, ID).
     * **Edges ($E$):** Causal and spatial relationships (Kinematic Constraints, Dynamic Contacts).
-* **Cognitive Persistence (Task 17-20 Verified) ✅:**
+* **Cognitive Persistence (Task 17-20 & 29 Verified) ✅:**
     * **Object Permanence:** TTL-based circular buffer to maintain graph nodes during visual dropout.
     * **Identity Mapping (Task 19):** Applied **Identity Collapse** training to ensure latent representations are identical for "Visible" and "Occluded" states.
-    * **Outcome:** Zero topological drift across 30+ frame occlusion events.
+    * **Outcome:** Verified via Task 29 "Total Blackout" episodes; zero topological drift across extended occlusion events.
 
-### 2.2 Multimodal Sensor Fusion & Training (Task 21-28 Verified) ✅
+### 2.2 Multimodal Sensor Fusion & Training (Task 21-29 Verified) ✅
 * **Policy Fusion (Task 21):** Deployment of a Residual MLP fusing GNN latents, Joint-space proprioception, and Language embeddings.
 * **Sensor Grounding (Task 22):** Implementation of a calibrated Proprioception Handler. Normalizes raw $\pm 90^\circ$ joint angles to the $[-1, 1]$ latent manifold with integrated **Alpha-Filter smoothing** ($\alpha=0.7$).
 * **Language Grounding (Task 23):** Integration of the **Language Handler**. Utilizes `all-distilroberta-v1` with a custom **768→512 Projection Layer**.
@@ -39,6 +39,7 @@
 * **Data Harvesting Engine (Task 26) ✅:** Implementation of the high-speed HDF5 harvester. Fixed renderer synchronization to prevent frozen frames.
 * **Domain Randomization (Task 27) ✅:** Verified environmental entropy (color/position) and integrated **Automated Movement Auditing** via Mean Absolute Difference (MAD) pixel analysis.
 * **Advanced Manipulation (Task 28) ✅:** Implemented **Multi-Phase State Machines** for complex Pick-and-Place. Integrated **"Iron Grip" physics** to eliminate object slippage during transport.
+* **Robustness Production (Task 29) ✅:** Scaled the harvesting pipeline to generate the **"Robustness Trinity"** dataset (50 episodes). Certified stochastic scenario injection for **Visual Occlusion** and **Dynamic Perturbation** (Target Jumps).
 
 ---
 
@@ -49,11 +50,14 @@
 
 ## 4. Data Engine Strategy: The "Audit-Ready" Dataset
 
-### 4.1 Multi-Scenario Harvesting (Task 28 Verified) ✅
+### 4.1 Multi-Scenario Harvesting (Task 28-29 Verified) ✅
 The E-VLAformer dataset is now "Scenario-Aware," capturing both success and recovery data:
 * **Scenario A-C:** Spatial Randomization (Normal, Left, Right offsets).
 * **Scenario D: 阻擋 (Obstacle):** Robot uses RMPFlow to navigate around cuboids while maintaining end-effector targets.
-* **Scenario E: 碰撞 (Collision):** Captures "Out-of-Distribution" (OOD) joint vibrations and recovery deltas to train the **Task 33 Recovery Policy**.
+* **Scenario E: 碰撞 (Collision):** Captures "Out-of-Distribution" (OOD) joint vibrations and recovery deltas.
+* **Robustness Trinity (Task 29):**
+    * **Full Occlusion:** Trains GWM persistence via total visual deprivation (Giant Wall scenario).
+    * **Dynamic Perturbation:** Mid-trajectory target shifting to train reactive path re-planning.
 
 ---
 
@@ -70,9 +74,10 @@ The E-VLAformer dataset is now "Scenario-Aware," capturing both success and reco
 | Component | Metric | Target | Status |
 | :--- | :--- | :--- | :--- |
 | **GWM Latent** | **Silhouette Stability** | **$\approx 0.00$** | ✅ **0.0000 (Identity)** |
-| **Expert Data** | **Scenario Coverage** | **5/5 Types** | ✅ **Certified (Task 28)** |
+| **Expert Data** | **Scenario Coverage** | **3/3 Trinity** | ✅ **Certified (Task 29)** |
 | **Unified Fusion** | **Input Vector Dim** | **548-dim** | ✅ **Verified (Task 24)** |
 | **BC Pipeline** | **Gradient Path** | **Certified** | ✅ **Verified (Task 25)** |
+| **Data Volume** | **Audited Episodes** | **50 Episodes** | ✅ **Mass-Produced (Task 29)** |
 
 ---
 *Note: This document is a living blueprint for the E-VLAformer research initiative.*

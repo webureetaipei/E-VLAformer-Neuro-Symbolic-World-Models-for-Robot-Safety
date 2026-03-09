@@ -60,9 +60,14 @@
 ### 🦾 Task 26-30: Expert Demonstration & Behavioral Cloning
 - [x] **Task 26: Kinesthetic Scripting (Verified)**: Develop Isaac Sim script to generate "Expert" trajectories (Pushing/Reach).
 - [x] **Task 27: Demonstration Harvesting (Verified)**: Generate high-entropy episodes with Domain Randomization and Automated Movement Auditing.
-- [x] **Task 28: Pick-and-Place State Machine (Verified)**: Upgraded the controller to a Multi-Phase Logic (Hover -> Dive -> Grasp -> Lift -> Place). Integrated the **"Iron Grip" physics protocol** and certified 5-scenario H5 data coverage (Normal, Spatial Offsets, Obstacles, and Collisions).
-- [ ] **Task 29: Behavioral Cloning (BC) Training**: Train the Policy Head to mimic expert joint trajectories using MSE/Cross-Entropy.
-- [ ] **Task 30: Autonomous Rollout Testing**: Execute the first simulation loop without hardcoded paths, relying on the VLA Policy.
+- [x] **Task 28: Pick-and-Place State Machine (Verified)**: Upgraded the controller to a Multi-Phase Logic (Hover -> Dive -> Grasp -> Lift -> Place). Integrated the **"Iron Grip" physics protocol** and certified 5-scenario H5 data coverage.
+- [x] **Task 29: Robustness Production (Verified)**: Scaled the pipeline to generate the **"Robustness Trinity"** dataset (50 episodes). Verified 100% integrity across Normal, Occlusion (Object Permanence), and Perturbation (Reactive) scenarios.
+
+| Normal Baseline | Visual Occlusion | Dynamic Perturbation |
+| :---: | :---: | :---: |
+| <video src="https://github.com/user-attachments/assets/51a7333a-c138-4abe-b1b0-2d84bc367c40" width="100%"></video> | <video src="https://github.com/user-attachments/assets/0be5fa49-3628-478a-9c24-0fe5bb534e3d" width="100%"></video> | <video src="https://github.com/user-attachments/assets/b4f42cc8-ef76-4212-956c-a51b0f0ff03e" width="100%"></video> |
+
+- [ ] **Task 30: VLA Dataset & Training Pipeline**: Build the PyTorch `DataLoader` to aggregate H5 trajectories. Implement joint normalization and initiate the first Behavioral Cloning training loop.
 
 ### 🧪 Task 31-35: Long-Horizon Reasoning
 - [ ] **Task 31: Multi-Stage Sequences**: Implement "Unstack → Move → Restack" causal workflows using the Persistent GWM.

@@ -706,3 +706,35 @@ python src/data/expert_grabber_scenarios.py
 🚚 MOVING TO DROP ZONE (STABLE) | Vision: UNFROZEN (READY)
 
 ✅ SUCCESS: Task 28 Certified. Dataset verified for Iron-Grip stability and 5-Scenario coverage.
+
+## 29. Robustness Production & Stochastic Data Scaling (Task 29)
+This task focuses on mass-producing high-entropy trajectories and verifying the "Robustness Trinity" (Normal, Occlusion, Perturbation) to ensure the E-VLAformer can handle real-world failures and dynamic environments.
+### 1. Implementation: Robustness Trinity & Batch Logic
+Verify that the RobustnessManager is configured to inject stochastic events. This forces the system to generate data where the visual stream is interrupted or the target coordinates shift mid-trajectory.
+### 2. Execute Expert Harvesting & Scaling
+Run the randomized expert harvester to generate the 50-episode batch. This script applies Domain Randomization (DR) and specific robustness stressors to ensure a balanced dataset for Phase 3 training.
+```bash
+# Execute Randomized Expert Harvesting for Task 29
+python src/data/expert_harvester_randomized.py --episodes 50
+```
+### 3. Master Dataset Aggregation
+Once the individual trajectories are harvested, run the aggregation script to serialize the episodes into a unified HDF5 master file.
+```bash
+# Aggregate individual episodes into the master training file
+python src/data/aggregate_data.py
+```
+### 4. Expected Verification Output
+--- 🌪️ Starting Task 29: ROBUSTNESS PRODUCTION ---
+[Isaac] Parallelizing environment sessions...
+
+✅ Audit Complete: 50/50 files passed basic integrity.
+
+📈 DISTRIBUTION: {'NORMAL': 12, 'OCCLUSION': 20, 'PERTURBATION': 18}
+
+📦 DATASET: task29_master_dataset.h5 (Size: 142.50 MB)
+
+👁️ OCCLUSION CHECK: Total Blackout detected in Ep 14 | GWM Persistence: ACTIVE
+
+🎯 PERTURBATION CHECK: Target Jump in Ep 22 | Reactive Path Correction: VERIFIED
+
+✅ SUCCESS: Task 29 Certified. 50/50 episodes passed integrity audit. Master Dataset ready for BC Training.
