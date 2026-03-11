@@ -217,9 +217,7 @@ Each file contains unique Domain Randomization samples (varying mass, colors, an
 
 ## 11. Graph Data Infrastructure Setup (Task 11)
 
-This guide documents the environment configuration and verification for the Object-Centric Dataset Loader.
-
-This guide documents the environment configuration and verification for the Object-Centric Dataset Loader.
+This guide documents the environment configuration and verification for the Object-Centric Dataset Loader and the raw-to-graph preprocessing pipeline.
 
 ### 1. Environment Requirements
 The project utilizes **WSL2 (Ubuntu)** with a dedicated Conda environment.
@@ -227,8 +225,8 @@ The project utilizes **WSL2 (Ubuntu)** with a dedicated Conda environment.
 #### Core Dependencies
 * **Python:** 3.10
 * **PyTorch:** Installed via Pip (CPU version) to ensure compatibility with WSL2 symbols.
-* **Torch Geometric:** For Graph Neural Network data structures.
-* **h5py:** For memory-efficient streaming of large dataset chunks.
+* **Torch Geometric:** For Graph Neural Network data structures and message passing.
+* **h5py:** For memory-efficient streaming of large dataset chunks from the Master HDF5.
 
 ### 2. Installation Steps
 ```bash
@@ -238,43 +236,60 @@ pip install torch torchvision --index-url [https://download.pytorch.org/whl/cpu]
 # Install Graph and Data libraries
 pip install torch-geometric h5py requests
 ```
-### 3. Data Architecture
-
-The system transforms raw sensory tensors into a relational graph structure ($G = \{V, E\}$):
-
-- Nodes (V): Feature vectors include [x, y, z, mass, type_id], allowing the model to distinguish between robot joints and environmental objects.
-
+### 3. Data Architecture & Preprocessing
+The infrastructure utilizes a two-stage pipeline to transform raw sensory tensors into a relational graph structure ($G = \{V, E\}$):
+#### A. Preprocessing (src/data/preprocess_raw_to_graph.py)
+This utility serves as the bridge between the HDF5 Data Engine and the GNN. It extracts synchronized state vectors and formats them for the Graph Builder.
+- Input: Raw HDF5 Trajectories (RGB, Joint States, Object Poses).
+- Operation: Flattens multimodal streams into object-centric feature tensors.
+- Output: Intermediate Graph Tensors ready for edge instantiation.
+#### B. Graph Structure
+- Nodes (V): Feature vectors include $[x, y, z, m, \mathrm{type\_id}]$, allowing the model to distinguish between robot joints and environmental objects.
 - Edges (E): Physical and spatial constraints stored in COO format (Coordinate format) for optimized GNN message passing.
-
-- Metadata: * sim_path: Logical pointer to NVIDIA Isaac Sim prims for digital twin synchronization.
-
-   - hw_id: Direct hardware mapping for Physical ESP32 (MG996R servos) during real-world execution.4. Verification
-
+- Metadata Alignment: - sim_path: Logical pointer to NVIDIA Isaac Sim prims for digital twin synchronization.
+  - hw_id: Direct hardware mapping for Physical ESP32 (MG996R servos) during real-world execution.
 ### 4. Verification
-To ensure the environment and data pipeline are correctly configured, run the following smoke test to generate and load dummy graph data:
+To ensure the environment and the preprocessing pipeline are correctly configured, run the following smoke tests:
+Step 1: Verify Preprocessing Logic
 ```bash
+# Test the raw data to graph tensor conversion
+python src/data/task11_preprocess_raw_to_graph.py --test_mode
+```
+Step 2: Verify Graph Loading
+```bash
+# Test the Geometric Dataset Loader and COO format integrity
 python src/models/graph_dataset.py
 ```
-
+✅ Task 11 Certified: Environment is stable, and the preprocess_raw_to_graph.py utility is confirmed to handle 548-dim multimodal synchronization.
 ## 12. Relational Graph Construction (Task 12)
-This guide documents the implementation and verification of the Graph Builder, which defines the structural and dynamic relationships between robot components and environment objects.
+This guide documents the implementation and verification of the **Graph Builder**, which defines the structural and dynamic relationships between robot components and environment objects.
 
-### 1. Functional Logic
-The RelationalGraphBuilder (Task 12) implements two primary edge types to guide the model's causal reasoning:
+### 1. Functional Logic (`src/models/task12_graph_builder.py`)
+The `RelationalGraphBuilder` implements the symbolic logic required to transform spatial coordinates into a relational topology. It defines two primary edge categories:
 
-- Kinematic Constraints: Establishes a permanent, bi-directional link between the Base, Joints, and Gripper for the 4-DOF DIY arm.
+#### A. Kinematic Constraints ($E_{kin}$)
+Establishes permanent, bi-directional links based on the physical assembly of the **Franka Emika Panda**.
+* **Topology:** `Base -> Link1 -> Link2 -> ... -> Hand -> Gripper`.
+* **Purpose:** Ensures the GNN understands that the movement of the base link propagates through the entire kinematic chain.
 
-- Contact Detection: Dynamically instantiates edges when the Euclidean distance between the Gripper and a target object falls below a specified threshold (Default: $0.05m$).
+#### B. Dynamic Contact Detection ($E_{con}$)
+Instantiates edges in real-time based on proximity sensors or Euclidean distance.
+* **Threshold:** Default is set to **$0.05m$**.
+* **Trigger:** If $dist(\text{Gripper}, \text{Object}) < 0.05$, a "Contact Edge" is created, allowing the VLA model to reason about grasping and object manipulation.
 
-### 2. Implementation File
-The core logic is stored in src/models/graph_builder.py. This module acts as the intermediate layer between raw data loading and the Graph Neural Network (GNN).
+### 2. Implementation Overview
+The core logic resides in `src/models/task12_graph_builder.py`. This module acts as the intermediate reasoning layer between the `preprocess_raw_to_graph.py` (Task 11) and the GNN Processor (Task 13).
+
+
 
 ### 3. Verification & Integration Test
-Because this task involves complex spatial logic, an integration test is required to ensure that the "Nervous System" (Task 11) correctly passes data to the "Relational Logic" (Task 12).
+This test ensures that the "Nervous System" (Task 11) correctly feeds the "Relational Logic" (Task 12) without spatial data corruption.
+
 ```bash
-To run the Task 12 verification:
+# Activate environment
 conda activate evla
-# Run the integration test from the project root
+
+# Run the Task 12 verification (Checks for adjacency matrix integrity)
 python -m src.utils.verify_task12
 ```
 **Expected Output:**
@@ -285,62 +300,102 @@ Total Edges Found: 8
 ✅ Task 12 SUCCESS: Kinematic and Contact edges generated.
 
 ## 13. GNN Message Passing Infrastructure (Task 13)
-This guide documents the implementation of the inductive reasoning processor.
+This guide documents the implementation of the inductive reasoning processor, which serves as the "Spatial Brain" of the E-VLAformer.
 
-### 1. Functional Logic
-The `EVLAGNNProcessor` utilizes **GraphSAGE (SAGEConv)** layers to perform feature aggregation across the relational graph.
-- **Architecture:** 3-layer GNN with 64 hidden channels and 32-dim output embeddings.
+### 1. Functional Logic (`src/models/task13_gnn_processor.py`)
+The `EVLAGNNProcessor` is responsible for performing inductive reasoning over the relational graph built in Task 12. It utilizes **GraphSAGE (SAGEConv)** layers to aggregate features from neighboring nodes (e.g., propagating joint torque information to the gripper node).
 
-### 2. Verification
-Run the forward pass test to verify neural data flow:
+#### Architecture Specifications:
+- **Backbone:** 3-layer GraphSAGE Architecture.
+- **Hidden Dimensions:** 64 channels per layer with **GELU** activation.
+- **Output Latent:** 32-dimensional embedding representing the unified physical world-state.
+- **Inductive Bias:** The processor is designed to handle variable graph sizes, ensuring compatibility if additional objects are added to the simulation scene.
+
+
+
+### 2. Implementation Details
+The core model definition is located in `src/models/task13_gnn_processor.py`. This script defines the `Forward` pass logic, including:
+1. **Neighborhood Aggregation:** Gathering $[x, y, z, m]$ features from connected links.
+2. **Feature Fusion:** Updating node hidden states based on kinematic constraints.
+3. **Global Pooling:** (Optional) Generating a graph-level summary for the VLA Policy Head.
+
+### 3. Neural Data Flow Verification
+Run the forward pass test to verify that the GNN can ingest the COO-format edges from Task 12 and produce a non-zero 32-dim latent:
+
 ```bash
+# Activate environment and set path
 conda activate evla
 export PYTHONPATH=$PYTHONPATH:.
+
+# Execute the GNN forward-pass smoke test
 python -m src.utils.verify_task13
-```
-## 14. Multimodal Fusion Infrastructure (Task 14)
-This guide outlines the technical requirements and implementation steps for fusing the Vision-Language features with the Graph World Model (GWM) outputs.
-
-### 1. Functional Objectives
-
-Gemini said
-Task 14 marks the beginning of the Multimodal Fusion Layer, the critical component that aligns and integrates diverse sensory streams—vision, language, and the GNN-based physical embeddings you just built. This layer serves as the "Global Workspace" where abstract instructions and raw physical data merge into a unified representation for action prediction.
-
-Task 14: Multimodal Fusion Infrastructure
-This guide outlines the technical requirements and implementation steps for fusing the Vision-Language features with the Graph World Model (GWM) outputs.
-
-- Functional Objectives
-The primary goal is to perform Intermediate Fusion to bridge the "Reality Gap" between visual pixels and symbolic physical constraints.
-- Feature Alignment: Aligning high-frequency proprioception and graph embeddings with lower-frequency visual tokens.
-- Semantic Mapping: Using a Q-Former style query mechanism to extract relevant physical features from the GNN based on the textual instruction (e.g., "pick up the red cube").
-### 2. Technical Architecture
-The MultimodalFusionLayer utilizes Cross-Attention to allow the visual-language backbone to "interrogate" the Graph World Model for physical consistency.
-- Inputs:
-    - Visual Tokens ($\mathbf{T}_{vis}$): From the ViT/CLIP encoder.
-    - Instruction Tokens ($\mathbf{T}_{lang}$): From the language backbone.
-    - GNN Embeddings ($\mathbf{T}_{graph}$): 32-dimensional physical latent vectors from Task 13.
-- Mechanism:
-    - Query ($Q$): Generated from language and vision tokens to focus on task-relevant objects.
-    - Key ($K$) & Value ($V$): Derived from the GNN embeddings to provide physical context (mass, position, hierarchy).
-### 3. Verification & Integration Test
-A successful Task 14 requires verifying that the fused embedding contains information from all three sources.
-```bash
-#Run the verification script (to be created as src/utils/verify_task14.py):
-conda activate evla
-export PYTHONPATH=$PYTHONPATH:.
-python -m src.utils.verify_task14
 ```
 **Expected Output:**
 
---- Task 14: Multimodal Fusion Verification ---
+--- 🧠 Phase 2: GNN MESSAGE PASSING AUDIT ---
 
-Input Vision Tokens: torch.Size([1, 256, 512])
+[GNN] Ingesting Graph (Nodes: 8, Edges: 14)
 
-Input GNN Embeddings: torch.Size([4, 32])
+[GNN] Forward Pass: 3-Layer SAGEConv...
 
-Fused Multimodal Embedding: torch.Size([1, 256, 512])
+✅ Tensor Shape: [1, 32] (Physical Latent Verified)
 
-✅ Task 14 SUCCESS: Multimodal alignment and cross-attention verified.
+✅ Gradient Path: Functional
+
+✅ Latent Variance: 0.5309 (Rich Feature Extraction)
+
+🚀 Task 13 SUCCESS: The GNN Processor is certified for Neuro-Symbolic Reasoning.
+## 14. Multimodal Fusion Infrastructure (Task 14)
+This guide outlines the technical requirements and implementation steps for fusing Vision-Language features with the Graph World Model (GWM) outputs.
+
+### 1. Functional Objectives (`src/models/fusion_layer.py`)
+The primary goal is to perform **Intermediate Fusion** to bridge the "Reality Gap" between visual pixels and symbolic physical constraints. The `MultimodalFusionLayer` serves as the global workspace where abstract instructions and raw physical data merge.
+
+* **Feature Alignment:** Aligning high-frequency proprioception (100Hz) and graph embeddings with lower-frequency visual tokens (30Hz).
+* **Semantic Mapping:** Utilizing a Cross-Attention mechanism to allow the VLA backbone to "interrogate" the GNN for physical consistency based on text instructions (e.g., *"Pick up the red cube"*).
+* **Dimensionality Synchronization:** Compiling disparate streams into the certified **548-dim Fusion Vector** (32 GNN + 4 Joint + 512 Lang).
+
+### 2. Technical Architecture
+The `fusion_layer.py` implements a synchronized bottleneck where vision and language tokens are grounded by physical graph latents.
+
+* **Inputs:**
+    * **Visual Tokens ($\mathbf{T}_{vis}$):** Extracted from the ViT/CLIP encoder.
+    * **Instruction Tokens ($\mathbf{T}_{lang}$):** 512-dim embeddings from the Language Handler (Task 23).
+    * **GNN Embeddings ($\mathbf{T}_{graph}$):** 32-dim physical latent vectors from Task 13.
+    * **Proprioception:** 4-dim normalized joint states from Task 22.
+* **Mechanism:**
+    * **Query ($Q$):** Generated from language/vision to focus on task-relevant nodes.
+    * **Key ($K$) & Value ($V$):** Derived from the GNN embeddings to provide physical context (mass, position, hierarchy).
+
+
+
+### 3. Verification & Integration Test
+This test verifies that the `fusion_layer.py` correctly concatenates and aligns all three sources without data loss or shape mismatch.
+
+```bash
+# Activate environment and set path
+conda activate evla
+export PYTHONPATH=$PYTHONPATH:.
+
+# Run the Task 14 verification
+python -m src.utils.verify_task14
+```
+**Expected Output:**
+--- 🧠 Task 14: MULTIMODAL FUSION VERIFICATION ---
+
+[Fusion] Ingesting Language Latents: torch.Size([1, 512])
+
+[Fusion] Ingesting GNN Physical Latents: torch.Size([1, 32])
+
+[Fusion] Ingesting Joint Proprioception: torch.Size([1, 4])
+
+✅ Total Fusion Vector Dim: 548 
+
+✅ Attention Map Sparsity: Verified
+
+✅ Modality Alignment: SUCCESS
+
+🚀 Task 14 SUCCESS: Multimodal alignment and cross-attention logic certified.
 
 ## 15. Latent Space Visualization Setup (Task 15)
 
@@ -362,7 +417,7 @@ To generate the t-SNE manifold of the GNN latent space, run the utility from the
 
 ```bash
 export PYTHONPATH=$PYTHONPATH:.
-python -m src.utils.visualize_graph_latents
+python -m src.utils.task15_visualize_graph_latents
 ```
 
 **Expected Output:**
@@ -402,7 +457,7 @@ Once the dependencies are verified, follow these steps to ground your model:
 
 - Initialize Weights: Ensure models/weights/ exists to store the .pth artifacts.
 
-- Run Trainer: Execute python src/models/train_gnn_contrastive.py.
+- Run Trainer: Execute python src/models/task16_train_gnn_contrastive.py.
 
 - Audit Topology: Run the t-SNE visualizer to verify the axis expansion from 150 to 400 units.
 
@@ -455,7 +510,7 @@ To train the World Model for object permanence, we use "Blink Logic" to simulate
 **1. Verify Blink Logic (Unit Test)**
 Run the simulator-free logic test to ensure the stochastic occlusion math is working:
 ```bash
-python src/utils/test_blink_generator.py
+python src/utils/task18_test_blink_generator.py
 ```
 ## 🔬 Model Validation & Certification (Phase 2 Freeze)
 
@@ -466,7 +521,7 @@ This audit calculates the mathematical overlap between "Visible" and "Occluded" 
 Ensure you have trained the GNN with Identity Mapping (Task 16.1) before running this. This script loads `gnn_contrastive_beta.pth` and interrogates the latent manifold.
 ```bash
 export PYTHONPATH=$PYTHONPATH:.
-python src/utils/silhouette_audit.py
+python src/utils/task19_silhouette_audit.py
 ```
 ### 2. Interpret the Result
 - Score ~0.00: ✅ Success (Identity Preservation). The model perceives the object identically regardless of visibility.
@@ -504,7 +559,7 @@ Note: Once archived, certified_gwm_v1.pth becomes the frozen backbone for all Ph
 This task initializes the neural bridge between the stable World Model (Phase 2) and the robotic actuators.
 
 ### 1. Implementation: Policy Head**
-Create or verify the core architecture in `src/models/vla_policy_head.py`. This Residual MLP is designed to fuse multimodal latents into normalized joint deltas.
+Create or verify the core architecture in `src/models/task21_vla_policy_head.py`. This Residual MLP is designed to fuse multimodal latents into normalized joint deltas.
 
 ### 2. Verify Architecture & Forward Pass**
 Run the integration smoke test to ensure the dimensions for GNN (32), Proprioception (4), and Language (512) are correctly aligned.
@@ -517,7 +572,7 @@ conda activate evla
 export PYTHONPATH=$PYTHONPATH:.
 
 # Execute Smoke Test
-python src/models/vla_policy_head.py
+python src/models/task21_vla_policy_head.py
 ```
 
 
@@ -525,7 +580,7 @@ python src/models/vla_policy_head.py
 This task establishes the mathematical bridge between raw sensor data (Degrees/Radians) and the normalized latent space required for Transformer-based policy inference.
 
 ### 1. Implementation: Proprioception Handler**
-Create or verify the handler in `src/vla/proprioception_handler.py`. This module implements a low-pass alpha filter to prevent simulation jitter from destabilizing the Policy Head.
+Create or verify the handler in `src/vla/task22_proprioception_handler.py`. This module implements a low-pass alpha filter to prevent simulation jitter from destabilizing the Policy Head.
 
 ### 2. Verify Normalization & Safety Clamping**
 Run the verification script to ensure raw joint angles are mapped correctly to the $[-1, 1]$ range and that the smoothing logic is active.
@@ -538,7 +593,7 @@ conda activate evla
 export PYTHONPATH=$PYTHONPATH:.
 
 # Execute Proprioception Verification
-python src/vla/proprioception_handler.py
+python src/vla/task22_proprioception_handler.py
 ```
 
 ## 23. Language Grounding (Task 23)
@@ -562,7 +617,7 @@ Run the verification script to certify that text strings are successfully mapped
 export PYTHONPATH=$PYTHONPATH:.
 
 # Execute Language Verification
-python src/vla/language_handler.py
+python src/vla/task23_language_handler.py
 ```
 ### 4. Expected Verification Output
 ```bash
@@ -585,13 +640,24 @@ Final Embedding Shape: [1, 512]
 Note: The projection layer weights are currently initialized via nn.Linear. These will be fine-tuned during Phase 3 Behavioral Cloning to align semantic meaning with physical trajectories.
 
 ## 24. Multimodal Inference Engine (Task 24)
-This task establishes the "Central Nervous System" of the E-VLAformer by synchronizing the frozen World Model, the physical sensor handlers, and the semantic instruction encoders into a single execution loop.
+This task establishes the **"Central Nervous System"** of the E-VLAformer by synchronizing the frozen World Model, the physical sensor handlers, and the semantic instruction encoders into a single deterministic execution loop.
 
-### 1. Implementation: Inference Engine**
-Verify or create the master orchestrator in `src/vla/inference_engine.py`. This script handles the asynchronous data streams and performs the final **548-dimensional fusion** before passing the tensor to the Policy Head.
+### 1. Implementation: The Orchestration Logic
+The system utilizes two primary scripts to manage the "pixels-to-actions" pipeline:
 
-### 2. Execute Multimodal Synchronization Test**
-Run the engine in "Smoke Test" mode to certify that all handlers (GNN, Proprioception, and Language) are communicating correctly without dimensionality mismatches.
+* **The Orchestrator (`src/vla/task24_inference_engine.py`):** Handles asynchronous stream management (Vision @ 30Hz, Proprioception @ 100Hz) and ensures timing-consistent delivery to the policy head.
+* **The Fusion Core (`src/models/fusion_layer.py`):** Acts as the mathematical bottleneck. It ingests the disparate streams and performs the final **548-dimensional fusion**, mapping the 32-dim GNN latent, 4-dim Joint vector, and 512-dim Semantic embedding into a unified tensor.
+
+
+
+### 2. The 548-Dim Fusion Protocol
+The `fusion_layer.py` ensures that the Policy Head receives a grounded representation of the world.
+- **Symbolic Grounding:** The 32-dim GNN latent enforces physical consistency (Object Permanence).
+- **Physical Grounding:** The 4-dim Proprioception vector provides real-time "self-awareness" of the arm's configuration.
+- **Instructional Grounding:** The 512-dim Language vector directs the attention mechanism toward the task goal.
+
+### 3. Execute Multimodal Synchronization Test
+Run the engine in "Smoke Test" mode to certify that all handlers are communicating correctly without dimensionality mismatches or latency spikes.
 
 ```bash
 # Activate Phase 3 Environment
@@ -601,8 +667,25 @@ conda activate evla
 export PYTHONPATH=$PYTHONPATH:.
 
 # Execute Inference Engine Verification
-python src/vla/inference_engine.py
+python src/vla/task24_inference_engine.py
 ```
+### 3. Expected Verification Output
+--- 🚀 Task 24: INFERENCE ENGINE LIVE SYNC ---
+
+[Engine] GNN Stream: ACTIVE (Latent: 32-dim)
+
+[Engine] Joint Stream: ACTIVE (Proprio: 4-dim)
+
+[Engine] Lang Stream: ACTIVE (Embed: 512-dim)
+
+🔗 Calling FusionLayer... 
+
+✅ Result: 548-dim Fusion Vector [1, 548]
+
+✅ Latency: 14.2ms (E2E)
+
+🚀 Task 24 SUCCESS: Central Nervous System is synchronized. Ready for BC Training.
+
 ## 25. Behavioral Cloning Pipeline (Task 25)
 This task implements the supervised learning framework (BC) required to map the 548-dimensional multimodal input space to expert-level motor trajectories.
 
@@ -620,7 +703,7 @@ conda activate evla
 export PYTHONPATH=$PYTHONPATH:.
 
 # Execute BC Training Verification
-python src/vla/bc_trainer.py
+python src/vla/task25_bc_trainer.py
 ```
 
 ### 3. Expected Verification Output
@@ -644,7 +727,7 @@ Run the harvester to capture a sample episode. This test confirms that the rende
 
 ```bash
 # Execute Expert Data Harvesting
-python src/data/expert_harvester.py
+python src/data/task26_expert_harvester.py
 ```
 ### 3. Expected Verification Output
 
@@ -690,7 +773,7 @@ Ensure the `IronGrip` protocol is active in the controller. This forces negative
 Run the advanced state-machine script. The system will cycle through the 5 defined scenarios to ensure the HDF5 buffer contains "Out-of-Distribution" (OOD) recovery data.
 ```bash
 # Execute Multi-Scenario Harvesting with Iron Grip
-python src/data/expert_grabber_scenarios.py
+python src/data/task28_expert_grabber_scenarios.py
 ```
 ### 3. Expected Verification Output
 
@@ -712,11 +795,11 @@ This task focuses on mass-producing high-entropy trajectories and verifying the 
 
 ### 1. Implementation: The Robustness Pipeline
 The data engine utilizes a suite of specialized scripts to ensure data diversity and integrity:
-* `collect_data_manager.py`: Orchestrates parallelized Isaac Sim sessions and robustness triggers.
-* `expert_harvester_randomized.py`: Executes the stochastic expert policy with Domain Randomization.
-* `check_h5_data.py`: Performs frame-by-frame auditing of visual and proprioceptive alignment.
-* `combined_h5.py`: Serializes individual episodes into the unified Master HDF5 structure.
-* `count_data.py`: Provides real-time distribution analytics across the Trinity categories.
+* `task29_collect_data_manager.py`: Orchestrates parallelized Isaac Sim sessions and robustness triggers.
+* `task29_expert_harvester_randomized.py`: Executes the stochastic expert policy with Domain Randomization.
+* `task29_check_h5_data.py`: Performs frame-by-frame auditing of visual and proprioceptive alignment.
+* `task29_combined_h5.py`: Serializes individual episodes into the unified Master HDF5 structure.
+* `task29_count_data.py`: Provides real-time distribution analytics across the Trinity categories.
 
 ### 2. Execute Expert Harvesting & Scaling
 Run the randomized expert harvester to generate the 100-episode master batch. This applies Domain Randomization (DR) and specific robustness stressors.
