@@ -4,7 +4,8 @@ __pycache__/
 .venv/
 miniconda3/
 *.log
-data/
+# Ignore the ROOT data folder only (where H5 files are stored)
+/data/
 checkpoints/
 .vscode/
 .DS_Store

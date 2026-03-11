@@ -24,9 +24,9 @@ Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
 | **Data Synchronization** | HDF5 Multimodal Sync | 100% Alignment | **100% Sync** | ✅ Task 26 Certified |
 | **Grip Stability** | Transport Success | $> 98\%$ | **100%** | ✅ **Task 28 (Iron Grip)** |
 | **Robustness Entropy** | **Scenario Variance** | 3 Classes | **"Trinity" Verified** | ✅ **Task 29 Certified** |
-| **Dataset Scale** | Batch Throughput | 50 Episodes | **50/50 Harvested** | ✅ **Task 29 Certified** |
+| **Dataset Scale** | Batch Throughput | 100 Episodes | **100/100 Harvested**| ✅ **Task 29 Certified** |
 
-> **Verification Note (Task 29):** The **Robustness Trinity** production has achieved a high-entropy distribution: 24% Normal, 40% Occlusion, and 36% Perturbation. The inclusion of "Total Blackout" (Occlusion) and "Mid-Trajectory Target Jumps" (Perturbation) ensures the training data covers the extreme corners of the state space required for robust Behavioral Cloning.
+> **Verification Note (Task 29):** The **Robustness Trinity** production has achieved a high-entropy distribution: **33% Normal, 40% Occlusion, and 27% Perturbation**. This 100-episode master set is hosted at: [🤗 Hugging Face Dataset](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
 
 ---
 
@@ -45,9 +45,7 @@ Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
 
 | Normal Baseline | Visual Occlusion | Dynamic Perturbation |
 | :---: | :---: | :---: |
-| <video src="https://github.com/user-attachments/assets/51a7333a-c138-4abe-b1b0-2d84bc367c40" width="100%"></video> | <video src="https://github.com/user-attachments/assets/0be5fa49-3628-478a-9c24-0fe5bb534e3d" width="100%"></video> | <video src="https://github.com/user-attachments/assets/b4f42cc8-ef76-4212-956c-a51b0f0ff03e" width="100%"></video> |
-
-
+| <video src="https://github.com/user-attachments/assets/686e73ee-8ed3-43a1-b7f0-130a672a03f4" width="100%" controls></video> | <video src="https://github.com/user-attachments/assets/d2fec678-bcca-4b91-9817-e158e402f248" width="100%" controls></video> | <video src="https://github.com/user-attachments/assets/8eb4106a-51de-4b2c-aaae-7855b84c7b46" width="100%" controls></video> |
 
 ---
 
@@ -62,4 +60,4 @@ Benchmarks executed on the target hardware abstraction layer to verify real-time
 | **Vision Token** | Latency | $< 10\text{ ms}$ | **8.4ms** | Int8 Quantized |
 
 ---
-*Last Updated: 2026-03-09* | *Researcher: Tsung Lung Yang*
+*Last Updated: 2026-03-11* | *Researcher: Tsung Lung Yang*

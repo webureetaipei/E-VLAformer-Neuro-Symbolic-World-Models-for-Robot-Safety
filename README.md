@@ -39,8 +39,6 @@ Modern Vision-Language-Action (VLA) models lack explicit world-state reasoning, 
 
 ## Key Features
 
-## Key Features
-
 ### 1. Neuro-Symbolic Core (Phase 2)
 Solves "Causal Hallucination" by injecting a **Graph Neural Network (GNN)** into the transformer loop. The graph acts as a "Physics Consistency Filter," preventing the robot from attempting impossible actions.
 
@@ -48,30 +46,53 @@ Solves "Causal Hallucination" by injecting a **Graph Neural Network (GNN)** into
 - **Backbone:** The GraphSAGE relational embeddings are now locked (`certified_gwm_v1.pth`) and serve as the immutable spatial-reasoning foundation for all Phase 3 policies.
 - **Verification:** Topology confirmed via Task 19 Silhouette Audit ($S=0.00$), ensuring identity mapping remains stable during sensory dropout.
 
-
+---
 
 ### 2. Multimodal Action Policies (Phase 3) 
 **Current Sprint: Expert Data Harvesting & Behavioral Cloning**
 
 - **Objective:** Mapping the stable physical latents from Phase 2 to precise motor commands ($\Delta \theta$) using a Transformer-based Policy Head.
+
+<p align="center">
+  <table align="center">
+    <tr>
+      <td>
+        <video src="https://github.com/user-attachments/assets/686e73ee-8ed3-43a1-b7f0-130a672a03f4" width="100%" controls></video>
+        <p align="center"><strong>Normal</strong></p>
+      </td>
+      <td>
+        <video src="https://github.com/user-attachments/assets/d2fec678-bcca-4b91-9817-e158e402f248" width="100%" controls></video>
+        <p align="center"><strong>Occlusion</strong></p>
+      </td>
+      <td>
+        <video src="https://github.com/user-attachments/assets/8eb4106a-51de-4b2c-aaae-7855b84c7b46" width="100%" controls></video>
+        <p align="center"><strong>Perturbation</strong></p>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <em>Robustness Trinity (Task 29): Visualized expert trajectories for Normal, Occluded (Object Permanence), and Perturbed (Reactive) scenarios.</em>
+</p>
+
 - **Active Tasks:**
     - ✅ **Task 25 (Behavioral Cloning):** Verified the supervised training loop and gradient path.
     - ✅ **Task 26 (Data Engine):** Certified the high-fidelity HDF5 harvesting pipeline with "unfrozen" frame capture.
     - ✅ **Task 27 (Domain Randomization):** Verified environmental entropy and automated pixel-diff auditing.
-    - ✅ **Task 28 (Advanced Manipulation):** Certified the **"Iron Grip" physics protocol** and Multi-Phase State Machines. Completed the 5-Scenario training framework (Normal, Spatial Offset, Obstacles, and Collisions) to ensure high-coverage training data.
-    - ✅ **Task 29 (Robustness Production):** Certified mass-production scaling. Successfully generated and audited a 50-episode "Robustness Trinity" dataset. 
-        - **Data Distribution:** Verified 24% Baseline (Normal), 40% Visual Occlusion (Object Permanence Stress-Test), and 36% Dynamic Perturbation (Reactive Closed-Loop).
-        - **Integrity Audit:** 100% pass rate via HDF5 Batch Auditor; verified "Total Blackout" persistence and "Target Jump" trajectory correction.
-        - **Serialization:** Compiled into a unified Master HDF5 structure for high-throughput Phase 3 training.
+    - ✅ **Task 28 (Advanced Manipulation):** Certified the **"Iron Grip" physics protocol** and Multi-Phase State Machines.
+    - ✅ **Task 29 (Robustness Production):** **[SCALED]** Generated a **100-episode "Robustness Trinity" master dataset**. 
+        - **Distribution:** 33% Normal | 40% Occlusion | 27% Perturbation.
+        - **Hosting:** Dataset fully serialized and hosted on [Hugging Face Datasets](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
+        - **Integrity:** 100% pass rate via HDF5 Batch Auditor; verified "Blind Grasp" memory persistence.
 
-
+---
 
 ### 3. Cognitive Persistence (Task 17 & 27 Verified)
 Unlike standard VLAs that suffer from "out-of-sight, out-of-mind" hallucinations, E-VLAformer maintains a **Global State Persistence** layer.
 - **Object Permanence:** Successfully implemented a TTL-based (Time-To-Live) **Graph Memory Buffer**.
-- **The Lid Test:** Verified that the GWM retains node attributes (position, mass, ID) even when $P(\text{visibility}) = 0$ due to physical occlusion.
-- **Validation Audit:** Verified via **Task 27 Automated Auditing**, confirming that internal world-state representations remain stable across high-entropy randomized trajectories.
-- **Current Status:** ✅ **Operational.** Integrated into the active Data Harvesting pipeline.
+- **The Blind Grasp Test:** Verified via Task 29 that the GWM retains node attributes (position, mass, ID) even when $P(\text{visibility}) = 0$ due to physical occlusion.
+- **Validation Audit:** Internal world-state representations remain stable across high-entropy randomized trajectories (Verified in Task 27).
+
+---
 
 ### 4. TinyEngine (C++ Inference)
 A custom bare-metal runtime designed for **Jetson Orin/Edge Devices**.
@@ -79,18 +100,20 @@ A custom bare-metal runtime designed for **Jetson Orin/Edge Devices**.
 * **Int8 PTQ:** <10ms latency via NEON-optimized GEMM kernels.
 * **Zero-Dependency:** No PyTorch/ONNX runtime overhead.
 
-### 5. Long-Horizon Causal Manipulation
-Unified Reasoning + Manipulation capabilities. The system handles complex, multi-stage "Desktop Sequence" tasks, proving the model can maintain long-horizon causal memory through graph-based state persistence.
+---
 
-- **Logic Persistence:** Maintains high-fidelity memory of object attributes (e.g., hidden mass, friction coefficients) across 1,000+ frames of interaction.
-- **Sequential Integrity:** Executes multi-step workflows—such as Unstack → Relocate → Re-stack—where the Graph World Model enforces physical consistency.
+### 5. Long-Horizon Causal Manipulation
+Unified Reasoning + Manipulation capabilities. The system handles complex, multi-stage "Desktop Sequence" tasks through graph-based state persistence.
+- **Logic Persistence:** Maintains memory of object attributes (e.g., mass, friction) across 1,000+ frames.
+- **Sequential Integrity:** Executes multi-step workflows—such as Unstack → Relocate → Re-stack.
+
+---
 
 ### 6. Sim-to-Real Infrastructure
-A distributed data generation pipeline using **NVIDIA Isaac Sim** & **gRPC**. Scales to 1,000+ hours of synthetic data generation using heterogeneous compute clusters.
-
-- **Scenario-Based Scaling:** Transitioned from single-trajectory capture to **Multi-Scenario Harvesting** (Task 28), generating diverse edge-case data for obstacle avoidance and collision recovery.
-- **Data Scaling:** Capable of generating 1,000+ hours of synthetic data with automated causal labeling.
-- **Domain Randomization (DR):** Synchronized variance of visual (lighting/color) and physical (mass/friction) properties (Verified in Task 27).
+A distributed data generation pipeline using **NVIDIA Isaac Sim** & **gRPC**. 
+- **Scenario Scaling:** Transitioned to **Multi-Scenario Harvesting** (Task 28) for obstacle avoidance and collision recovery.
+- **Data Scaling:** Automated causal labeling for synthetic data generation.
+- **Domain Randomization (DR):** Synchronized variance of visual (lighting/color) and physical (mass/friction) properties.
 
 ---
 
@@ -395,15 +418,15 @@ Scaling the data engine to generate high-entropy trajectories for training resil
   <table align="center">
     <tr>
       <td>
-        <video src="https://github.com/user-attachments/assets/51a7333a-c138-4abe-b1b0-2d84bc367c40" width="100%" controls></video>
+        <video src="https://github.com/user-attachments/assets/686e73ee-8ed3-43a1-b7f0-130a672a03f4" width="100%" controls></video>
         <p align="center"><strong>Normal</strong></p>
       </td>
       <td>
-        <video src="https://github.com/user-attachments/assets/0be5fa49-3628-478a-9c24-0fe5bb534e3d" width="100%" controls></video>
+        <video src="https://github.com/user-attachments/assets/d2fec678-bcca-4b91-9817-e158e402f248" width="100%" controls></video>
         <p align="center"><strong>Occlusion</strong></p>
       </td>
       <td>
-        <video src="https://github.com/user-attachments/assets/b4f42cc8-ef76-4212-956c-a51b0f0ff03e" width="100%" controls></video>
+        <video src="https://github.com/user-attachments/assets/8eb4106a-51de-4b2c-aaae-7855b84c7b46" width="100%" controls></video>
         <p align="center"><strong>Perturbation</strong></p>
       </td>
     </tr>
@@ -412,11 +435,11 @@ Scaling the data engine to generate high-entropy trajectories for training resil
   <em>Robustness Trinity: Normal Baseline (Left), Visual Occlusion (Center), and Dynamic Perturbation (Right).</em>
 </p>
 
-- **Robustness Trinity:** Successfully scaled the harvesting pipeline to generate a balanced 50-episode dataset across three critical categories: **Normal** (Success baseline), **Occlusion** (Visual dropout), and **Perturbation** (Dynamic target shifts).
-- **Cognitive Persistence Test:** Verified that the "Total Blackout" occlusion (large-scale visual masking) forces the model to rely on proprioceptive memory and GWM state persistence rather than reactive visual servoing.
-- **Reactive Re-Planning:** Captured "Target Jump" episodes where the ball coordinates shift mid-trajectory, providing the necessary gradient signals for the E-VLAformer to learn real-time path correction.
-- **Automated HDF5 Auditing:** Implemented a batch-verification script to ensure 100% data integrity, verifying frame counts and metadata labels across the unified **Master Dataset**.
-- **Outcome:** ✅ **Task 29 Certified.** The "Robustness Trinity" dataset is serialized and ready for consumption. The project is now transitioning to Task 30: Unified Training Pipeline.
+- **Robustness Trinity:** Successfully scaled the harvesting pipeline to generate a balanced **100-episode master dataset** (33 Normal, 40 Occlusion, 27 Perturbation). This ensures the E-VLAformer is exposed to high-variance trajectories.
+- **Cognitive Persistence Test:** Verified that the "Blind Grasp" occlusion (wall appearing mid-trajectory) forces the model to rely on **Graph World Model (GWM)** state persistence and proprioceptive memory rather than purely reactive visual pixels.
+- **Reactive Re-Planning:** Captured "Target Jump" episodes where the ball coordinates shift dynamically, providing the necessary gradient signals for the model to learn real-time path correction and error recovery.
+- **Cloud-Scale Data Hosting:** Integrated the **Master Dataset** with [Hugging Face Datasets](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) for streamlined distribution and version-controlled training access.
+- **Outcome:** ✅ **Task 29 Certified.** The "Robustness Trinity" dataset is fully serialized in HDF5 format and hosted. The project has transitioned to **Task 30: Unified Training Pipeline.**
 ---
 
 ## Roadmap & Progress

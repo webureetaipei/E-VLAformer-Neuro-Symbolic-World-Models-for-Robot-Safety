@@ -61,11 +61,8 @@
 - [x] **Task 26: Kinesthetic Scripting (Verified)**: Develop Isaac Sim script to generate "Expert" trajectories (Pushing/Reach).
 - [x] **Task 27: Demonstration Harvesting (Verified)**: Generate high-entropy episodes with Domain Randomization and Automated Movement Auditing.
 - [x] **Task 28: Pick-and-Place State Machine (Verified)**: Upgraded the controller to a Multi-Phase Logic (Hover -> Dive -> Grasp -> Lift -> Place). Integrated the **"Iron Grip" physics protocol** and certified 5-scenario H5 data coverage.
-- [x] **Task 29: Robustness Production (Verified)**: Scaled the pipeline to generate the **"Robustness Trinity"** dataset (50 episodes). Verified 100% integrity across Normal, Occlusion (Object Permanence), and Perturbation (Reactive) scenarios.
+- [x] **Task 29: Robustness Production (Verified)**: Scaled the pipeline to generate the **"Robustness Trinity"** dataset (100 episodes). Verified 100% integrity across Normal, Occlusion (Object Permanence), and Perturbation (Reactive) scenarios.
 
-| Normal Baseline | Visual Occlusion | Dynamic Perturbation |
-| :---: | :---: | :---: |
-| <video src="https://github.com/user-attachments/assets/51a7333a-c138-4abe-b1b0-2d84bc367c40" width="100%"></video> | <video src="https://github.com/user-attachments/assets/0be5fa49-3628-478a-9c24-0fe5bb534e3d" width="100%"></video> | <video src="https://github.com/user-attachments/assets/b4f42cc8-ef76-4212-956c-a51b0f0ff03e" width="100%"></video> |
 
 - [ ] **Task 30: VLA Dataset & Training Pipeline**: Build the PyTorch `DataLoader` to aggregate H5 trajectories. Implement joint normalization and initiate the first Behavioral Cloning training loop.
 

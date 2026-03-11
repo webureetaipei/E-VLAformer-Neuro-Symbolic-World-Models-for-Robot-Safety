@@ -28,7 +28,7 @@
 * **Cognitive Persistence (Task 17-20 & 29 Verified) ✅:**
     * **Object Permanence:** TTL-based circular buffer to maintain graph nodes during visual dropout.
     * **Identity Mapping (Task 19):** Applied **Identity Collapse** training to ensure latent representations are identical for "Visible" and "Occluded" states.
-    * **Outcome:** Verified via Task 29 "Total Blackout" episodes; zero topological drift across extended occlusion events.
+    * **Outcome:** Verified via Task 29 "Blind Grasp" episodes; zero topological drift ($S=0.00$) across extended occlusion events.
 
 ### 2.2 Multimodal Sensor Fusion & Training (Task 21-29 Verified) ✅
 * **Policy Fusion (Task 21):** Deployment of a Residual MLP fusing GNN latents, Joint-space proprioception, and Language embeddings.
@@ -39,7 +39,7 @@
 * **Data Harvesting Engine (Task 26) ✅:** Implementation of the high-speed HDF5 harvester. Fixed renderer synchronization to prevent frozen frames.
 * **Domain Randomization (Task 27) ✅:** Verified environmental entropy (color/position) and integrated **Automated Movement Auditing** via Mean Absolute Difference (MAD) pixel analysis.
 * **Advanced Manipulation (Task 28) ✅:** Implemented **Multi-Phase State Machines** for complex Pick-and-Place. Integrated **"Iron Grip" physics** to eliminate object slippage during transport.
-* **Robustness Production (Task 29) ✅:** Scaled the harvesting pipeline to generate the **"Robustness Trinity"** dataset (50 episodes). Certified stochastic scenario injection for **Visual Occlusion** and **Dynamic Perturbation** (Target Jumps).
+* **Robustness Production (Task 29) ✅:** Scaled the harvesting pipeline to generate a **100-episode "Robustness Trinity" dataset**  [Hugging Face Datasets](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset). Certified stochastic scenario injection for **Visual Occlusion** and **Dynamic Perturbation** (Target Jumps).
 
 ---
 
@@ -51,13 +51,14 @@
 ## 4. Data Engine Strategy: The "Audit-Ready" Dataset
 
 ### 4.1 Multi-Scenario Harvesting (Task 28-29 Verified) ✅
-The E-VLAformer dataset is now "Scenario-Aware," capturing both success and recovery data:
+The E-VLAformer dataset is now "Scenario-Aware," capturing both success and recovery data. It is hosted and versioned for distributed training:
+* **Dataset Repo:** [🤗 Hugging Face: E-VLAformer-GWM-Dataset](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset)
 * **Scenario A-C:** Spatial Randomization (Normal, Left, Right offsets).
 * **Scenario D: 阻擋 (Obstacle):** Robot uses RMPFlow to navigate around cuboids while maintaining end-effector targets.
 * **Scenario E: 碰撞 (Collision):** Captures "Out-of-Distribution" (OOD) joint vibrations and recovery deltas.
 * **Robustness Trinity (Task 29):**
-    * **Full Occlusion:** Trains GWM persistence via total visual deprivation (Giant Wall scenario).
-    * **Dynamic Perturbation:** Mid-trajectory target shifting to train reactive path re-planning.
+    * **Full Occlusion (40%):** Trains GWM persistence via total visual deprivation (Giant Wall scenario).
+    * **Dynamic Perturbation (27%):** Mid-trajectory target shifting to train reactive path re-planning.
 
 ---
 
@@ -77,7 +78,7 @@ The E-VLAformer dataset is now "Scenario-Aware," capturing both success and reco
 | **Expert Data** | **Scenario Coverage** | **3/3 Trinity** | ✅ **Certified (Task 29)** |
 | **Unified Fusion** | **Input Vector Dim** | **548-dim** | ✅ **Verified (Task 24)** |
 | **BC Pipeline** | **Gradient Path** | **Certified** | ✅ **Verified (Task 25)** |
-| **Data Volume** | **Audited Episodes** | **50 Episodes** | ✅ **Mass-Produced (Task 29)** |
+| **Data Volume** | **Audited Episodes** | **100 Episodes** | ✅ **Mass-Produced (Task 29)** |
 
 ---
 *Note: This document is a living blueprint for the E-VLAformer research initiative.*

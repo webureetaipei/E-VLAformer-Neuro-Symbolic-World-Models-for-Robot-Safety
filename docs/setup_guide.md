@@ -707,34 +707,44 @@ python src/data/expert_grabber_scenarios.py
 
 ✅ SUCCESS: Task 28 Certified. Dataset verified for Iron-Grip stability and 5-Scenario coverage.
 
-## 29. Robustness Production & Stochastic Data Scaling (Task 29)
-This task focuses on mass-producing high-entropy trajectories and verifying the "Robustness Trinity" (Normal, Occlusion, Perturbation) to ensure the E-VLAformer can handle real-world failures and dynamic environments.
-### 1. Implementation: Robustness Trinity & Batch Logic
-Verify that the RobustnessManager is configured to inject stochastic events. This forces the system to generate data where the visual stream is interrupted or the target coordinates shift mid-trajectory.
+## 🌪️ Robustness Production & Stochastic Data Scaling (Task 29)
+This task focuses on mass-producing high-entropy trajectories and verifying the **"Robustness Trinity"** (Normal, Occlusion, Perturbation) to ensure the E-VLAformer handles real-world failures and dynamic environments.
+
+### 1. Implementation: The Robustness Pipeline
+The data engine utilizes a suite of specialized scripts to ensure data diversity and integrity:
+* `collect_data_manager.py`: Orchestrates parallelized Isaac Sim sessions and robustness triggers.
+* `expert_harvester_randomized.py`: Executes the stochastic expert policy with Domain Randomization.
+* `check_h5_data.py`: Performs frame-by-frame auditing of visual and proprioceptive alignment.
+* `combined_h5.py`: Serializes individual episodes into the unified Master HDF5 structure.
+* `count_data.py`: Provides real-time distribution analytics across the Trinity categories.
+
 ### 2. Execute Expert Harvesting & Scaling
-Run the randomized expert harvester to generate the 50-episode batch. This script applies Domain Randomization (DR) and specific robustness stressors to ensure a balanced dataset for Phase 3 training.
+Run the randomized expert harvester to generate the 100-episode master batch. This applies Domain Randomization (DR) and specific robustness stressors.
 ```bash
 # Execute Randomized Expert Harvesting for Task 29
-python src/data/expert_harvester_randomized.py --episodes 50
+python src/data/task29_expert_harvester_randomized.py --episodes 100
 ```
-### 3. Master Dataset Aggregation
-Once the individual trajectories are harvested, run the aggregation script to serialize the episodes into a unified HDF5 master file.
+### 3. Master Dataset Aggregation & Serialization
+Once harvested, trajectories are audited and merged into the final training file for Phase 3.
 ```bash
-# Aggregate individual episodes into the master training file
-python src/data/aggregate_data.py
+# Verify data integrity and combine into master file
+python src/data/task29_check_h5_data.py
+python src/data/task29_combined_h5.py
+python src/data/task29_count_data.py
 ```
 ### 4. Expected Verification Output
+
 --- 🌪️ Starting Task 29: ROBUSTNESS PRODUCTION ---
 [Isaac] Parallelizing environment sessions...
 
-✅ Audit Complete: 50/50 files passed basic integrity.
+✅ Audit Complete: 100/100 files passed basic integrity.
 
-📈 DISTRIBUTION: {'NORMAL': 12, 'OCCLUSION': 20, 'PERTURBATION': 18}
+📈 DISTRIBUTION: {'NORMAL': 33, 'OCCLUSION': 40, 'PERTURBATION': 27}
 
-📦 DATASET: task29_master_dataset.h5 (Size: 142.50 MB)
+📦 DATASET: task30_training_master.h5 (Size: 1.20 GB)
 
-👁️ OCCLUSION CHECK: Total Blackout detected in Ep 14 | GWM Persistence: ACTIVE
+👁️ OCCLUSION CHECK: "Blind Grasp" detected in Ep 42 | GWM Persistence: ACTIVE
+🎯 PERTURBATION CHECK: Target Jump in Ep 88 | Reactive Path Correction: VERIFIED
 
-🎯 PERTURBATION CHECK: Target Jump in Ep 22 | Reactive Path Correction: VERIFIED
-
-✅ SUCCESS: Task 29 Certified. 50/50 episodes passed integrity audit. Master Dataset ready for BC Training.
+✅ SUCCESS: Task 29 Certified. 100/100 episodes passed integrity audit. 
+🚀 Master Dataset hosted: [https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset)
