@@ -690,7 +690,7 @@ python src/vla/task24_inference_engine.py
 This task implements the supervised learning framework (BC) required to map the 548-dimensional multimodal input space to expert-level motor trajectories.
 
 ### 1. Implementation: BC Trainer
-Verify or create the training orchestrator in `src/vla/bc_trainer.py`. This module handles the backpropagation logic and ensures that the **GNN**, **Proprioception**, and **Language** streams are correctly weighted during optimization.
+Verify or create the training orchestrator in `src/vla/task25_bc_trainer.py`. This module handles the backpropagation logic and ensures that the **GNN**, **Proprioception**, and **Language** streams are correctly weighted during optimization.
 
 ### 2. Execute Gradient Path Verification
 Run the trainer in "Smoke Test" mode to certify that the `MSELoss` is calculating correctly and that the model weights are capable of updating across the multimodal fusion layers.
@@ -720,7 +720,7 @@ Initial Training Loss: 0.842109 (values will vary)
 This task establishes the high-speed data generation pipeline in Isaac Sim, ensuring that visual renders are perfectly synchronized with robot joint states in the HDF5 buffer.
 
 ### 1. Implementation: Data Harvester
-Verify the harvester logic in `src/data/expert_harvester.py`. This module manages the `SimulationApp` lifecycle and coordinates the Replicator API to capture non-frozen RGB frames.
+Verify the harvester logic in `src/data/task26_expert_harvester.py`. This module manages the `SimulationApp` lifecycle and coordinates the Replicator API to capture non-frozen RGB frames.
 
 ### 2. Execute Harvesting Verification
 Run the harvester to capture a sample episode. This test confirms that the renderer is correctly drawing the robot's motion and saving it to the expert buffer.
@@ -805,7 +805,7 @@ The data engine utilizes a suite of specialized scripts to ensure data diversity
 Run the randomized expert harvester to generate the 100-episode master batch. This applies Domain Randomization (DR) and specific robustness stressors.
 ```bash
 # Execute Randomized Expert Harvesting for Task 29
-python src/data/task29_expert_harvester_randomized.py --episodes 100
+python src/data/expert_harvester_randomized.py --episodes 100
 ```
 ### 3. Master Dataset Aggregation & Serialization
 Once harvested, trajectories are audited and merged into the final training file for Phase 3.
