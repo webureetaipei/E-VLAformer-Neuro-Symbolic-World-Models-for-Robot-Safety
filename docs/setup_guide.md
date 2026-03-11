@@ -767,7 +767,7 @@ python src/data/expert_harvester_randomized.py
 This task certifies the physical reliability of the expert demonstrations and expands the dataset to include complex recovery scenarios (Obstacles and Collisions).
 
 ### 1. Implementation: "Iron Grip" & Scenario Logic
-Ensure the `IronGrip` protocol is active in the controller. This forces negative joint commanding to prevent object slippage during high-acceleration maneuvers. Verify the `ScenarioManager` is configured to toggle between Normal, Obstacle (阻擋), and Collision (碰撞) modes.
+Ensure the `IronGrip` protocol is active in the controller. This forces negative joint commanding to prevent object slippage during high-acceleration maneuvers. Verify the `ScenarioManager` is configured to toggle between Normal, Obstacle, and Collision modes.
 
 ### 2. Execute Multi-Scenario Harvesting
 Run the advanced state-machine script. The system will cycle through the 5 defined scenarios to ensure the HDF5 buffer contains "Out-of-Distribution" (OOD) recovery data.
