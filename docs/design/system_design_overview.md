@@ -52,8 +52,8 @@
 The E-VLAformer dataset is "Scenario-Aware," capturing both success and recovery data.
 * **Master Weights:** **`evla_advanced_epoch80.pth`** (Certified for 4-DOF inference).
 * **Scenario A-C:** Spatial Randomization (Normal, Left, Right offsets).
-* **Scenario D: 阻擋 (Obstacle):** Robot navigates around cuboids while maintaining end-effector targets.
-* **Scenario E: 碰撞 (Collision):** Captures "Out-of-Distribution" (OOD) joint vibrations and recovery deltas.
+* **Scenario D: (Obstacle):** Robot navigates around cuboids while maintaining end-effector targets.
+* **Scenario E: (Collision):** Captures "Out-of-Distribution" (OOD) joint vibrations and recovery deltas.
 * **Robustness Trinity (Verified):**
     * **Full Occlusion (40%):** Trains GWM persistence via total visual deprivation.
     * **Dynamic Perturbation (27%):** Mid-trajectory target shifting to train reactive path re-planning.

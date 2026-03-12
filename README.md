@@ -448,8 +448,7 @@ Integrating the Vision-Language-Action (VLA) architecture with the Graph World M
 ### 📥 Pretrained Models
 | Checkpoint | Epochs | Loss | Description | Link |
 | :--- | :---: | :---: | :--- | :---: |
-| **evla_advanced_epoch80.pth** | **80** | **0.249** | **Elite Model:** Maximum precision and reactivity. | [🔗 Download](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) |
-| evla_smart_epoch50.pth | 50 | 0.250 | **Stable Model:** Robust baseline performance. | [🔗 Download](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) |
+| **evla_advanced_epoch80.pth** | **80** | **0.249** | **Elite Model:** Maximum precision and reactivity. Optimized for Robustness Trinity scenarios. | [🔗 Download](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) |
 ---
 
 ## Roadmap & Progress
