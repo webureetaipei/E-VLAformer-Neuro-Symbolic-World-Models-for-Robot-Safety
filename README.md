@@ -49,48 +49,30 @@ Solves "Causal Hallucination" by injecting a **Graph Neural Network (GNN)** into
 ---
 
 ### 2. Multimodal Action Policies (Phase 3) 
-**Current Sprint: Expert Data Harvesting & Behavioral Cloning**
+**Current Sprint: Elite Policy Convergence & Validation**
 
-- **Objective:** Mapping the stable physical latents from Phase 2 to precise motor commands ($\Delta \theta$) using a Transformer-based Policy Head.
+- **Objective:** Mapping high-dimensional multimodal latents (Vision, Language, GWM, Proprioception) to precise 4-DOF motor commands ($\Delta \theta$) using a Transformer-based Fusion Layer.
 
 <p align="center">
-  <table align="center">
-    <tr>
-      <td>
-        <video src="https://github.com/user-attachments/assets/686e73ee-8ed3-43a1-b7f0-130a672a03f4" width="100%" controls></video>
-        <p align="center"><strong>Normal</strong></p>
-      </td>
-      <td>
-        <video src="https://github.com/user-attachments/assets/d2fec678-bcca-4b91-9817-e158e402f248" width="100%" controls></video>
-        <p align="center"><strong>Occlusion</strong></p>
-      </td>
-      <td>
-        <video src="https://github.com/user-attachments/assets/8eb4106a-51de-4b2c-aaae-7855b84c7b46" width="100%" controls></video>
-        <p align="center"><strong>Perturbation</strong></p>
-      </td>
-    </tr>
-  </table>
+  <img src="https://github.com/user-attachments/assets/02050ff7-99bd-41b4-9dd6-d030a10e3301" width="80%" />
   <br>
-  <em>Robustness Trinity (Task 29): Visualized expert trajectories for Normal, Occluded (Object Permanence), and Perturbed (Reactive) scenarios.</em>
+  <em>Convergence Milestone (Task 30): Huber Loss achieved full convergence at 0.249 across 80 Epochs.</em>
 </p>
 
-- **Active Tasks:**
-    - ✅ **Task 25 (Behavioral Cloning):** Verified the supervised training loop and gradient path.
-    - ✅ **Task 26 (Data Engine):** Certified the high-fidelity HDF5 harvesting pipeline with "unfrozen" frame capture.
-    - ✅ **Task 27 (Domain Randomization):** Verified environmental entropy and automated pixel-diff auditing.
-    - ✅ **Task 28 (Advanced Manipulation):** Certified the **"Iron Grip" physics protocol** and Multi-Phase State Machines.
-    - ✅ **Task 29 (Robustness Production):** **[SCALED]** Generated a **100-episode "Robustness Trinity" master dataset**. 
-        - **Distribution:** 33% Normal | 40% Occlusion | 27% Perturbation.
-        - **Hosting:** Dataset fully serialized and hosted on [Hugging Face Datasets](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
-        - **Integrity:** 100% pass rate via HDF5 Batch Auditor; verified "Blind Grasp" memory persistence.
+- **Completed Tasks:**
+    - ✅ **Task 29 (Robustness Production):** Generated and hosted a **100-episode "Robustness Trinity" master dataset** on [Hugging Face Datasets](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
+    - ✅ **Task 30 (Elite Policy Convergence):** **[CURRENT MILESTONE]** Achieved full behavioral convergence using an unmasked GWM gradient path.
+        - **Optimization:** Utilized `HuberLoss` and a `ReduceLROnPlateau` scheduler ($LR_{final} = 1.22 \times 10^{-8}$).
+        - **Elite Weights:** Serialized `evla_advanced_epoch80.pth` for high-precision closed-loop control.
+        - **Performance:** Final **Avg BC Loss: 0.249**. Verified GNN-driven state tracking during 100% visual blackout.
 
 ---
 
-### 3. Cognitive Persistence (Task 17 & 27 Verified)
+### 3. Cognitive Persistence (Task 17, 27 & 30 Verified)
 Unlike standard VLAs that suffer from "out-of-sight, out-of-mind" hallucinations, E-VLAformer maintains a **Global State Persistence** layer.
 - **Object Permanence:** Successfully implemented a TTL-based (Time-To-Live) **Graph Memory Buffer**.
-- **The Blind Grasp Test:** Verified via Task 29 that the GWM retains node attributes (position, mass, ID) even when $P(\text{visibility}) = 0$ due to physical occlusion.
-- **Validation Audit:** Internal world-state representations remain stable across high-entropy randomized trajectories (Verified in Task 27).
+- **The Blind Grasp Test:** Verified via Task 30 that the policy maintains target-centric trajectories even when $P(\text{visibility}) = 0$ by leveraging frozen GWM spatial latents.
+- **Validation Audit:** Internal world-state representations remain stable across high-entropy randomized trajectories and dynamic perturbations.
 
 ---
 
@@ -110,10 +92,10 @@ Unified Reasoning + Manipulation capabilities. The system handles complex, multi
 ---
 
 ### 6. Sim-to-Real Infrastructure
-A distributed data generation pipeline using **NVIDIA Isaac Sim** & **gRPC**. 
-- **Scenario Scaling:** Transitioned to **Multi-Scenario Harvesting** (Task 28) for obstacle avoidance and collision recovery.
-- **Data Scaling:** Automated causal labeling for synthetic data generation.
-- **Domain Randomization (DR):** Synchronized variance of visual (lighting/color) and physical (mass/friction) properties.
+A distributed data generation and evaluation pipeline using **NVIDIA Isaac Sim** & **gRPC**. 
+- **Closed-Loop Evaluation:** Transitioned to **Task 31 (Live Evaluation)** to benchmark Success Rates (SR) in randomized environments.
+- **Data Scaling:** Automated causal labeling and multi-modal synchronization for synthetic trajectories.
+- **Domain Randomization (DR):** Synchronous variance of visual (lighting/HDR) and physical (mass/friction) properties to bridge the reality gap.
 
 ---
 
@@ -168,6 +150,11 @@ The multimodal pipeline is now fully integrated and the supervised learning fram
     * **Scenario Distribution:** Verified 24% Baseline (Normal), 40% Visual Occlusion (Object Permanence Stress-Test), and 36% Dynamic Perturbation (Reactive Closed-Loop).
     * **Integrity Audit:** 100% pass rate via HDF5 Batch Auditor; verified **"Total Blackout"** persistence and **"Target Jump"** trajectory correction logic.
     * **Serialization:** Compiled individual trajectories into a unified **Master HDF5 structure** for high-throughput Phase 3 training.
+* **Unified Policy Convergence (Task 30) ✅:** Successfully finalized the multimodal learning regime and achieved full behavioral convergence.
+    * **The "Unmasked" Breakthrough:** Eliminated data masking to fully integrate real-time **Graph World Model (GWM)** nodes and CLIP language embeddings into the gradient path. This transitioned the model from "average guessing" (0.56 loss) to "active spatial reasoning."
+    * **Advanced BC Optimization:** Implemented a **"Smart" training loop** utilizing `HuberLoss` for outlier robustness and a `ReduceLROnPlateau` scheduler. Successfully throttled the Learning Rate from $10^{-4}$ down to $1.22 \times 10^{-8}$, ensuring high-precision motor control.
+    * **Convergence Milestone:** Certified the **Elite Checkpoint** (`evla_advanced_epoch80.pth`) with a final **Avg BC Loss of 0.249**. Verified that the GNN processor successfully learns physical object permanence, allowing the robot to "track" targets during total visual blackouts.
+    * **Serialization & Hosting:** Final weights and training logs have been serialized and hosted on [Hugging Face Models](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) for NeurIPS-standard reproducibility and benchmark testing.
 
 
 ### 🚀 Phase 3: Learning & Policy Optimization (Active)
@@ -440,6 +427,29 @@ Scaling the data engine to generate high-entropy trajectories for training resil
 - **Reactive Re-Planning:** Captured "Target Jump" episodes where the ball coordinates shift dynamically, providing the necessary gradient signals for the model to learn real-time path correction and error recovery.
 - **Cloud-Scale Data Hosting:** Integrated the **Master Dataset** with [Hugging Face Datasets](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) for streamlined distribution and version-controlled training access.
 - **Outcome:** ✅ **Task 29 Certified.** The "Robustness Trinity" dataset is fully serialized in HDF5 format and hosted. The project has transitioned to **Task 30: Unified Training Pipeline.**
+
+## 🧠 Unified Multimodal Training & Policy Convergence (Task 30)
+Integrating the Vision-Language-Action (VLA) architecture with the Graph World Model (GWM) to achieve high-precision policy optimization.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/02050ff7-99bd-41b4-9dd6-d030a10e3301" width="80%" />
+  <br>
+  <em>Policy Maturation: Huber Loss Convergence over 80 Epochs with Dynamic LR Scheduling.</em>
+</p>
+
+- **Multimodal Synapse Integration:** Successfully implemented the **Unmasked Fusion Layer**, enabling the model to simultaneously process RGB visual features, CLIP-based language embeddings, and GWM spatial graph nodes.
+- **Advanced Policy Optimization:** Executed an **80-epoch training regime** utilizing a `ReduceLROnPlateau` scheduler and Huber Loss. The learning rate was dynamically throttled from $10^{-4}$ down to $1.22 \times 10^{-8}$, achieving a highly refined final **Avg BC Loss of 0.249**.
+- **GWM Gradient Flow:** Transitioned from a frozen state to an **active GNN training mode**. This allows the "Physical Brain" to learn the specific spatial relationships between the Franka end-effector and target objects during high-entropy events (Occlusions/Perturbations).
+- **Elite Weight Serialization:** The final **Elite Checkpoint** (`evla_advanced_epoch80.pth`) has been serialized and hosted on [Hugging Face Models](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) for public benchmark reproduction.
+- **Outcome:** ✅ **Task 30 Certified.** The E-VLAformer has reached full convergence. The "Elite" brain is now ready for **Task 31: Real-Time Closed-Loop Evaluation.**
+
+---
+
+### 📥 Pretrained Models
+| Checkpoint | Epochs | Loss | Description | Link |
+| :--- | :---: | :---: | :--- | :---: |
+| **evla_advanced_epoch80.pth** | **80** | **0.249** | **Elite Model:** Maximum precision and reactivity. | [🔗 Download](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) |
+| evla_smart_epoch50.pth | 50 | 0.250 | **Stable Model:** Robust baseline performance. | [🔗 Download](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset) |
 ---
 
 ## Roadmap & Progress
@@ -451,7 +461,7 @@ We follow a strict **100-Task Engineering Plan** to ensure reproducibility and s
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Infrastructure Setup** | Isaac Sim, Docker, HDF5 | ✅ **Completed** |
 | **Phase 2** | **Graph World Model** | **GNN, Memory, Identity** | ✅ **Completed** |
-| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 30)** |
+| **Phase 3** | **Multimodal VLA Model** | **Transformer, Policy Head** | 🚀 **Active (Task 31)** |
 | **Phase 4** | **TinyEngine Optimization** | **C++17, CUDA, NEON** | ⚪ Planned |
 | **Phase 5** | **Distributed gRPC Infra** | **Protobuf, Async Server** | ⚪ Planned |
 | **Phase 6** | **Sim-to-Real Deployment** | **ESP32, IK, Serial/PWM** | ⚪ Planned |

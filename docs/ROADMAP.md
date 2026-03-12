@@ -62,13 +62,11 @@
 - [x] **Task 27: Demonstration Harvesting (Verified)**: Generate high-entropy episodes with Domain Randomization and Automated Movement Auditing.
 - [x] **Task 28: Pick-and-Place State Machine (Verified)**: Upgraded the controller to a Multi-Phase Logic (Hover -> Dive -> Grasp -> Lift -> Place). Integrated the **"Iron Grip" physics protocol** and certified 5-scenario H5 data coverage.
 - [x] **Task 29: Robustness Production (Verified)**: Scaled the pipeline to generate the **"Robustness Trinity"** dataset (100 episodes). Verified 100% integrity across Normal, Occlusion (Object Permanence), and Perturbation (Reactive) scenarios.
+- [x] **Task 30: VLA Dataset & Elite Training (Verified)**: Built the "Unmasked" PyTorch `DataLoader`. Executed the 80-epoch Elite Optimization regime. **Outcome:** Achieved full convergence ($0.249$ Huber Loss) with active GWM-to-Action gradient flow and dynamic LR scheduling.
 
-
-- [ ] **Task 30: VLA Dataset & Training Pipeline**: Build the PyTorch `DataLoader` to aggregate H5 trajectories. Implement joint normalization and initiate the first Behavioral Cloning training loop.
-
-### 🧪 Task 31-35: Long-Horizon Reasoning
-- [ ] **Task 31: Multi-Stage Sequences**: Implement "Unstack → Move → Restack" causal workflows using the Persistent GWM.
-- [ ] **Task 32: Graph-Guided Search**: Use the GNN to predict intermediate sub-goals for complex, multi-object tasks.
+### 🧪 Task 31-35: Long-Horizon Reasoning & Validation
+- [ ] **Task 31: Closed-Loop Benchmarking**: Execute the "Robustness Trinity" evaluation suite in Isaac Sim. Benchmark Success Rates (SR) and Latency for Normal vs. High-Entropy scenarios using Elite weights.
+- [ ] **Task 32: Multi-Stage Sequences**: Implement "Unstack → Move → Restack" causal workflows using the Persistent GWM.
 - [ ] **Task 33: Recovery Policies**: Train the model to "re-try" or "re-acquire" if the cube is dropped or grippers slip.
 - [ ] **Task 34: Hallucination Audit**: Verify the Policy doesn't "reach for shadows" during occlusion (Task 19 Identity Validation).
 - [ ] **Task 35: Hierarchical VLA**: Formally separate High-level "Intent" from Low-level "Joint Control" streams.

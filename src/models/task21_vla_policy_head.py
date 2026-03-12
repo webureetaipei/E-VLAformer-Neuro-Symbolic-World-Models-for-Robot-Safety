@@ -1,27 +1,22 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 class EVLAPolicyHead(nn.Module):
     """
-    Task 21: VLA Policy Head
-    Fuses Multimodal Latents -> Joint Delta Actions
+    Task 21: VLA Policy Head (Unified Version)
+    Processes the 548-dim multimodal latent into 4-DOF Joint Deltas.
     """
-    def __init__(self, latent_dim=32, joint_dim=4, lang_dim=512, hidden_dim=256):
+    def __init__(self, input_dim=548, joint_dim=4, hidden_dim=256):
         super(EVLAPolicyHead, self).__init__()
         
-        # 1. Multimodal Fusion Layer
-        # Inputs: GNN Latent (32) + Proprioception (4) + Language (512)
-        input_dim = latent_dim + joint_dim + lang_dim
-        
+        # 1. Initial Projection from the 548-dim fused latent
         self.fc_input = nn.Linear(input_dim, hidden_dim)
         
-        # 2. Residual Reasoning Blocks
+        # 2. Residual Reasoning Blocks for deep stability
         self.res_block1 = nn.Linear(hidden_dim, hidden_dim)
         self.res_block2 = nn.Linear(hidden_dim, hidden_dim)
         
-        # 3. Action Regression Head
-        # Predicts delta change for 4-DOF joints
+        # 3. Action Regression Head (Outputs delta changes for 4 joints)
         self.action_head = nn.Linear(hidden_dim, joint_dim)
         
         # 4. Normalization & Activation
@@ -29,16 +24,15 @@ class EVLAPolicyHead(nn.Module):
         self.gelu = nn.GELU()
         self.tanh = nn.Tanh()
 
-    def forward(self, gnn_embed, joint_state, lang_embed):
-        # Concatenate all sensory streams
-        # Shape: [Batch, latent + joint + lang]
-        x = torch.cat([gnn_embed, joint_state, lang_embed], dim=-1)
-        
+    def forward(self, fused_latent):
+        """
+        fused_latent: [Batch, 548] vector from the MultimodalFusionLayer
+        """
         # Initial projection
-        x = self.gelu(self.fc_input(x))
+        x = self.gelu(self.fc_input(fused_latent))
         x = self.layer_norm(x)
         
-        # Residual Reasoning (Skip connections for deep stability)
+        # Residual Reasoning (Skip connection)
         identity = x
         x = self.gelu(self.res_block1(x))
         x = self.res_block2(x) + identity
@@ -47,18 +41,3 @@ class EVLAPolicyHead(nn.Module):
         # Predict Joint Deltas (Scaled to [-1, 1] for motor safety)
         actions = self.tanh(self.action_head(x))
         return actions
-
-if __name__ == "__main__":
-    # Integration Smoke Test
-    model = EVLAPolicyHead()
-    
-    # Mock Tensors: [Batch Size, Dimension]
-    mock_gnn = torch.randn(1, 32)
-    mock_joints = torch.randn(1, 4)
-    mock_lang = torch.randn(1, 512)
-    
-    out = model(mock_gnn, mock_joints, mock_lang)
-    
-    print("--- Task 21: Policy Head Initialization ---")
-    print(f"Action Vector: {out.detach().numpy()}")
-    print(f"✅ SUCCESS: Predicted {out.shape[1]} joint deltas.")

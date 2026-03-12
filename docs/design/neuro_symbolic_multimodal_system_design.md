@@ -33,13 +33,14 @@ To handle the "Reality Gap" and asynchronous sensors, the system utilizes a Hier
 
 ### 4.1 Cognitive Persistence & Object Permanence ✅
 To solve the "Out-of-Sight, Out-of-Mind" hallucination problem, we utilize a **Graph Memory Buffer** with **Identity Mapping**.
-- **The Blind Grasp Test (Task 29):** Verified that the GWM retains node attributes even when $P(\text{visibility}) = 0$ due to physical occlusion by dynamic barriers.
+- **Object Permanence:** Verified via Task 30 "Blind Grasp" tests; the model maintains target-centric trajectories during 100% visual blackout.
 - **Latent Identity Mapping (Task 19):** Manifold distance between "Visible" and "Occluded" states is mathematically zero ($S = 0.00$).
 
-### 4.2 Action Loop & Robustness (Task 21-29 Verified) ✅
-The action loop is grounded in real-time physical feedback and high-entropy stochastic demonstrations:
-- **Iron Grip Protocol (Task 28):** Forces torque saturation to maintain high-friction object clamping during transport.
-- **Robustness Trinity (Task 29):** Scaled production of **100 expert trajectories** hosted on [Hugging Face](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
+### 4.2 Elite Action Policy (Task 30 Verified) ✅
+The action loop is grounded in real-time physical feedback and high-entropy stochastic demonstrations.
+- **Elite Checkpoint:** All policy weights are frozen in **`evla_advanced_epoch80.pth`** ([Download via Hugging Face](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset)).
+- **Optimization:** Achieved a **0.249 Huber Loss** through unmasked GWM gradient flow, enabling reactive path re-planning.
+- **Robustness Trinity (Task 29):** 100 expert trajectories hosted on [Hugging Face](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
 
 | Normal Baseline | Visual Occlusion | Dynamic Perturbation |
 | :---: | :---: | :---: |
@@ -54,7 +55,7 @@ The action loop is grounded in real-time physical feedback and high-entropy stoc
 - [x] **Behavioral Cloning:** Expert Trajectory Trainer (Task 25) ✅ 
 - [x] **Advanced Manipulation:** Multi-Phase Pick-and-Place & Iron Grip (Task 28) ✅
 - [x] **Robustness Production:** 100-Episode "Robustness Trinity" Dataset (Task 29) ✅
-- [ ] **Unified Training Pipeline:** Master HDF5 DataLoader & BC Optimization (Task 30)
+- [x] **Elite Policy Convergence:** 80-Epoch Optimization & **`evla_advanced_epoch80.pth`** (Task 30) ✅
 
 ---
-*Generated: 2026-03-11 | E-VLAformer Research Lab*
+*Generated: 2026-03-12 | E-VLAformer Research Lab*

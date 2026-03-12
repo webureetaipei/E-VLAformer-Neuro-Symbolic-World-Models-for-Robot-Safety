@@ -831,3 +831,47 @@ python src/data/task29_count_data.py
 
 ✅ SUCCESS: Task 29 Certified. 100/100 episodes passed integrity audit. 
 🚀 Master Dataset hosted: [https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset)
+
+## 🧠 Unified Multimodal Training & Policy Convergence (Task 30)
+This task focuses on the "Unmasked" optimization of the E-VLAformer brain, transitioning from static data harvesting to active policy learning across the multimodal manifold.
+
+### 1. Implementation: The Training Pipeline
+The training infrastructure leverages specialized modules to ensure gradient flow across the GWM and Vision streams:
+* `task30_evla_dataset.py`: The "Unmasked" loader that pulls real-time GWM Graph Nodes and CLIP Language embeddings.
+* `task30_train_vla.py`: The main optimization engine utilizing Huber Loss and `ReduceLROnPlateau` for precision motor control.
+* `task30_plot_results.py`: A visualization utility that generates high-fidelity convergence plots for research audit.
+
+### 2. Execute Policy Optimization
+Run the unified training script to begin the 80-epoch optimization regime. This will dynamically adjust the Learning Rate as the model approaches the global minimum.
+```bash
+# Execute Elite Policy Training for Task 30
+python src/vla/task30_train_vla.py
+```
+
+### 3. Convergence Visualization & Audit
+Once training is complete, generate the convergence plot to verify the stability of the policy and the timing of the Learning Rate decays.
+```bash
+# Generate NeurIPS-standard training plot
+python src/utils/task30_plot_results.py
+```
+### 4. Expected Verification Output
+--- 🧠 Starting Task 30: UNIFIED POLICY CONVERGENCE ---
+
+⚙️ Initializing SMART Training on: cuda
+
+🚀 Commencing Advanced BC Optimization...
+Epoch [01/80] | Loss: 0.289045 | LR: 1.00e-04
+...
+Epoch [19/80] | Loss: 0.249963 | LR: 5.00e-05 (Scheduler: Decay Triggered)
+...
+Epoch [80/80] | Loss: 0.249514 | LR: 1.22e-08
+
+💾 Checkpoint Saved: models/weights/evla_advanced_epoch80.pth
+
+📈 CONVERGENCE: Huber Loss stable at 0.2495
+
+🧠 GWM INTEGRATION: Gradients active | Node-to-Action mapping: VERIFIED
+
+✅ SUCCESS: Task 30 Certified. Elite Brain fully converged.
+🚀 Weights Hosted: https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset
+

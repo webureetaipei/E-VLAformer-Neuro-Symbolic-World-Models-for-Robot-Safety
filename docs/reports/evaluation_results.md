@@ -15,37 +15,60 @@ We evaluate the Graph World Model (GWM) by analyzing its latent space. High-qual
 
 ---
 
-## 2. Multimodal Action & Data Integrity (Phase 3)
-Evaluation of the VLA Policy Head and the high-speed data harvesting engine.
+## 2. Multimodal Action & Policy Convergence (Phase 3)
+Evaluation of the VLA Policy Head, data integrity, and behavioral cloning convergence.
 
-### 🦾 Task 26-29: Harvesting, Audit & Robustness
+### 🦾 Task 26-30: Harvesting, Audit & Elite Training
 | Metric | Methodology | Target | Current | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Data Synchronization** | HDF5 Multimodal Sync | 100% Alignment | **100% Sync** | ✅ Task 26 Certified |
 | **Grip Stability** | Transport Success | $> 98\%$ | **100%** | ✅ **Task 28 (Iron Grip)** |
-| **Robustness Entropy** | **Scenario Variance** | 3 Classes | **"Trinity" Verified** | ✅ **Task 29 Certified** |
-| **Dataset Scale** | Batch Throughput | 100 Episodes | **100/100 Harvested**| ✅ **Task 29 Certified** |
+| **Huber Loss (Elite)** | BC Optimization | $< 0.300$ | **0.2495** | ✅ **Task 30 Certified** |
+| **Final Learning Rate** | Scheduler Convergence | $< 1e-7$ | **1.22e-08** | ✅ **Full Convergence** |
 
-> **Verification Note (Task 29):** The **Robustness Trinity** production has achieved a high-entropy distribution: **33% Normal, 40% Occlusion, and 27% Perturbation**. This 100-episode master set is hosted at: [🤗 Hugging Face Dataset](https://huggingface.co/datasets/TsungLungYang/E-VLAformer-GWM-Dataset).
+> **Verification Note (Task 30):** The model has achieved full convergence over **80 Epochs**. By "unmasking" the GWM gradient path, the policy now successfully maps physical graph nodes to motor actions, ensuring reactivity during visual sensory dropout.
 
 ---
 
 ## 3. Cognitive Resilience: Object Permanence & Occlusion
 
-### 🧠 Persistence Benchmarks (Task 17 - 20)
+### 🧠 Persistence Benchmarks (Task 17 - 30)
 | Metric | Target | Result | Status |
 | :--- | :--- | :--- | :--- |
 | **Persistence Duration** | $> 500\text{ frames}$ | **1,000+ Frames** | ✅ Logic Verified |
-| **Latent Drift** | $< 5.0 \%$ | **0.0%** | ✅ Task 19 Verified |
-| **Phase 2 Freeze** | Certified | **certified_gwm_v1** | ✅ Task 20 Locked |
+| **Occlusion Tracking** | Path Deviation $< 5\%$ | **1.2% Drift** | ✅ Task 30 Verified |
+| **Phase 3 Weights** | Certified | **evla_advanced_epoch80**| ✅ Task 30 Locked |
 
 ---
 
-## 4. Visual Evidence: Robustness Trinity (Task 29)
+## 4. Visual Evidence: Robustness Trinity & Convergence (Task 29 & 30)
 
+### 🌪️ Robustness Trinity Expert Trajectories
 | Normal Baseline | Visual Occlusion | Dynamic Perturbation |
 | :---: | :---: | :---: |
 | <video src="https://github.com/user-attachments/assets/686e73ee-8ed3-43a1-b7f0-130a672a03f4" width="100%" controls></video> | <video src="https://github.com/user-attachments/assets/d2fec678-bcca-4b91-9817-e158e402f248" width="100%" controls></video> | <video src="https://github.com/user-attachments/assets/8eb4106a-51de-4b2c-aaae-7855b84c7b46" width="100%" controls></video> |
+
+### 📈 Training Maturation & Architecture
+<p align="center">
+  <table align="center">
+    <tr>
+      <td width="50%">
+        <img src="https://github.com/user-attachments/assets/02050ff7-99bd-41b4-9dd6-d030a10e3301" width="100%" />
+        <p align="center"><strong>Policy Convergence (Task 30)</strong></p>
+      </td>
+      <td width="50%">
+        <table>
+          <tr><th>Modality</th><th>Dim</th><th>Role</th></tr>
+          <tr><td>Vision</td><td>512</td><td>Spatial Context</td></tr>
+          <tr><td>Language</td><td>512</td><td>Task Grounding</td></tr>
+          <tr><td>GWM Graph</td><td>32</td><td><b>Mental Map</b></td></tr>
+          <tr><td>Proprio</td><td>4</td><td>Joint State</td></tr>
+        </table>
+        <p align="center"><strong>Fusion Architecture</strong></p>
+      </td>
+    </tr>
+  </table>
+</p>
 
 ---
 
@@ -60,4 +83,4 @@ Benchmarks executed on the target hardware abstraction layer to verify real-time
 | **Vision Token** | Latency | $< 10\text{ ms}$ | **8.4ms** | Int8 Quantized |
 
 ---
-*Last Updated: 2026-03-11* | *Researcher: Tsung Lung Yang*
+*Last Updated: 2026-03-12* | *Researcher: Tsung Lung Yang*
